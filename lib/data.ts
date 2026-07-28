@@ -12,6 +12,7 @@ export interface Filme {
   ano: number;
   tipo: string;
   url: string;
+  poster?: string;
 }
 
 export const comerciais: Comercial[] = [
@@ -56,11 +57,6 @@ export const filmes: Filme[] = [
     ano: 2025,
     tipo: "Longa · Amazon MGM",
     url: "https://www.youtube.com/watch?v=QMdLVfBOlpQ",
-  },
-  {
-    titulo: "Furnas Fundas",
-    ano: 2023,
-    tipo: "Longa · Terror",
-    url: "https://www.youtube.com/watch?v=0HsBvqQpQoA",
+    poster: "/posters/perrengue-fashion.jpg",
   },
 ];

@@ -17,7 +17,6 @@ export default function Home() {
       <section id="trabalhos">
         <div className="sec-head">
           <h2>Comerciais</h2>
-          <span className="idx">{String(comerciais.length).padStart(2, "0")}</span>
         </div>
         <ComerciaisGrid items={comerciais} />
       </section>
@@ -25,7 +24,6 @@ export default function Home() {
       <section id="cinema">
         <div className="sec-head">
           <h2>Cinema</h2>
-          <span className="idx">{String(filmes.length).padStart(2, "0")}</span>
         </div>
         <CinemaList items={filmes} />
       </section>

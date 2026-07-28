@@ -32,7 +32,6 @@ export default function Hero() {
         <h1>Bruno Homem</h1>
         <div className="role">Gaffer</div>
       </div>
-      <div className="scroll">Role para ver os trabalhos</div>
     </section>
   );
 }

@@ -7,10 +7,10 @@ export default function Contato() {
       </a>
       <div className="contato-links">
         <a href="tel:+5511981869619">+55 11 98186-9619</a>
-        <a href="#" target="_blank" rel="noopener">
+        <a href="https://www.instagram.com/brunohomem/" target="_blank" rel="noopener">
           Instagram
         </a>
-        <a href="#" target="_blank" rel="noopener">
+        <a href="https://www.imdb.com/pt/name/nm7868769/" target="_blank" rel="noopener">
           IMDb
         </a>
       </div>
