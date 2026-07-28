@@ -1,8 +1,8 @@
 :root{
-  --bg:#ADD0FF;
-  --fg:#0a0a0b;
-  --muted:#54687d;
-  --line:rgba(10,10,11,.12);
+  --bg:#14243A;
+  --fg:#f3f1ec;
+  --muted:#7c8aa0;
+  --line:rgba(243,241,236,.12);
   --overlay-fg:#f3f1ec;
   --overlay-muted:rgba(243,241,236,.65);
   --display:var(--font-display), sans-serif;
@@ -44,7 +44,7 @@ header.site nav a:hover{color:var(--overlay-fg)}
 }
 .hero .grade{
   position:absolute;inset:0;
-  background:linear-gradient(to bottom, rgba(10,10,11,.35) 0%, rgba(10,10,11,0) 30%, rgba(10,10,11,0) 62%, var(--bg) 100%);
+  background:linear-gradient(to bottom, rgba(10,10,11,.35) 0%, rgba(10,10,11,0) 30%, rgba(10,10,11,0) 80%, var(--bg) 100%);
 }
 .hero .name-plate{
   position:absolute;inset:0;display:flex;flex-direction:column;
