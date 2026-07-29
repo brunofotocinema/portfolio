@@ -55,6 +55,15 @@
       "sub": "Publicidade · 2023",
       "url": "https://www.youtube.com/watch?v=ZqzhNZJse2I",
       "ano": 2023
+    },
+    {
+      "id": "fiat",
+      "logo": "/logos/fiat.png",
+      "alt": "FIAT",
+      "titulo": "FIAT",
+      "sub": "Publicidade · 2025",
+      "url": "https://www.youtube.com/watch?v=OJlbTfdJQE0&t=9s",
+      "ano": 2025
     }
   ],
   "filmes": [
