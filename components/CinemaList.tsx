@@ -13,7 +13,7 @@ export default function CinemaList({ items }: { items: Filme[] }) {
         <div key={f.id} className="filmes-row" onClick={() => openModal(toEmbed(f.url))}>
           <img
             className="poster"
-            src={f.poster ?? thumbOf(f.url) ?? undefined}
+            src={f.banner ?? f.poster ?? thumbOf(f.url) ?? undefined}
             alt={`Pôster de ${f.titulo}`}
             loading="lazy"
           />

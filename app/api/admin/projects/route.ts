@@ -79,7 +79,6 @@ export async function POST(request: Request) {
   const videoUrl = (form.get("videoUrl") as string | null)?.trim() || undefined;
   const banner = form.get("banner");
   const logo = form.get("logo");
-  const poster = form.get("poster");
 
   if (categoria !== "publicidade" && categoria !== "filmes-series") {
     return NextResponse.json({ error: "Categoria inválida." }, { status: 400 });
@@ -91,26 +90,14 @@ export async function POST(request: Request) {
   if (!anoRaw || Number.isNaN(ano)) {
     return NextResponse.json({ error: "Ano é obrigatório." }, { status: 400 });
   }
-  if (!(banner instanceof File) || banner.size === 0) {
-    return NextResponse.json({ error: "Banner/thumbnail é obrigatório." }, { status: 400 });
-  }
-  if (banner.size > MAX_FILE_BYTES) {
-    return NextResponse.json(
-      { error: "Banner/thumbnail muito grande (máximo 8MB)." },
-      { status: 400 }
-    );
+  if (!videoUrl) {
+    return NextResponse.json({ error: "Link do vídeo é obrigatório." }, { status: 400 });
   }
 
   if (categoria === "publicidade") {
-    if (!videoUrl) {
-      return NextResponse.json(
-        { error: "Link do vídeo é obrigatório para Publicidade." },
-        { status: 400 }
-      );
-    }
     if (!(logo instanceof File) || logo.size === 0) {
       return NextResponse.json(
-        { error: "Logo (PNG sem fundo) é obrigatória para Publicidade." },
+        { error: "Logo (PNG) é obrigatória para Publicidade." },
         { status: 400 }
       );
     }
@@ -118,14 +105,14 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Logo muito grande (máximo 8MB)." }, { status: 400 });
     }
   } else {
-    if (!(poster instanceof File) || poster.size === 0) {
+    if (!(banner instanceof File) || banner.size === 0) {
       return NextResponse.json(
-        { error: "Pôster é obrigatório para Filmes e Séries." },
+        { error: "Banner é obrigatório para Filmes e Séries." },
         { status: 400 }
       );
     }
-    if (poster.size > MAX_FILE_BYTES) {
-      return NextResponse.json({ error: "Pôster muito grande (máximo 8MB)." }, { status: 400 });
+    if (banner.size > MAX_FILE_BYTES) {
+      return NextResponse.json({ error: "Banner muito grande (máximo 8MB)." }, { status: 400 });
     }
   }
 
@@ -136,16 +123,6 @@ export async function POST(request: Request) {
     const creditos = readCreditos(form);
 
     const changes: FileChange[] = [];
-
-    const bannerFile = banner as File;
-    const bannerExt = fileExtension(bannerFile);
-    const bannerPath = `public/banners/${id}.${bannerExt}`;
-    changes.push({
-      path: bannerPath,
-      content: await fileToBase64(bannerFile),
-      encoding: "base64",
-    });
-    const bannerPublicUrl = `/banners/${id}.${bannerExt}`;
 
     if (categoria === "publicidade") {
       const logoFile = logo as File;
@@ -165,18 +142,17 @@ export async function POST(request: Request) {
         sub: creditos?.funcaoBruno ? `${creditos.funcaoBruno} · ${ano}` : `Publicidade · ${ano}`,
         url: videoUrl!,
         ano,
-        banner: bannerPublicUrl,
         ...(creditos ? { creditos } : {}),
       };
 
       current.comerciais = [...current.comerciais, novoComercial];
     } else {
-      const posterFile = poster as File;
-      const posterExt = fileExtension(posterFile);
-      const posterPath = `public/posters/${id}.${posterExt}`;
+      const bannerFile = banner as File;
+      const bannerExt = fileExtension(bannerFile);
+      const bannerPath = `public/banners/${id}.${bannerExt}`;
       changes.push({
-        path: posterPath,
-        content: await fileToBase64(posterFile),
+        path: bannerPath,
+        content: await fileToBase64(bannerFile),
         encoding: "base64",
       });
 
@@ -185,9 +161,8 @@ export async function POST(request: Request) {
         titulo,
         ano,
         tipo: creditos?.funcaoBruno ?? "Filme e Série",
-        ...(videoUrl ? { url: videoUrl } : {}),
-        poster: `/posters/${id}.${posterExt}`,
-        banner: bannerPublicUrl,
+        url: videoUrl!,
+        banner: `/banners/${id}.${bannerExt}`,
         ...(creditos ? { creditos } : {}),
       };
 

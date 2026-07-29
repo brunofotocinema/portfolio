@@ -22,7 +22,6 @@ const initialState = {
 export default function ProjectForm({ onCreated }: ProjectFormProps) {
   const [fields, setFields] = useState(initialState);
   const [logoFile, setLogoFile] = useState<File | null>(null);
-  const [posterFile, setPosterFile] = useState<File | null>(null);
   const [bannerFile, setBannerFile] = useState<File | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -35,20 +34,18 @@ export default function ProjectForm({ onCreated }: ProjectFormProps) {
   function resetForm() {
     setFields(initialState);
     setLogoFile(null);
-    setPosterFile(null);
     setBannerFile(null);
   }
 
   function validate(): string | null {
     if (!fields.titulo.trim()) return "Título é obrigatório.";
     if (!fields.ano.trim() || Number.isNaN(Number(fields.ano))) return "Ano é obrigatório.";
-    if (!bannerFile) return "Banner/thumbnail é obrigatório.";
+    if (!fields.videoUrl.trim()) return "Link do vídeo é obrigatório.";
 
     if (fields.categoria === "publicidade") {
-      if (!fields.videoUrl.trim()) return "Link do vídeo é obrigatório para Publicidade.";
-      if (!logoFile) return "Logo (PNG sem fundo) é obrigatória para Publicidade.";
+      if (!logoFile) return "Logo (PNG) é obrigatória para Publicidade.";
     } else {
-      if (!posterFile) return "Pôster é obrigatório para Filmes e Séries.";
+      if (!bannerFile) return "Banner é obrigatório para Filmes e Séries.";
     }
 
     return null;
@@ -79,7 +76,7 @@ export default function ProjectForm({ onCreated }: ProjectFormProps) {
       formData.set("categoria", fields.categoria);
       formData.set("titulo", fields.titulo.trim());
       formData.set("ano", fields.ano.trim());
-      if (fields.videoUrl.trim()) formData.set("videoUrl", fields.videoUrl.trim());
+      formData.set("videoUrl", fields.videoUrl.trim());
       if (fields.creditosProdutora.trim())
         formData.set("creditosProdutora", fields.creditosProdutora.trim());
       if (fields.creditosDirecao.trim())
@@ -87,7 +84,6 @@ export default function ProjectForm({ onCreated }: ProjectFormProps) {
       if (fields.creditosFuncaoBruno.trim())
         formData.set("creditosFuncaoBruno", fields.creditosFuncaoBruno.trim());
       if (logoFile) formData.set("logo", logoFile);
-      if (posterFile) formData.set("poster", posterFile);
       if (bannerFile) formData.set("banner", bannerFile);
 
       const res = await fetch("/api/admin/projects", {
@@ -144,7 +140,7 @@ export default function ProjectForm({ onCreated }: ProjectFormProps) {
       </label>
 
       <label>
-        Link do vídeo (YouTube ou Vimeo){fields.categoria === "publicidade" ? " *" : " (opcional, trailer)"}
+        Link do vídeo (YouTube) *
         <input
           type="url"
           value={fields.videoUrl}
@@ -154,30 +150,19 @@ export default function ProjectForm({ onCreated }: ProjectFormProps) {
       </label>
 
       {fields.categoria === "publicidade" ? (
-        <LogoUploader label="Logo (PNG, sem fundo)" required onChange={setLogoFile} />
+        <LogoUploader label="Logo (PNG)" required onChange={setLogoFile} />
       ) : (
         <div className="admin-field">
           <label>
-            Pôster oficial *
+            Banner *
             <input
               type="file"
               accept="image/png,image/jpeg,image/webp"
-              onChange={(e) => setPosterFile(e.target.files?.[0] ?? null)}
+              onChange={(e) => setBannerFile(e.target.files?.[0] ?? null)}
             />
           </label>
         </div>
       )}
-
-      <div className="admin-field">
-        <label>
-          Banner/thumbnail *
-          <input
-            type="file"
-            accept="image/png,image/jpeg,image/webp"
-            onChange={(e) => setBannerFile(e.target.files?.[0] ?? null)}
-          />
-        </label>
-      </div>
 
       <fieldset className="admin-creditos">
         <legend>Créditos (opcional)</legend>

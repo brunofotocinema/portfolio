@@ -24,7 +24,7 @@ export interface Filme {
   titulo: string;
   ano: number;
   tipo: string;
-  url?: string;
+  url: string;
   poster?: string;
   banner?: string;
   creditos?: Creditos;
