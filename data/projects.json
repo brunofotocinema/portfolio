@@ -64,6 +64,15 @@
       "sub": "Publicidade · 2025",
       "url": "https://www.youtube.com/watch?v=OJlbTfdJQE0&t=9s",
       "ano": 2025
+    },
+    {
+      "id": "guarana",
+      "logo": "/logos/guarana.png",
+      "alt": "Guaraná",
+      "titulo": "Guaraná",
+      "sub": "Publicidade · 2024",
+      "url": "https://www.youtube.com/watch?is=hIQXZ26CH0lbD4bJ&v=bM8IraTNOgo&feature=youtu.be",
+      "ano": 2024
     }
   ],
   "filmes": [
