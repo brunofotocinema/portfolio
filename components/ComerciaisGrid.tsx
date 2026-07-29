@@ -12,12 +12,12 @@ export default function ComerciaisGrid({ items }: { items: Comercial[] }) {
     <div className="works">
       {items.map((c) => (
         <div
-          key={c.titulo}
+          key={c.id}
           className="card"
           style={c.zoom ? ({ "--zoom": c.zoom } as CSSProperties) : undefined}
           onClick={() => openModal(toEmbed(c.url))}
         >
-          <img className="thumb" src={thumbOf(c.url) ?? undefined} alt={c.alt} loading="lazy" />
+          <img className="thumb" src={c.banner ?? thumbOf(c.url) ?? undefined} alt={c.alt} loading="lazy" />
           <div className="shade" />
           <div className="logo">
             <img src={c.logo} alt={c.alt} />

@@ -1,0 +1,186 @@
+.admin-page {
+  min-height: 100vh;
+  padding: 6vh 5vw 10vh;
+  max-width: 720px;
+  margin: 0 auto;
+  color: var(--fg);
+}
+
+.admin-page h1 {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: clamp(22px, 3vw, 32px);
+  letter-spacing: -0.01em;
+}
+
+.admin-page h2 {
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: 20px;
+  margin: 40px 0 16px;
+}
+
+.admin-page h3 {
+  font-size: 15px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+  margin: 24px 0 10px;
+}
+
+.admin-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 20px;
+}
+
+.admin-header div {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 14px;
+  color: var(--muted);
+}
+
+.admin-note {
+  margin-top: 20px;
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.admin-login {
+  max-width: 360px;
+  margin: 14vh auto 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.admin-project-form,
+.admin-project-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.admin-project-form label,
+.admin-login label,
+.admin-field label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.admin-project-form input,
+.admin-project-form select,
+.admin-login input {
+  background: rgba(243, 241, 236, 0.06);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 10px 12px;
+  color: var(--fg);
+  font-size: 15px;
+  font-family: var(--body);
+}
+
+.admin-creditos {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.admin-creditos legend {
+  font-size: 13px;
+  color: var(--muted);
+  padding: 0 6px;
+}
+
+button {
+  background: var(--fg);
+  color: var(--bg);
+  border: none;
+  border-radius: 6px;
+  padding: 10px 18px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  width: fit-content;
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.admin-project-list ul {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.admin-project-list li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 14px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.admin-project-list li button {
+  background: transparent;
+  color: #e88;
+  border: 1px solid rgba(238, 136, 136, 0.4);
+  padding: 6px 12px;
+  font-size: 13px;
+}
+
+.admin-logo-preview {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.admin-logo-preview img {
+  max-width: 120px;
+  max-height: 120px;
+  border-radius: 6px;
+  background: repeating-conic-gradient(#2a3a52 0% 25%, #1c2b41 0% 50%) 50% / 16px 16px;
+  object-fit: contain;
+}
+
+.admin-logo-preview-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.admin-logo-preview-actions button {
+  padding: 6px 12px;
+  font-size: 13px;
+}
+
+.admin-error {
+  color: #ff8080;
+  font-size: 13px;
+}
+
+.admin-success {
+  color: #8ce0a0;
+  font-size: 13px;
+}

@@ -1,62 +1,41 @@
+import projectsJson from "@/data/projects.json";
+
+export interface Creditos {
+  produtora?: string;
+  direcao?: string;
+  funcaoBruno?: string;
+}
+
 export interface Comercial {
+  id: string;
   logo: string;
   alt: string;
   titulo: string;
   sub: string;
   url: string;
+  ano: number;
   zoom?: number;
+  banner?: string;
+  creditos?: Creditos;
 }
 
 export interface Filme {
+  id: string;
   titulo: string;
   ano: number;
   tipo: string;
-  url: string;
+  url?: string;
   poster?: string;
+  banner?: string;
+  creditos?: Creditos;
 }
 
-export const comerciais: Comercial[] = [
-  {
-    logo: "/logos/tomford.png",
-    alt: "Tom Ford",
-    titulo: "SS24",
-    sub: "Moda · 2024",
-    url: "https://player.vimeo.com/video/924696462?autoplay=1&loop=1&controls=1&muted=0",
-  },
-  {
-    // thumb com tarja preta — compensada com zoom
-    logo: "/logos/heineken.png",
-    alt: "Heineken",
-    titulo: "Campanha",
-    sub: "Comercial",
-    url: "https://www.youtube.com/watch?v=E0fSp_YdvwQ",
-    zoom: 1.35,
-  },
-  {
-    // thumb com tarja preta — compensada com zoom
-    logo: "/logos/itau.webp",
-    alt: "Itaú",
-    titulo: "Comercial",
-    sub: "Publicidade",
-    url: "https://www.youtube.com/watch?v=BXdRo9fCL-I",
-    zoom: 1.5,
-  },
-  {
-    // placeholder — aguardando link real da Natura
-    logo: "/logos/natura.png",
-    alt: "Natura",
-    titulo: "Taís Araújo",
-    sub: "Comercial",
-    url: "https://www.youtube.com/watch?v=ZqzhNZJse2I",
-  },
-];
+interface ProjectsData {
+  comerciais: Comercial[];
+  filmes: Filme[];
+}
 
-export const filmes: Filme[] = [
-  {
-    titulo: "Perrengue Fashion",
-    ano: 2025,
-    tipo: "Longa · Amazon MGM",
-    url: "https://www.youtube.com/watch?v=QMdLVfBOlpQ",
-    poster: "/posters/perrengue-fashion.jpg",
-  },
-];
+const data = projectsJson as ProjectsData;
+
+export const comerciais: Comercial[] = data.comerciais;
+export const filmes: Filme[] = data.filmes;

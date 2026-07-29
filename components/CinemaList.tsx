@@ -10,7 +10,7 @@ export default function CinemaList({ items }: { items: Filme[] }) {
   return (
     <div id="lista-filmes">
       {items.map((f) => (
-        <div key={f.titulo} className="filmes-row" onClick={() => openModal(toEmbed(f.url))}>
+        <div key={f.id} className="filmes-row" onClick={() => openModal(toEmbed(f.url))}>
           <img
             className="poster"
             src={f.poster ?? thumbOf(f.url) ?? undefined}
