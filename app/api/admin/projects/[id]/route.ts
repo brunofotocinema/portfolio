@@ -54,13 +54,15 @@ export async function DELETE(
       current.filmes = current.filmes.filter((p) => p.id !== id);
     }
 
+    // Data file first so a project is never left referencing already-deleted
+    // assets, then the (now unreferenced) image files.
     const changes: FileChange[] = [
-      ...assetPaths(project).map((path) => ({ path, delete: true as const })),
       {
         path: DATA_PATH,
         content: JSON.stringify(current, null, 2) + "\n",
         encoding: "utf-8" as const,
       },
+      ...assetPaths(project).map((path) => ({ path, delete: true as const })),
     ];
 
     const { commitSha } = await commitFiles(
