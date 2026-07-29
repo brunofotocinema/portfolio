@@ -37,6 +37,15 @@
       "sub": "Comercial",
       "url": "https://www.youtube.com/watch?v=ZqzhNZJse2I",
       "ano": 2023
+    },
+    {
+      "id": "bradesco",
+      "logo": "/logos/bradesco.png",
+      "alt": "Bradesco",
+      "titulo": "Bradesco",
+      "sub": "Publicidade · 2025",
+      "url": "https://www.youtube.com/watch?v=1A9PslUFGWE",
+      "ano": 2025
     }
   ],
   "filmes": [
