@@ -46,6 +46,15 @@
       "sub": "Publicidade · 2026",
       "url": "https://vimeo.com/1213942714",
       "ano": 2026
+    },
+    {
+      "id": "natura",
+      "logo": "/logos/natura.png",
+      "alt": "Natura",
+      "titulo": "Natura",
+      "sub": "Publicidade · 2023",
+      "url": "https://www.youtube.com/watch?v=ZqzhNZJse2I",
+      "ano": 2023
     }
   ],
   "filmes": [
