@@ -1,14 +1,22 @@
+"use client";
+
+import { useLanguage } from "@/lib/language-context";
+import LanguageToggle from "./LanguageToggle";
+
 export default function Header() {
+  const { t } = useLanguage();
+
   return (
     <header className="site">
       <a className="name" href="#top">
         Bruno Homem
       </a>
       <nav>
-        <a href="#trabalhos">Trabalhos</a>
-        <a href="#cinema">Cinema</a>
-        <a href="#sobre">Sobre</a>
-        <a href="#contato">Contato</a>
+        <a href="#trabalhos">{t("nav.trabalhos")}</a>
+        <a href="#cinema">{t("nav.cinema")}</a>
+        <a href="#sobre">{t("nav.sobre")}</a>
+        <a href="#contato">{t("nav.contato")}</a>
+        <LanguageToggle />
       </nav>
     </header>
   );

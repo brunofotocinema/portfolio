@@ -30,7 +30,8 @@ export default function Hero() {
       <div className="grade" />
       <div className="name-plate">
         <h1>Bruno Homem</h1>
-        <div className="role">Gaffer</div>
+        {/* Kept in English regardless of site language — a credential line, not a translated sentence. */}
+        <div className="role">Gaffer · Brazilian · English-speaking</div>
       </div>
     </section>
   );

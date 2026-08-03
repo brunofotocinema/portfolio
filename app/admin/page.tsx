@@ -6,11 +6,20 @@ import { auth } from "@/lib/firebase";
 import LoginForm from "@/components/admin/LoginForm";
 import ProjectForm from "@/components/admin/ProjectForm";
 import ProjectList from "@/components/admin/ProjectList";
+import type { Comercial, Filme } from "@/lib/data";
 import "./admin.css";
+
+export interface ProjectsData {
+  comerciais: Comercial[];
+  filmes: Filme[];
+}
 
 export default function AdminPage() {
   const [user, setUser] = useState<User | null>(null);
   const [checkingAuth, setCheckingAuth] = useState(true);
+  const [projects, setProjects] = useState<ProjectsData | null>(null);
+  const [projectsError, setProjectsError] = useState<string | null>(null);
+  const [projectsLoading, setProjectsLoading] = useState(false);
   const [reloadToken, setReloadToken] = useState(0);
 
   useEffect(() => {
@@ -22,6 +31,38 @@ export default function AdminPage() {
     });
     return unsubscribe;
   }, []);
+
+  useEffect(() => {
+    if (!user) return;
+    let ignore = false;
+
+    async function run() {
+      setProjectsLoading(true);
+      setProjectsError(null);
+      try {
+        const idToken = await user!.getIdToken();
+        const res = await fetch("/api/admin/projects", {
+          headers: { Authorization: `Bearer ${idToken}` },
+        });
+        const json = await res.json();
+        if (ignore) return;
+        if (!res.ok) {
+          setProjectsError(json.error ?? "Erro ao carregar projetos.");
+          return;
+        }
+        setProjects(json);
+      } catch {
+        if (!ignore) setProjectsError("Erro de rede ao carregar projetos.");
+      } finally {
+        if (!ignore) setProjectsLoading(false);
+      }
+    }
+
+    run();
+    return () => {
+      ignore = true;
+    };
+  }, [user, reloadToken]);
 
   if (checkingAuth) {
     return (
@@ -57,8 +98,16 @@ export default function AdminPage() {
         site refletir a mudança — isso é esperado.
       </p>
 
-      <ProjectForm onCreated={() => setReloadToken((n) => n + 1)} />
-      <ProjectList reloadToken={reloadToken} />
+      <ProjectForm
+        existingComerciais={projects?.comerciais ?? []}
+        onCreated={() => setReloadToken((n) => n + 1)}
+      />
+      <ProjectList
+        data={projects}
+        loading={projectsLoading}
+        error={projectsError}
+        onChanged={() => setReloadToken((n) => n + 1)}
+      />
     </div>
   );
 }

@@ -1,7 +1,13 @@
+"use client";
+
+import { useLanguage } from "@/lib/language-context";
+
 export default function Contato() {
+  const { t } = useLanguage();
+
   return (
     <section id="contato" className="contato">
-      <div className="lead">Próximo projeto?</div>
+      <div className="lead">{t("contato.lead")}</div>
       <a className="big" href="mailto:brunofotocinema@gmail.com">
         brunofotocinema@gmail.com
       </a>

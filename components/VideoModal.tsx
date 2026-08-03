@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import { useLanguage } from "@/lib/language-context";
 
 interface VideoModalProps {
   src: string | null;
@@ -9,6 +10,7 @@ interface VideoModalProps {
 
 export default function VideoModal({ src, onClose }: VideoModalProps) {
   const open = !!src;
+  const { t } = useLanguage();
 
   useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "";
@@ -31,7 +33,7 @@ export default function VideoModal({ src, onClose }: VideoModalProps) {
     >
       <div className="modal-box">
         <button className="modal-close" onClick={onClose}>
-          Fechar ✕
+          {t("modal.close")}
         </button>
         {open && (
           <iframe

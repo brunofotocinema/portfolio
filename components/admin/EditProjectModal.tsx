@@ -1,0 +1,170 @@
+"use client";
+
+import { useState } from "react";
+import { auth } from "@/lib/firebase";
+import LogoUploader from "./LogoUploader";
+import type { Categoria } from "@/lib/admin-types";
+import type { Comercial, Filme } from "@/lib/data";
+
+interface EditProjectModalProps {
+  categoria: Categoria;
+  project: Comercial | Filme;
+  onClose: () => void;
+  onSaved: () => void;
+}
+
+export default function EditProjectModal({
+  categoria,
+  project,
+  onClose,
+  onSaved,
+}: EditProjectModalProps) {
+  const [titulo, setTitulo] = useState(project.titulo);
+  const [ano, setAno] = useState(String(project.ano));
+  const [videoUrl, setVideoUrl] = useState(project.url);
+  const [creditosProdutora, setCreditosProdutora] = useState(project.creditos?.produtora ?? "");
+  const [creditosDirecao, setCreditosDirecao] = useState(project.creditos?.direcao ?? "");
+  const [creditosFuncaoBruno, setCreditosFuncaoBruno] = useState(
+    project.creditos?.funcaoBruno ?? ""
+  );
+  const [newLogoFile, setNewLogoFile] = useState<File | null>(null);
+  const [newBannerFile, setNewBannerFile] = useState<File | null>(null);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const currentImageUrl =
+    categoria === "publicidade" ? (project as Comercial).logo : (project as Filme).banner;
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setError(null);
+
+    if (!titulo.trim()) return setError("Título é obrigatório.");
+    if (!ano.trim() || Number.isNaN(Number(ano))) return setError("Ano é obrigatório.");
+    if (!videoUrl.trim()) return setError("Link do vídeo é obrigatório.");
+
+    const user = auth.currentUser;
+    if (!user) return setError("Sessão expirada. Faça login novamente.");
+
+    setSubmitting(true);
+    try {
+      const idToken = await user.getIdToken();
+      const formData = new FormData();
+      formData.set("titulo", titulo.trim());
+      formData.set("ano", ano.trim());
+      formData.set("videoUrl", videoUrl.trim());
+      if (creditosProdutora.trim()) formData.set("creditosProdutora", creditosProdutora.trim());
+      if (creditosDirecao.trim()) formData.set("creditosDirecao", creditosDirecao.trim());
+      if (creditosFuncaoBruno.trim())
+        formData.set("creditosFuncaoBruno", creditosFuncaoBruno.trim());
+      if (newLogoFile) formData.set("logo", newLogoFile);
+      if (newBannerFile) formData.set("banner", newBannerFile);
+
+      const res = await fetch(
+        `/api/admin/projects/${encodeURIComponent(project.id)}?categoria=${categoria}`,
+        {
+          method: "PUT",
+          headers: { Authorization: `Bearer ${idToken}` },
+          body: formData,
+        }
+      );
+      const data = await res.json();
+      if (!res.ok) {
+        setError(data.error ?? "Não foi possível salvar.");
+        return;
+      }
+      onSaved();
+    } catch {
+      setError("Erro de rede ao salvar.");
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
+  return (
+    <div
+      className="admin-modal-overlay"
+      onClick={(e) => {
+        if (e.target === e.currentTarget) onClose();
+      }}
+    >
+      <div className="admin-modal-box">
+        <h2>Editar &ldquo;{project.titulo}&rdquo;</h2>
+        <form className="admin-project-form" onSubmit={handleSubmit}>
+          <label>
+            Título *
+            <input value={titulo} onChange={(e) => setTitulo(e.target.value)} />
+          </label>
+
+          <label>
+            Ano *
+            <input type="number" value={ano} onChange={(e) => setAno(e.target.value)} />
+          </label>
+
+          <label>
+            Link do vídeo (YouTube) *
+            <input type="url" value={videoUrl} onChange={(e) => setVideoUrl(e.target.value)} />
+          </label>
+
+          {currentImageUrl && (
+            <div className="admin-field">
+              <label>Imagem atual</label>
+              <img src={currentImageUrl} alt="" className="admin-current-image" />
+            </div>
+          )}
+
+          {categoria === "publicidade" ? (
+            <LogoUploader label="Substituir logo (opcional)" onChange={setNewLogoFile} />
+          ) : (
+            <div className="admin-field">
+              <label>
+                Substituir banner (opcional)
+                <input
+                  type="file"
+                  accept="image/png,image/jpeg,image/webp"
+                  onChange={(e) => setNewBannerFile(e.target.files?.[0] ?? null)}
+                />
+              </label>
+            </div>
+          )}
+
+          <fieldset className="admin-creditos">
+            <legend>Créditos (opcional)</legend>
+            <label>
+              Produtora
+              <input
+                value={creditosProdutora}
+                onChange={(e) => setCreditosProdutora(e.target.value)}
+              />
+            </label>
+            <label>
+              Diretor(a) / DP
+              <input
+                value={creditosDirecao}
+                onChange={(e) => setCreditosDirecao(e.target.value)}
+              />
+            </label>
+            <label>
+              Função do Bruno
+              <input
+                value={creditosFuncaoBruno}
+                onChange={(e) => setCreditosFuncaoBruno(e.target.value)}
+              />
+            </label>
+          </fieldset>
+
+          {error && <p className="admin-error">{error}</p>}
+
+          <div className="admin-modal-actions">
+            <button type="button" onClick={onClose} disabled={submitting}>
+              Cancelar
+            </button>
+            <button type="submit" disabled={submitting}>
+              {submitting ? "Salvando..." : "Salvar"}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+}

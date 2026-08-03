@@ -7,6 +7,7 @@ import Sobre from "@/components/Sobre";
 import Contato from "@/components/Contato";
 import Footer from "@/components/Footer";
 import ModalProvider from "@/components/ModalProvider";
+import SectionHeading from "@/components/SectionHeading";
 
 export default function Home() {
   return (
@@ -16,14 +17,14 @@ export default function Home() {
 
       <section id="trabalhos">
         <div className="sec-head">
-          <h2>Comerciais</h2>
+          <SectionHeading i18nKey="section.comerciais" />
         </div>
         <ComerciaisGrid items={comerciais} />
       </section>
 
       <section id="cinema">
         <div className="sec-head">
-          <h2>Cinema</h2>
+          <SectionHeading i18nKey="section.cinema" />
         </div>
         <CinemaList items={filmes} />
       </section>

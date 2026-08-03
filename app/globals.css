@@ -36,6 +36,14 @@ header.site nav a{
   transition:color .25s;
 }
 header.site nav a:hover{color:var(--overlay-fg)}
+.lang-toggle{display:flex;gap:6px;margin-left:8px}
+.lang-toggle button{
+  background:none;border:none;cursor:pointer;line-height:1;
+  display:flex;align-items:center;
+  padding:2px;border-radius:3px;opacity:.45;transition:opacity .2s;
+}
+.lang-toggle button.active{opacity:1}
+.lang-toggle button:hover{opacity:.85}
 
 /* ---------- hero ---------- */
 .hero{position:relative;height:100svh;min-height:600px;overflow:hidden}
@@ -118,6 +126,37 @@ section{padding:13vh 5vw}
 .card:hover .logo{opacity:0;transform:scale(.94)}
 .card:hover .meta{opacity:1;transform:none}
 .card:hover .play{opacity:1;transform:scale(1)}
+
+/* ---------- extras soltos (mais vídeos de uma marca) ---------- */
+.works-extra{
+  display:flex;flex-wrap:wrap;gap:16px;
+  margin-top:32px;padding-top:26px;
+  border-top:1px dashed var(--line);
+}
+.extra-card{
+  position:relative;overflow:hidden;cursor:pointer;
+  width:200px;aspect-ratio:16/9;border-radius:3px;background:#141414;
+  border:1px solid rgba(243,241,236,.3);
+  transform:rotate(-1.5deg);transition:transform .25s;
+}
+.extra-card:nth-child(even){transform:rotate(1.5deg)}
+.extra-card:hover{transform:rotate(0deg) scale(1.03)}
+.extra-card > img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.extra-card .shade{
+  position:absolute;inset:0;
+  background:linear-gradient(to top, rgba(10,10,11,.65), rgba(10,10,11,.15) 55%, rgba(10,10,11,.3));
+}
+.extra-card .logo{
+  position:absolute;left:8px;top:8px;width:32px;height:32px;border-radius:50%;
+  background:rgba(20,20,20,.75);display:flex;align-items:center;justify-content:center;overflow:hidden;
+}
+.extra-card .logo img{max-width:70%;max-height:70%;object-fit:contain}
+.extra-card .meta{
+  position:absolute;left:8px;right:8px;bottom:6px;z-index:3;
+  display:flex;flex-direction:column;
+}
+.extra-card .meta .t{font-family:var(--display);font-weight:600;font-size:12px;color:var(--overlay-fg)}
+.extra-card .meta .s{font-size:10px;color:var(--overlay-muted);letter-spacing:.03em}
 
 /* ---------- cinema ---------- */
 .filmes-row{

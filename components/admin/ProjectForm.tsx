@@ -4,8 +4,10 @@ import { useState } from "react";
 import { auth } from "@/lib/firebase";
 import LogoUploader from "./LogoUploader";
 import type { Categoria } from "@/lib/admin-types";
+import type { Comercial } from "@/lib/data";
 
 interface ProjectFormProps {
+  existingComerciais: Comercial[];
   onCreated: () => void;
 }
 
@@ -14,12 +16,13 @@ const initialState = {
   titulo: "",
   ano: "",
   videoUrl: "",
+  vincularA: "",
   creditosProdutora: "",
   creditosDirecao: "",
   creditosFuncaoBruno: "",
 };
 
-export default function ProjectForm({ onCreated }: ProjectFormProps) {
+export default function ProjectForm({ existingComerciais, onCreated }: ProjectFormProps) {
   const [fields, setFields] = useState(initialState);
   const [logoFile, setLogoFile] = useState<File | null>(null);
   const [bannerFile, setBannerFile] = useState<File | null>(null);
@@ -43,7 +46,7 @@ export default function ProjectForm({ onCreated }: ProjectFormProps) {
     if (!fields.videoUrl.trim()) return "Link do vídeo é obrigatório.";
 
     if (fields.categoria === "publicidade") {
-      if (!logoFile) return "Logo (PNG) é obrigatória para Publicidade.";
+      if (!fields.vincularA && !logoFile) return "Logo (PNG) é obrigatória para Publicidade.";
     } else {
       if (!bannerFile) return "Banner é obrigatório para Filmes e Séries.";
     }
@@ -83,6 +86,7 @@ export default function ProjectForm({ onCreated }: ProjectFormProps) {
         formData.set("creditosDirecao", fields.creditosDirecao.trim());
       if (fields.creditosFuncaoBruno.trim())
         formData.set("creditosFuncaoBruno", fields.creditosFuncaoBruno.trim());
+      if (fields.vincularA) formData.set("vincularA", fields.vincularA);
       if (logoFile) formData.set("logo", logoFile);
       if (bannerFile) formData.set("banner", bannerFile);
 
@@ -149,9 +153,33 @@ export default function ProjectForm({ onCreated }: ProjectFormProps) {
         />
       </label>
 
-      {fields.categoria === "publicidade" ? (
+      {fields.categoria === "publicidade" && existingComerciais.length > 0 && (
+        <label>
+          Vincular a uma marca já existente? (opcional)
+          <select
+            value={fields.vincularA}
+            onChange={(e) => update("vincularA", e.target.value)}
+          >
+            <option value="">Não — criar um card novo</option>
+            {existingComerciais.map((c) => (
+              <option key={c.id} value={c.id}>
+                {c.titulo}
+              </option>
+            ))}
+          </select>
+        </label>
+      )}
+
+      {fields.categoria === "publicidade" && fields.vincularA && (
+        <p className="admin-note">
+          Este vídeo não vai gerar um card novo — ele aparece como vídeo extra da marca
+          selecionada, revelado quando alguém clicar no card dela.
+        </p>
+      )}
+
+      {fields.categoria === "publicidade" && !fields.vincularA ? (
         <LogoUploader label="Logo (PNG)" required onChange={setLogoFile} />
-      ) : (
+      ) : fields.categoria === "filmes-series" ? (
         <div className="admin-field">
           <label>
             Banner *
@@ -162,7 +190,7 @@ export default function ProjectForm({ onCreated }: ProjectFormProps) {
             />
           </label>
         </div>
-      )}
+      ) : null}
 
       <fieldset className="admin-creditos">
         <legend>Créditos (opcional)</legend>

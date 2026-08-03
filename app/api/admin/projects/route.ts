@@ -2,11 +2,11 @@ import { NextResponse } from "next/server";
 import { requireFirebaseUser, UnauthorizedError } from "@/lib/auth-server";
 import { commitFiles, getJsonFile, GithubCommitError, type FileChange } from "@/lib/github";
 import { slugify, uniqueSlug } from "@/lib/slugify";
-import type { Comercial, Filme } from "@/lib/data";
-import type { Categoria, CreditosInput } from "@/lib/admin-types";
+import { fileExtension, fileToBase64, readCreditos, MAX_FILE_BYTES } from "@/lib/admin-server-utils";
+import type { Comercial, ComercialExtra, Filme } from "@/lib/data";
+import type { Categoria } from "@/lib/admin-types";
 
 const DATA_PATH = "data/projects.json";
-const MAX_FILE_BYTES = 8 * 1024 * 1024;
 
 export async function GET(request: Request) {
   try {
@@ -35,32 +35,6 @@ interface ProjectsData {
   filmes: Filme[];
 }
 
-function fileExtension(file: File): string {
-  const fromName = file.name.split(".").pop();
-  if (fromName && fromName.length <= 5) return fromName.toLowerCase();
-  if (file.type === "image/png") return "png";
-  if (file.type === "image/webp") return "webp";
-  return "jpg";
-}
-
-async function fileToBase64(file: File): Promise<string> {
-  const buffer = Buffer.from(await file.arrayBuffer());
-  return buffer.toString("base64");
-}
-
-function readCreditos(form: FormData): CreditosInput | undefined {
-  const produtora = (form.get("creditosProdutora") as string | null)?.trim();
-  const direcao = (form.get("creditosDirecao") as string | null)?.trim();
-  const funcaoBruno = (form.get("creditosFuncaoBruno") as string | null)?.trim();
-
-  if (!produtora && !direcao && !funcaoBruno) return undefined;
-  return {
-    ...(produtora ? { produtora } : {}),
-    ...(direcao ? { direcao } : {}),
-    ...(funcaoBruno ? { funcaoBruno } : {}),
-  };
-}
-
 export async function POST(request: Request) {
   try {
     await requireFirebaseUser(request);
@@ -77,6 +51,7 @@ export async function POST(request: Request) {
   const titulo = (form.get("titulo") as string | null)?.trim();
   const anoRaw = form.get("ano") as string | null;
   const videoUrl = (form.get("videoUrl") as string | null)?.trim() || undefined;
+  const vincularA = (form.get("vincularA") as string | null)?.trim() || undefined;
   const banner = form.get("banner");
   const logo = form.get("logo");
 
@@ -95,14 +70,16 @@ export async function POST(request: Request) {
   }
 
   if (categoria === "publicidade") {
-    if (!(logo instanceof File) || logo.size === 0) {
-      return NextResponse.json(
-        { error: "Logo (PNG) é obrigatória para Publicidade." },
-        { status: 400 }
-      );
-    }
-    if (logo.size > MAX_FILE_BYTES) {
-      return NextResponse.json({ error: "Logo muito grande (máximo 8MB)." }, { status: 400 });
+    if (!vincularA) {
+      if (!(logo instanceof File) || logo.size === 0) {
+        return NextResponse.json(
+          { error: "Logo (PNG) é obrigatória para Publicidade." },
+          { status: 400 }
+        );
+      }
+      if (logo.size > MAX_FILE_BYTES) {
+        return NextResponse.json({ error: "Logo muito grande (máximo 8MB)." }, { status: 400 });
+      }
     }
   } else {
     if (!(banner instanceof File) || banner.size === 0) {
@@ -118,9 +95,39 @@ export async function POST(request: Request) {
 
   try {
     const current = await getJsonFile<ProjectsData>(DATA_PATH);
+    const creditos = readCreditos(form);
+
+    if (categoria === "publicidade" && vincularA) {
+      const parent = current.comerciais.find((c) => c.id === vincularA);
+      if (!parent) {
+        return NextResponse.json({ error: "Marca selecionada não encontrada." }, { status: 400 });
+      }
+
+      const existingExtraIds = current.comerciais.flatMap((c) =>
+        (c.extras ?? []).map((e) => e.id)
+      );
+      const extraId = uniqueSlug(slugify(titulo), existingExtraIds);
+      const novoExtra: ComercialExtra = { id: extraId, titulo, url: videoUrl!, ano };
+      parent.extras = [...(parent.extras ?? []), novoExtra];
+
+      const changes: FileChange[] = [
+        {
+          path: DATA_PATH,
+          content: JSON.stringify(current, null, 2) + "\n",
+          encoding: "utf-8",
+        },
+      ];
+
+      const { commitSha } = await commitFiles(
+        changes,
+        `Admin: adiciona vídeo extra "${titulo}" à marca "${parent.titulo}"`
+      );
+
+      return NextResponse.json({ ok: true, id: extraId, commitSha });
+    }
+
     const existingIds = [...current.comerciais, ...current.filmes].map((p) => p.id);
     const id = uniqueSlug(slugify(titulo), existingIds);
-    const creditos = readCreditos(form);
 
     const changes: FileChange[] = [];
 

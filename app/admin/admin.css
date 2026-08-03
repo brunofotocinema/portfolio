@@ -147,6 +147,37 @@ button:disabled {
   font-size: 13px;
 }
 
+.admin-project-list li.admin-project-item {
+  display: block;
+}
+
+.admin-project-item-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.admin-project-extras {
+  list-style: none;
+  margin-top: 10px;
+  padding-left: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  border-left: 2px solid var(--line);
+}
+
+.admin-project-extras li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+  color: var(--muted);
+  padding: 4px 0 4px 10px;
+  border: none;
+  border-radius: 0;
+}
+
 .admin-logo-preview {
   display: flex;
   align-items: center;
@@ -183,4 +214,63 @@ button:disabled {
 .admin-success {
   color: #8ce0a0;
   font-size: 13px;
+}
+
+.admin-project-item-clickable {
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.admin-project-item-clickable:hover {
+  background: rgba(243, 241, 236, 0.05);
+}
+
+.admin-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  background: rgba(10, 10, 11, 0.75);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  overflow-y: auto;
+  padding: 6vh 5vw;
+}
+
+.admin-modal-box {
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 28px;
+  max-width: 480px;
+  width: 100%;
+}
+
+.admin-modal-box h2 {
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: 19px;
+  margin-bottom: 20px;
+}
+
+.admin-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.admin-modal-actions button[type="button"] {
+  background: transparent;
+  color: var(--fg);
+  border: 1px solid var(--line);
+}
+
+.admin-current-image {
+  display: block;
+  max-width: 140px;
+  max-height: 140px;
+  object-fit: contain;
+  border-radius: 6px;
+  margin-top: 6px;
+  background: repeating-conic-gradient(#2a3a52 0% 25%, #1c2b41 0% 50%) 50% / 16px 16px;
 }

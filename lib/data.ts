@@ -6,6 +6,13 @@ export interface Creditos {
   funcaoBruno?: string;
 }
 
+export interface ComercialExtra {
+  id: string;
+  titulo: string;
+  url: string;
+  ano?: number;
+}
+
 export interface Comercial {
   id: string;
   logo: string;
@@ -17,6 +24,7 @@ export interface Comercial {
   zoom?: number;
   banner?: string;
   creditos?: Creditos;
+  extras?: ComercialExtra[];
 }
 
 export interface Filme {
