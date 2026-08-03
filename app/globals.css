@@ -79,6 +79,7 @@ section{padding:13vh 5vw}
 .card{
   position:relative;overflow:hidden;cursor:pointer;
   aspect-ratio:16/9;border-radius:3px;background:#141414;
+  border:1px solid rgba(243,241,236,.4);
 }
 .card img.thumb{
   position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
