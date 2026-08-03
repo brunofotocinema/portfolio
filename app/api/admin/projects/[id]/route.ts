@@ -185,7 +185,7 @@ export async function PUT(request: Request, ctx: RouteContext<"/api/admin/projec
       comercial.alt = titulo;
       comercial.sub = creditos?.funcaoBruno
         ? `${creditos.funcaoBruno} · ${ano}`
-        : `Publicidade · ${ano}`;
+        : `Comercial · ${ano}`;
 
       if (logo instanceof File && logo.size > 0) {
         const ext = fileExtension(logo);

@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { auth } from "@/lib/firebase";
 import LogoUploader from "./LogoUploader";
-import type { Categoria } from "@/lib/admin-types";
+import { CATEGORIA_LABEL, type Categoria } from "@/lib/admin-types";
 import type { Comercial } from "@/lib/data";
 
 interface ProjectFormProps {
@@ -46,7 +46,8 @@ export default function ProjectForm({ existingComerciais, onCreated }: ProjectFo
     if (!fields.videoUrl.trim()) return "Link do vídeo é obrigatório.";
 
     if (fields.categoria === "publicidade") {
-      if (!fields.vincularA && !logoFile) return "Logo (PNG) é obrigatória para Publicidade.";
+      if (!fields.vincularA && !logoFile)
+        return `Logo (PNG) é obrigatória para ${CATEGORIA_LABEL.publicidade}.`;
     } else {
       if (!bannerFile) return "Banner é obrigatório para Filmes e Séries.";
     }
@@ -124,8 +125,8 @@ export default function ProjectForm({ existingComerciais, onCreated }: ProjectFo
           value={fields.categoria}
           onChange={(e) => update("categoria", e.target.value as Categoria)}
         >
-          <option value="publicidade">Publicidade</option>
-          <option value="filmes-series">Filmes e Séries</option>
+          <option value="publicidade">{CATEGORIA_LABEL.publicidade}</option>
+          <option value="filmes-series">{CATEGORIA_LABEL["filmes-series"]}</option>
         </select>
       </label>
 

@@ -90,6 +90,14 @@
   font-family: var(--body);
 }
 
+/* The dropdown list itself renders with the browser's native (light)
+   background, which the page's dark theme can't override — so force
+   dark, readable text specifically for the option list. */
+.admin-project-form select option {
+  color: #111;
+  background: #fff;
+}
+
 .admin-creditos {
   border: 1px solid var(--line);
   border-radius: 8px;

@@ -7,6 +7,6 @@ export interface CreditosInput {
 }
 
 export const CATEGORIA_LABEL: Record<Categoria, string> = {
-  publicidade: "Publicidade",
+  publicidade: "Comerciais",
   "filmes-series": "Filmes e Séries",
 };

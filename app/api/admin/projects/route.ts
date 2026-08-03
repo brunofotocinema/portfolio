@@ -73,7 +73,7 @@ export async function POST(request: Request) {
     if (!vincularA) {
       if (!(logo instanceof File) || logo.size === 0) {
         return NextResponse.json(
-          { error: "Logo (PNG) é obrigatória para Publicidade." },
+          { error: "Logo (PNG) é obrigatória para Comerciais." },
           { status: 400 }
         );
       }
@@ -146,7 +146,7 @@ export async function POST(request: Request) {
         logo: `/logos/${id}.${logoExt}`,
         alt: titulo,
         titulo,
-        sub: creditos?.funcaoBruno ? `${creditos.funcaoBruno} · ${ano}` : `Publicidade · ${ano}`,
+        sub: creditos?.funcaoBruno ? `${creditos.funcaoBruno} · ${ano}` : `Comercial · ${ano}`,
         url: videoUrl!,
         ano,
         ...(creditos ? { creditos } : {}),
