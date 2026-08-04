@@ -36,14 +36,15 @@ header.site nav a{
   transition:color .25s;
 }
 header.site nav a:hover{color:var(--overlay-fg)}
-.lang-toggle{display:flex;gap:6px;margin-left:8px}
+.lang-toggle{display:flex;align-items:center;gap:6px;margin-left:8px}
 .lang-toggle button{
   background:none;border:none;cursor:pointer;line-height:1;
-  display:flex;align-items:center;
-  padding:2px;border-radius:3px;opacity:.45;transition:opacity .2s;
+  font-size:12px;letter-spacing:.06em;color:var(--overlay-muted);
+  padding:2px 0;opacity:.6;transition:opacity .2s,color .2s;
 }
-.lang-toggle button.active{opacity:1}
-.lang-toggle button:hover{opacity:.85}
+.lang-toggle button.active{opacity:1;color:var(--overlay-fg)}
+.lang-toggle button:hover{opacity:1}
+.lang-toggle-sep{font-size:12px;color:var(--overlay-muted);opacity:.4}
 
 /* ---------- hero ---------- */
 .hero{position:relative;height:100svh;min-height:600px;overflow:hidden}
@@ -58,6 +59,13 @@ header.site nav a:hover{color:var(--overlay-fg)}
   position:absolute;inset:0;display:flex;flex-direction:column;
   align-items:center;justify-content:center;text-align:center;
   animation:plate 8.8s cubic-bezier(.4,0,.2,1) forwards;
+}
+.hero .plate-block{
+  background:rgba(10,10,11,.42);
+  backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
+  border:1px solid rgba(243,241,236,.14);
+  border-radius:14px;
+  padding:clamp(28px,5vw,56px) clamp(32px,7vw,80px);
 }
 .hero .name-plate h1{
   font-family:var(--display);font-weight:700;color:var(--overlay-fg);

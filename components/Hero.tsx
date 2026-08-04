@@ -29,9 +29,11 @@ export default function Hero() {
       </video>
       <div className="grade" />
       <div className="name-plate">
-        <h1>Bruno Homem</h1>
-        {/* Kept in English regardless of site language — a credential line, not a translated sentence. */}
-        <div className="role">Gaffer · Brazilian · English-speaking</div>
+        <div className="plate-block">
+          <h1>Bruno Homem</h1>
+          {/* Kept in English regardless of site language — a credential line, not a translated sentence. */}
+          <div className="role">Gaffer · Brazilian · English-speaking</div>
+        </div>
       </div>
     </section>
   );
