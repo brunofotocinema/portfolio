@@ -6,12 +6,13 @@ import { auth } from "@/lib/firebase";
 import LoginForm from "@/components/admin/LoginForm";
 import ProjectForm from "@/components/admin/ProjectForm";
 import ProjectList from "@/components/admin/ProjectList";
-import type { Comercial, Filme } from "@/lib/data";
+import type { Comercial, Filme, ImagemGaleria } from "@/lib/data";
 import "./admin.css";
 
 export interface ProjectsData {
   comerciais: Comercial[];
   filmes: Filme[];
+  galeria: ImagemGaleria[];
 }
 
 export default function AdminPage() {

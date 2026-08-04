@@ -28,13 +28,6 @@ export default function Hero() {
         <source src="/hero.mp4" type="video/mp4" />
       </video>
       <div className="grade" />
-      <div className="name-plate">
-        <div className="plate-block">
-          <h1>Bruno Homem</h1>
-          {/* Kept in English regardless of site language — a credential line, not a translated sentence. */}
-          <div className="role">Gaffer · Brazilian · English-speaking</div>
-        </div>
-      </div>
     </section>
   );
 }

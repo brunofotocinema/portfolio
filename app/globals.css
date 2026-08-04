@@ -55,32 +55,6 @@ header.site nav a:hover{color:var(--overlay-fg)}
   position:absolute;inset:0;
   background:linear-gradient(to bottom, rgba(10,10,11,.35) 0%, rgba(10,10,11,0) 30%, rgba(10,10,11,0) 80%, var(--bg) 100%);
 }
-.hero .name-plate{
-  position:absolute;inset:0;display:flex;flex-direction:column;
-  align-items:center;justify-content:center;text-align:center;
-  animation:plate 8.8s cubic-bezier(.4,0,.2,1) forwards;
-}
-.hero .plate-block{
-  background:rgba(10,10,11,.42);
-  backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
-  border:1px solid rgba(243,241,236,.14);
-  border-radius:14px;
-  padding:clamp(28px,5vw,56px) clamp(32px,7vw,80px);
-}
-.hero .name-plate h1{
-  font-family:var(--display);font-weight:700;color:var(--overlay-fg);
-  font-size:clamp(40px,8vw,116px);line-height:.95;letter-spacing:-.02em;
-}
-.hero .name-plate .role{
-  margin-top:14px;font-size:clamp(12px,1.3vw,15px);letter-spacing:.32em;
-  text-transform:uppercase;color:var(--overlay-fg);opacity:.82;
-}
-@keyframes plate{
-  0%{opacity:0;transform:translateY(16px) scale(.99)}
-  14%{opacity:1;transform:translateY(0) scale(1)}
-  72%{opacity:1;transform:translateY(0) scale(1)}
-  100%{opacity:0;transform:translateY(-10px) scale(1.01)}
-}
 
 /* ---------- section shell ---------- */
 section{padding:13vh 5vw}
@@ -179,6 +153,66 @@ section{padding:13vh 5vw}
 .filmes-row .tipo{font-size:12px;letter-spacing:.04em;color:var(--muted);text-align:right}
 .filmes-row:hover .titulo{transform:translateX(12px)}
 
+/* ---------- galeria ---------- */
+.galeria-wrap{display:flex;align-items:center;gap:14px}
+.galeria-track{
+  display:flex;gap:16px;overflow-x:auto;scroll-snap-type:x proximity;
+  padding:4px 2px 14px;flex:1;
+  scrollbar-width:thin;
+}
+.galeria-item{
+  flex:0 0 auto;scroll-snap-align:start;
+  width:clamp(160px,22vw,240px);aspect-ratio:4/5;
+  border-radius:3px;overflow:hidden;background:#141414;
+  border:1px solid rgba(243,241,236,.4);
+  padding:0;cursor:pointer;
+}
+.galeria-item img{width:100%;height:100%;object-fit:cover;transition:transform .4s}
+.galeria-item:hover img{transform:scale(1.05)}
+.galeria-arrow{
+  flex:0 0 auto;width:40px;height:40px;border-radius:50%;
+  background:rgba(243,241,236,.08);border:1px solid var(--line);
+  color:var(--fg);font-size:20px;line-height:1;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;transition:background .2s;padding:0;
+}
+.galeria-arrow:hover{background:rgba(243,241,236,.18)}
+
+/* ---------- lightbox (galeria expandida) ---------- */
+.lightbox{
+  position:fixed;inset:0;z-index:320;
+  background:rgba(10,10,11,.96);
+  display:flex;align-items:center;justify-content:center;
+  padding:6vh 6vw;
+}
+.lightbox-image{
+  max-width:100%;max-height:100%;object-fit:contain;
+  border-radius:3px;user-select:none;touch-action:pan-y;
+}
+.lightbox-close{
+  position:fixed;top:24px;right:5vw;
+  background:none;border:0;color:var(--overlay-fg);
+  cursor:pointer;font-size:13px;letter-spacing:.1em;
+}
+.lightbox-close:hover{color:var(--overlay-muted)}
+.lightbox-arrow{
+  position:fixed;top:50%;transform:translateY(-50%);
+  width:48px;height:48px;border-radius:50%;
+  background:rgba(243,241,236,.1);border:1px solid rgba(243,241,236,.25);
+  color:var(--overlay-fg);font-size:24px;line-height:1;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;transition:background .2s;
+}
+.lightbox-arrow:hover{background:rgba(243,241,236,.22)}
+.lightbox-arrow-left{left:4vw}
+.lightbox-arrow-right{right:4vw}
+
+@media (max-width:800px){
+  .lightbox-arrow{width:38px;height:38px;font-size:20px}
+  .lightbox-arrow-left{left:12px}
+  .lightbox-arrow-right{right:12px}
+}
+
 /* ---------- sobre ---------- */
 .sobre-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:6vw;align-items:start}
 .sobre-grid p{font-size:clamp(18px,1.9vw,24px);line-height:1.5;max-width:36ch}
@@ -214,7 +248,13 @@ footer{padding:24px 5vw;border-top:1px solid var(--line);display:flex;justify-co
 .modal-close:hover{color:var(--overlay-muted)}
 
 @media (max-width:800px){
-  header.site nav{gap:18px}
+  header.site{padding:14px 4vw}
+  header.site .name{font-size:13px}
+  header.site nav{gap:8px}
+  header.site nav a{font-size:10.5px;letter-spacing:0}
+  .lang-toggle{margin-left:4px;gap:4px}
+  .lang-toggle button{font-size:10px}
+  .hero{height:55svh;min-height:380px}
   .works{grid-template-columns:1fr}
   .card.wide{grid-column:span 1;aspect-ratio:16/9}
   .sobre-grid{grid-template-columns:1fr}

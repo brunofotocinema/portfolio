@@ -4,11 +4,11 @@ import { useState } from "react";
 import { auth } from "@/lib/firebase";
 import LogoUploader from "./LogoUploader";
 import type { Categoria } from "@/lib/admin-types";
-import type { Comercial, Filme } from "@/lib/data";
+import type { Comercial, Filme, ImagemGaleria } from "@/lib/data";
 
 interface EditProjectModalProps {
   categoria: Categoria;
-  project: Comercial | Filme;
+  project: Comercial | Filme | ImagemGaleria;
   onClose: () => void;
   onSaved: () => void;
 }
@@ -19,29 +19,41 @@ export default function EditProjectModal({
   onClose,
   onSaved,
 }: EditProjectModalProps) {
-  const [titulo, setTitulo] = useState(project.titulo);
-  const [ano, setAno] = useState(String(project.ano));
-  const [videoUrl, setVideoUrl] = useState(project.url);
-  const [creditosProdutora, setCreditosProdutora] = useState(project.creditos?.produtora ?? "");
-  const [creditosDirecao, setCreditosDirecao] = useState(project.creditos?.direcao ?? "");
-  const [creditosFuncaoBruno, setCreditosFuncaoBruno] = useState(
-    project.creditos?.funcaoBruno ?? ""
+  const isGaleria = categoria === "galeria";
+  const [titulo, setTitulo] = useState(isGaleria ? "" : (project as Comercial | Filme).titulo);
+  const [ano, setAno] = useState(isGaleria ? "" : String((project as Comercial | Filme).ano));
+  const [videoUrl, setVideoUrl] = useState(isGaleria ? "" : (project as Comercial | Filme).url);
+  const [creditosProdutora, setCreditosProdutora] = useState(
+    isGaleria ? "" : (project as Comercial | Filme).creditos?.produtora ?? ""
   );
+  const [creditosDirecao, setCreditosDirecao] = useState(
+    isGaleria ? "" : (project as Comercial | Filme).creditos?.direcao ?? ""
+  );
+  const [creditosFuncaoBruno, setCreditosFuncaoBruno] = useState(
+    isGaleria ? "" : (project as Comercial | Filme).creditos?.funcaoBruno ?? ""
+  );
+  const [alt, setAlt] = useState(isGaleria ? (project as ImagemGaleria).alt ?? "" : "");
   const [newLogoFile, setNewLogoFile] = useState<File | null>(null);
   const [newBannerFile, setNewBannerFile] = useState<File | null>(null);
+  const [newImagemFile, setNewImagemFile] = useState<File | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const currentImageUrl =
-    categoria === "publicidade" ? (project as Comercial).logo : (project as Filme).banner;
+  const currentImageUrl = isGaleria
+    ? (project as ImagemGaleria).src
+    : categoria === "publicidade"
+      ? (project as Comercial).logo
+      : (project as Filme).banner;
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
 
-    if (!titulo.trim()) return setError("Título é obrigatório.");
-    if (!ano.trim() || Number.isNaN(Number(ano))) return setError("Ano é obrigatório.");
-    if (!videoUrl.trim()) return setError("Link do vídeo é obrigatório.");
+    if (!isGaleria) {
+      if (!titulo.trim()) return setError("Título é obrigatório.");
+      if (!ano.trim() || Number.isNaN(Number(ano))) return setError("Ano é obrigatório.");
+      if (!videoUrl.trim()) return setError("Link do vídeo é obrigatório.");
+    }
 
     const user = auth.currentUser;
     if (!user) return setError("Sessão expirada. Faça login novamente.");
@@ -50,15 +62,21 @@ export default function EditProjectModal({
     try {
       const idToken = await user.getIdToken();
       const formData = new FormData();
-      formData.set("titulo", titulo.trim());
-      formData.set("ano", ano.trim());
-      formData.set("videoUrl", videoUrl.trim());
-      if (creditosProdutora.trim()) formData.set("creditosProdutora", creditosProdutora.trim());
-      if (creditosDirecao.trim()) formData.set("creditosDirecao", creditosDirecao.trim());
-      if (creditosFuncaoBruno.trim())
-        formData.set("creditosFuncaoBruno", creditosFuncaoBruno.trim());
-      if (newLogoFile) formData.set("logo", newLogoFile);
-      if (newBannerFile) formData.set("banner", newBannerFile);
+
+      if (isGaleria) {
+        if (alt.trim()) formData.set("alt", alt.trim());
+        if (newImagemFile) formData.set("imagem", newImagemFile);
+      } else {
+        formData.set("titulo", titulo.trim());
+        formData.set("ano", ano.trim());
+        formData.set("videoUrl", videoUrl.trim());
+        if (creditosProdutora.trim()) formData.set("creditosProdutora", creditosProdutora.trim());
+        if (creditosDirecao.trim()) formData.set("creditosDirecao", creditosDirecao.trim());
+        if (creditosFuncaoBruno.trim())
+          formData.set("creditosFuncaoBruno", creditosFuncaoBruno.trim());
+        if (newLogoFile) formData.set("logo", newLogoFile);
+        if (newBannerFile) formData.set("banner", newBannerFile);
+      }
 
       const res = await fetch(
         `/api/admin/projects/${encodeURIComponent(project.id)}?categoria=${categoria}`,
@@ -89,22 +107,33 @@ export default function EditProjectModal({
       }}
     >
       <div className="admin-modal-box">
-        <h2>Editar &ldquo;{project.titulo}&rdquo;</h2>
+        <h2>
+          Editar &ldquo;{isGaleria ? (project as ImagemGaleria).alt || "imagem" : titulo}&rdquo;
+        </h2>
         <form className="admin-project-form" onSubmit={handleSubmit}>
-          <label>
-            Título *
-            <input value={titulo} onChange={(e) => setTitulo(e.target.value)} />
-          </label>
+          {isGaleria ? (
+            <label>
+              Legenda (opcional)
+              <input value={alt} onChange={(e) => setAlt(e.target.value)} />
+            </label>
+          ) : (
+            <>
+              <label>
+                Título *
+                <input value={titulo} onChange={(e) => setTitulo(e.target.value)} />
+              </label>
 
-          <label>
-            Ano *
-            <input type="number" value={ano} onChange={(e) => setAno(e.target.value)} />
-          </label>
+              <label>
+                Ano *
+                <input type="number" value={ano} onChange={(e) => setAno(e.target.value)} />
+              </label>
 
-          <label>
-            Link do vídeo (YouTube) *
-            <input type="url" value={videoUrl} onChange={(e) => setVideoUrl(e.target.value)} />
-          </label>
+              <label>
+                Link do vídeo (YouTube) *
+                <input type="url" value={videoUrl} onChange={(e) => setVideoUrl(e.target.value)} />
+              </label>
+            </>
+          )}
 
           {currentImageUrl && (
             <div className="admin-field">
@@ -113,7 +142,18 @@ export default function EditProjectModal({
             </div>
           )}
 
-          {categoria === "publicidade" ? (
+          {isGaleria ? (
+            <div className="admin-field">
+              <label>
+                Substituir imagem (opcional)
+                <input
+                  type="file"
+                  accept="image/png,image/jpeg,image/webp"
+                  onChange={(e) => setNewImagemFile(e.target.files?.[0] ?? null)}
+                />
+              </label>
+            </div>
+          ) : categoria === "publicidade" ? (
             <LogoUploader label="Substituir logo (opcional)" onChange={setNewLogoFile} />
           ) : (
             <div className="admin-field">
@@ -128,30 +168,32 @@ export default function EditProjectModal({
             </div>
           )}
 
-          <fieldset className="admin-creditos">
-            <legend>Créditos (opcional)</legend>
-            <label>
-              Produtora
-              <input
-                value={creditosProdutora}
-                onChange={(e) => setCreditosProdutora(e.target.value)}
-              />
-            </label>
-            <label>
-              Diretor(a) / DP
-              <input
-                value={creditosDirecao}
-                onChange={(e) => setCreditosDirecao(e.target.value)}
-              />
-            </label>
-            <label>
-              Função do Bruno
-              <input
-                value={creditosFuncaoBruno}
-                onChange={(e) => setCreditosFuncaoBruno(e.target.value)}
-              />
-            </label>
-          </fieldset>
+          {!isGaleria && (
+            <fieldset className="admin-creditos">
+              <legend>Créditos (opcional)</legend>
+              <label>
+                Produtora
+                <input
+                  value={creditosProdutora}
+                  onChange={(e) => setCreditosProdutora(e.target.value)}
+                />
+              </label>
+              <label>
+                Diretor(a) / DP
+                <input
+                  value={creditosDirecao}
+                  onChange={(e) => setCreditosDirecao(e.target.value)}
+                />
+              </label>
+              <label>
+                Função do Bruno
+                <input
+                  value={creditosFuncaoBruno}
+                  onChange={(e) => setCreditosFuncaoBruno(e.target.value)}
+                />
+              </label>
+            </fieldset>
+          )}
 
           {error && <p className="admin-error">{error}</p>}
 

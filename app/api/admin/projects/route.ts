@@ -3,7 +3,7 @@ import { requireFirebaseUser, UnauthorizedError } from "@/lib/auth-server";
 import { commitFiles, getJsonFile, GithubCommitError, type FileChange } from "@/lib/github";
 import { slugify, uniqueSlug } from "@/lib/slugify";
 import { fileExtension, fileToBase64, readCreditos, MAX_FILE_BYTES } from "@/lib/admin-server-utils";
-import type { Comercial, ComercialExtra, Filme } from "@/lib/data";
+import type { Comercial, ComercialExtra, Filme, ImagemGaleria } from "@/lib/data";
 import type { Categoria } from "@/lib/admin-types";
 
 const DATA_PATH = "data/projects.json";
@@ -33,6 +33,7 @@ export async function GET(request: Request) {
 interface ProjectsData {
   comerciais: Comercial[];
   filmes: Filme[];
+  galeria: ImagemGaleria[];
 }
 
 export async function POST(request: Request) {
@@ -48,6 +49,61 @@ export async function POST(request: Request) {
   const form = await request.formData();
 
   const categoria = form.get("categoria") as Categoria | null;
+
+  if (
+    categoria !== "publicidade" &&
+    categoria !== "filmes-series" &&
+    categoria !== "galeria"
+  ) {
+    return NextResponse.json({ error: "Categoria inválida." }, { status: 400 });
+  }
+
+  if (categoria === "galeria") {
+    const imagem = form.get("imagem");
+    const alt = (form.get("alt") as string | null)?.trim() || undefined;
+
+    if (!(imagem instanceof File) || imagem.size === 0) {
+      return NextResponse.json({ error: "Imagem é obrigatória para Galeria." }, { status: 400 });
+    }
+    if (imagem.size > MAX_FILE_BYTES) {
+      return NextResponse.json({ error: "Imagem muito grande (máximo 8MB)." }, { status: 400 });
+    }
+
+    try {
+      const current = await getJsonFile<ProjectsData>(DATA_PATH);
+      const existingIds = current.galeria.map((g) => g.id);
+      const id = uniqueSlug(slugify(alt || "imagem"), existingIds);
+      const ext = fileExtension(imagem);
+      const path = `public/galeria/${id}.${ext}`;
+
+      const novaImagem: ImagemGaleria = {
+        id,
+        src: `/galeria/${id}.${ext}`,
+        ...(alt ? { alt } : {}),
+      };
+      current.galeria = [...current.galeria, novaImagem];
+
+      const changes: FileChange[] = [
+        { path, content: await fileToBase64(imagem), encoding: "base64" },
+        {
+          path: DATA_PATH,
+          content: JSON.stringify(current, null, 2) + "\n",
+          encoding: "utf-8",
+        },
+      ];
+
+      const { commitSha } = await commitFiles(changes, `Admin: adiciona imagem à galeria`);
+
+      return NextResponse.json({ ok: true, id, commitSha });
+    } catch (err) {
+      if (err instanceof GithubCommitError) {
+        return NextResponse.json({ error: err.message }, { status: 502 });
+      }
+      console.error(err);
+      return NextResponse.json({ error: "Erro inesperado ao salvar a imagem." }, { status: 500 });
+    }
+  }
+
   const titulo = (form.get("titulo") as string | null)?.trim();
   const anoRaw = form.get("ano") as string | null;
   const videoUrl = (form.get("videoUrl") as string | null)?.trim() || undefined;
@@ -55,9 +111,6 @@ export async function POST(request: Request) {
   const banner = form.get("banner");
   const logo = form.get("logo");
 
-  if (categoria !== "publicidade" && categoria !== "filmes-series") {
-    return NextResponse.json({ error: "Categoria inválida." }, { status: 400 });
-  }
   if (!titulo) {
     return NextResponse.json({ error: "Título é obrigatório." }, { status: 400 });
   }

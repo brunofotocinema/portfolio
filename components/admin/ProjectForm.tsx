@@ -26,6 +26,7 @@ export default function ProjectForm({ existingComerciais, onCreated }: ProjectFo
   const [fields, setFields] = useState(initialState);
   const [logoFile, setLogoFile] = useState<File | null>(null);
   const [bannerFile, setBannerFile] = useState<File | null>(null);
+  const [imagemFile, setImagemFile] = useState<File | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
@@ -38,9 +39,15 @@ export default function ProjectForm({ existingComerciais, onCreated }: ProjectFo
     setFields(initialState);
     setLogoFile(null);
     setBannerFile(null);
+    setImagemFile(null);
   }
 
   function validate(): string | null {
+    if (fields.categoria === "galeria") {
+      if (!imagemFile) return "Imagem é obrigatória para Galeria.";
+      return null;
+    }
+
     if (!fields.titulo.trim()) return "Título é obrigatório.";
     if (!fields.ano.trim() || Number.isNaN(Number(fields.ano))) return "Ano é obrigatório.";
     if (!fields.videoUrl.trim()) return "Link do vídeo é obrigatório.";
@@ -78,18 +85,24 @@ export default function ProjectForm({ existingComerciais, onCreated }: ProjectFo
 
       const formData = new FormData();
       formData.set("categoria", fields.categoria);
-      formData.set("titulo", fields.titulo.trim());
-      formData.set("ano", fields.ano.trim());
-      formData.set("videoUrl", fields.videoUrl.trim());
-      if (fields.creditosProdutora.trim())
-        formData.set("creditosProdutora", fields.creditosProdutora.trim());
-      if (fields.creditosDirecao.trim())
-        formData.set("creditosDirecao", fields.creditosDirecao.trim());
-      if (fields.creditosFuncaoBruno.trim())
-        formData.set("creditosFuncaoBruno", fields.creditosFuncaoBruno.trim());
-      if (fields.vincularA) formData.set("vincularA", fields.vincularA);
-      if (logoFile) formData.set("logo", logoFile);
-      if (bannerFile) formData.set("banner", bannerFile);
+
+      if (fields.categoria === "galeria") {
+        if (fields.titulo.trim()) formData.set("alt", fields.titulo.trim());
+        if (imagemFile) formData.set("imagem", imagemFile);
+      } else {
+        formData.set("titulo", fields.titulo.trim());
+        formData.set("ano", fields.ano.trim());
+        formData.set("videoUrl", fields.videoUrl.trim());
+        if (fields.creditosProdutora.trim())
+          formData.set("creditosProdutora", fields.creditosProdutora.trim());
+        if (fields.creditosDirecao.trim())
+          formData.set("creditosDirecao", fields.creditosDirecao.trim());
+        if (fields.creditosFuncaoBruno.trim())
+          formData.set("creditosFuncaoBruno", fields.creditosFuncaoBruno.trim());
+        if (fields.vincularA) formData.set("vincularA", fields.vincularA);
+        if (logoFile) formData.set("logo", logoFile);
+        if (bannerFile) formData.set("banner", bannerFile);
+      }
 
       const res = await fetch("/api/admin/projects", {
         method: "POST",
@@ -127,32 +140,37 @@ export default function ProjectForm({ existingComerciais, onCreated }: ProjectFo
         >
           <option value="publicidade">{CATEGORIA_LABEL.publicidade}</option>
           <option value="filmes-series">{CATEGORIA_LABEL["filmes-series"]}</option>
+          <option value="galeria">{CATEGORIA_LABEL.galeria}</option>
         </select>
       </label>
 
       <label>
-        Título *
+        {fields.categoria === "galeria" ? "Legenda (opcional)" : "Título *"}
         <input value={fields.titulo} onChange={(e) => update("titulo", e.target.value)} />
       </label>
 
-      <label>
-        Ano *
-        <input
-          type="number"
-          value={fields.ano}
-          onChange={(e) => update("ano", e.target.value)}
-        />
-      </label>
+      {fields.categoria !== "galeria" && (
+        <label>
+          Ano *
+          <input
+            type="number"
+            value={fields.ano}
+            onChange={(e) => update("ano", e.target.value)}
+          />
+        </label>
+      )}
 
-      <label>
-        Link do vídeo (YouTube) *
-        <input
-          type="url"
-          value={fields.videoUrl}
-          onChange={(e) => update("videoUrl", e.target.value)}
-          placeholder="https://..."
-        />
-      </label>
+      {fields.categoria !== "galeria" && (
+        <label>
+          Link do vídeo (YouTube) *
+          <input
+            type="url"
+            value={fields.videoUrl}
+            onChange={(e) => update("videoUrl", e.target.value)}
+            placeholder="https://..."
+          />
+        </label>
+      )}
 
       {fields.categoria === "publicidade" && existingComerciais.length > 0 && (
         <label>
@@ -191,32 +209,45 @@ export default function ProjectForm({ existingComerciais, onCreated }: ProjectFo
             />
           </label>
         </div>
+      ) : fields.categoria === "galeria" ? (
+        <div className="admin-field">
+          <label>
+            Imagem *
+            <input
+              type="file"
+              accept="image/png,image/jpeg,image/webp"
+              onChange={(e) => setImagemFile(e.target.files?.[0] ?? null)}
+            />
+          </label>
+        </div>
       ) : null}
 
-      <fieldset className="admin-creditos">
-        <legend>Créditos (opcional)</legend>
-        <label>
-          Produtora
-          <input
-            value={fields.creditosProdutora}
-            onChange={(e) => update("creditosProdutora", e.target.value)}
-          />
-        </label>
-        <label>
-          Diretor(a) / DP
-          <input
-            value={fields.creditosDirecao}
-            onChange={(e) => update("creditosDirecao", e.target.value)}
-          />
-        </label>
-        <label>
-          Função do Bruno
-          <input
-            value={fields.creditosFuncaoBruno}
-            onChange={(e) => update("creditosFuncaoBruno", e.target.value)}
-          />
-        </label>
-      </fieldset>
+      {fields.categoria !== "galeria" && (
+        <fieldset className="admin-creditos">
+          <legend>Créditos (opcional)</legend>
+          <label>
+            Produtora
+            <input
+              value={fields.creditosProdutora}
+              onChange={(e) => update("creditosProdutora", e.target.value)}
+            />
+          </label>
+          <label>
+            Diretor(a) / DP
+            <input
+              value={fields.creditosDirecao}
+              onChange={(e) => update("creditosDirecao", e.target.value)}
+            />
+          </label>
+          <label>
+            Função do Bruno
+            <input
+              value={fields.creditosFuncaoBruno}
+              onChange={(e) => update("creditosFuncaoBruno", e.target.value)}
+            />
+          </label>
+        </fieldset>
+      )}
 
       {error && <p className="admin-error">{error}</p>}
       {success && <p className="admin-success">{success}</p>}

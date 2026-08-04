@@ -1,4 +1,4 @@
-export type Categoria = "publicidade" | "filmes-series";
+export type Categoria = "publicidade" | "filmes-series" | "galeria";
 
 export interface CreditosInput {
   produtora?: string;
@@ -9,4 +9,5 @@ export interface CreditosInput {
 export const CATEGORIA_LABEL: Record<Categoria, string> = {
   publicidade: "Comerciais",
   "filmes-series": "Filmes e Séries",
+  galeria: "Galeria",
 };

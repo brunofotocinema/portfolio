@@ -9,6 +9,7 @@ export const translations: Record<Lang, Record<string, string>> = {
 
     "section.comerciais": "Comerciais",
     "section.cinema": "Cinema",
+    "section.galeria": "Galeria",
 
     "sobre.p1":
       "Bruno Homem é gaffer, responsável pela elétrica de set em cinema, séries e publicidade. Assina a chefia de elétrica de campanhas para grandes marcas nacionais e internacionais, além de longas-metragens.",
@@ -37,6 +38,7 @@ export const translations: Record<Lang, Record<string, string>> = {
 
     "section.comerciais": "Commercials",
     "section.cinema": "Cinema",
+    "section.galeria": "Gallery",
 
     "sobre.p1":
       "Bruno Homem is a gaffer, responsible for on-set electrics in film, TV series and advertising. He has led the electrical department on campaigns for major national and international brands, as well as feature films.",

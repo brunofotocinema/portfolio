@@ -4,7 +4,7 @@ import { useState } from "react";
 import { auth } from "@/lib/firebase";
 import { CATEGORIA_LABEL, type Categoria } from "@/lib/admin-types";
 import type { ProjectsData } from "@/app/admin/page";
-import type { Comercial, Filme } from "@/lib/data";
+import type { Comercial, Filme, ImagemGaleria } from "@/lib/data";
 import EditProjectModal from "./EditProjectModal";
 
 interface ProjectListProps {
@@ -19,7 +19,7 @@ export default function ProjectList({ data, loading, error, onChanged }: Project
   const [actionError, setActionError] = useState<string | null>(null);
   const [editing, setEditing] = useState<{
     categoria: Categoria;
-    project: Comercial | Filme;
+    project: Comercial | Filme | ImagemGaleria;
   } | null>(null);
 
   async function removeRequest(
@@ -71,6 +71,13 @@ export default function ProjectList({ data, loading, error, onChanged }: Project
   function handleRemoveExtra(parentId: string, extraId: string, titulo: string) {
     if (!confirm(`Remover o vídeo extra "${titulo}"?`)) return;
     removeRequest(extraId, "publicidade", parentId, `extra:${extraId}`);
+  }
+
+  function handleRemoveGaleria(e: React.MouseEvent, id: string, label: string) {
+    e.stopPropagation();
+    if (!confirm(`Remover a imagem "${label}"? Isso commita a remoção direto na branch principal.`))
+      return;
+    removeRequest(id, "galeria", undefined, `galeria:${id}`);
   }
 
   return (
@@ -146,6 +153,28 @@ export default function ProjectList({ data, loading, error, onChanged }: Project
               </li>
             ))}
             {data.filmes.length === 0 && <li>Nenhum projeto.</li>}
+          </ul>
+
+          <h3>{CATEGORIA_LABEL.galeria}</h3>
+          <ul className="admin-gallery-list">
+            {data.galeria.map((g) => (
+              <li
+                key={g.id}
+                className="admin-project-item-clickable admin-gallery-item"
+                onClick={() => setEditing({ categoria: "galeria", project: g })}
+              >
+                <img src={g.src} alt="" className="admin-gallery-thumb" />
+                <span>{g.alt || "(sem legenda)"}</span>
+                <button
+                  type="button"
+                  onClick={(e) => handleRemoveGaleria(e, g.id, g.alt || g.id)}
+                  disabled={busyKey === `galeria:${g.id}`}
+                >
+                  {busyKey === `galeria:${g.id}` ? "Removendo..." : "Remover"}
+                </button>
+              </li>
+            ))}
+            {data.galeria.length === 0 && <li>Nenhuma imagem.</li>}
           </ul>
         </>
       )}

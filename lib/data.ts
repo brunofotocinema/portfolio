@@ -38,12 +38,20 @@ export interface Filme {
   creditos?: Creditos;
 }
 
+export interface ImagemGaleria {
+  id: string;
+  src: string;
+  alt?: string;
+}
+
 interface ProjectsData {
   comerciais: Comercial[];
   filmes: Filme[];
+  galeria: ImagemGaleria[];
 }
 
 const data = projectsJson as ProjectsData;
 
 export const comerciais: Comercial[] = data.comerciais;
 export const filmes: Filme[] = data.filmes;
+export const galeria: ImagemGaleria[] = data.galeria ?? [];

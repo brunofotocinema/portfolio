@@ -5,7 +5,7 @@
       "logo": "/logos/tomford.png",
       "alt": "TOM FORD",
       "titulo": "TOM FORD",
-      "sub": "Publicidade · 2024",
+      "sub": "Comercial · 2024",
       "url": "https://player.vimeo.com/video/924696462?autoplay=1&loop=1&controls=1&muted=0",
       "ano": 2024
     },
@@ -14,7 +14,7 @@
       "logo": "/logos/heineken.png",
       "alt": "Heineken",
       "titulo": "Heineken",
-      "sub": "Publicidade · 2023",
+      "sub": "Comercial · 2023",
       "url": "https://www.youtube.com/watch?v=E0fSp_YdvwQ",
       "zoom": 1.35,
       "ano": 2023
@@ -24,7 +24,7 @@
       "logo": "/logos/itau.webp",
       "alt": "Itaú",
       "titulo": "Itaú",
-      "sub": "Publicidade · 2023",
+      "sub": "Comercial · 2023",
       "url": "https://www.youtube.com/watch?v=BXdRo9fCL-I",
       "zoom": 1.5,
       "ano": 2023
@@ -34,7 +34,7 @@
       "logo": "/logos/bradesco.png",
       "alt": "Bradesco",
       "titulo": "Bradesco",
-      "sub": "Publicidade · 2025",
+      "sub": "Comercial · 2025",
       "url": "https://www.youtube.com/watch?v=1A9PslUFGWE",
       "ano": 2025
     },
@@ -43,7 +43,7 @@
       "logo": "/logos/i-food.png",
       "alt": "i Food",
       "titulo": "i Food",
-      "sub": "Publicidade · 2026",
+      "sub": "Comercial · 2026",
       "url": "https://vimeo.com/1213942714",
       "ano": 2026
     },
@@ -52,7 +52,7 @@
       "logo": "/logos/natura.png",
       "alt": "Natura",
       "titulo": "Natura",
-      "sub": "Publicidade · 2023",
+      "sub": "Comercial · 2023",
       "url": "https://www.youtube.com/watch?v=ZqzhNZJse2I",
       "ano": 2023
     },
@@ -61,7 +61,7 @@
       "logo": "/logos/fiat.png",
       "alt": "FIAT",
       "titulo": "FIAT",
-      "sub": "Publicidade · 2025",
+      "sub": "Comercial · 2025",
       "url": "https://www.youtube.com/watch?v=OJlbTfdJQE0&t=9s",
       "ano": 2025
     },
@@ -70,7 +70,7 @@
       "logo": "/logos/guarana.png",
       "alt": "Guaraná",
       "titulo": "Guaraná",
-      "sub": "Publicidade · 2024",
+      "sub": "Comercial · 2024",
       "url": "https://www.youtube.com/watch?is=hIQXZ26CH0lbD4bJ&v=bM8IraTNOgo&feature=youtu.be",
       "ano": 2024
     }
@@ -84,5 +84,6 @@
       "url": "https://www.youtube.com/watch?v=QMdLVfBOlpQ",
       "poster": "/posters/perrengue-fashion.jpg"
     }
-  ]
+  ],
+  "galeria": []
 }

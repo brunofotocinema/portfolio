@@ -1,8 +1,9 @@
-import { comerciais, filmes } from "@/lib/data";
+import { comerciais, filmes, galeria } from "@/lib/data";
 import Header from "@/components/Header";
 import Hero from "@/components/Hero";
 import ComerciaisGrid from "@/components/ComerciaisGrid";
 import CinemaList from "@/components/CinemaList";
+import Galeria from "@/components/Galeria";
 import Sobre from "@/components/Sobre";
 import Contato from "@/components/Contato";
 import Footer from "@/components/Footer";
@@ -30,6 +31,7 @@ export default function Home() {
       </section>
 
       <Sobre />
+      <Galeria items={galeria} />
       <Contato />
       <Footer />
     </ModalProvider>
