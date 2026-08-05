@@ -15,7 +15,7 @@
      both the static hold AND every animated keyframe stop below, so the
      size never jumps between the two (a literal px number at the first
      animated stop would diverge from this clamp() on most viewports) */
-  --logo-big-w:clamp(280px,52vw,560px);
+  --logo-big-w:clamp(280px,52%,560px);
 }
 *{margin:0;padding:0;box-sizing:border-box}
 html{scroll-behavior:smooth}
@@ -65,8 +65,14 @@ header.site nav a:hover{color:var(--overlay-fg)}
    (icon/BRUNO/HOMEM each move along their own path, not a single
    shrink+move of one flat image) — 3s static hold, then the real ~2s
    motion plays out. */
+/* Pinned to the true screen edges via inset:0 (not vw/%, which some
+   mobile browsers can resolve against a wider layout viewport than the
+   physical screen once any content forces horizontal overflow). Every
+   position below is a percentage of THIS box instead, so it can't drift
+   out of sync with the visible screen the way raw vw math could. */
+.logo-viewport{position:fixed;inset:0;z-index:15;overflow:hidden;pointer-events:none}
 .logo-stage{
-  position:fixed;z-index:15;top:calc(var(--hero-h)/2);left:50vw;
+  position:absolute;top:calc(var(--hero-h)/2);left:50%;
   aspect-ratio:618.456/235;
   color:var(--accent);text-decoration:none;
   animation:logoStage 5s linear forwards;
@@ -85,42 +91,42 @@ header.site nav a:hover{color:var(--overlay-fg)}
 .logo-homem{width:54.98%;height:29.79%;animation:logoHomem 5s linear forwards}
 
 @keyframes logoStage{
-  0%{opacity:0;top:calc(var(--hero-h)/2);left:50vw;width:var(--logo-big-w);transform:translate(-50%,-50%);pointer-events:none}
-  8%{opacity:1;top:calc(var(--hero-h)/2);left:50vw;width:var(--logo-big-w);transform:translate(-50%,-50%);pointer-events:none}
-  60%{opacity:1;top:calc(var(--hero-h)/2);left:50vw;width:var(--logo-big-w);transform:translate(-50%,-50%);pointer-events:none}
-  60.6%{opacity:1;top:calc(var(--hero-h) * 0.5000 + 0.00px);left:49.998vw;width:calc(var(--logo-big-w) * 1.0000 + 0.00px);transform:translate(-50.00%,-50.00%);pointer-events:none}
-  61.6%{opacity:1;top:calc(var(--hero-h) * 0.4998 + 0.01px);left:49.986vw;width:calc(var(--logo-big-w) * 0.9997 + 0.03px);transform:translate(-49.98%,-49.98%);pointer-events:none}
-  62.6%{opacity:1;top:calc(var(--hero-h) * 0.4994 + 0.02px);left:49.947vw;width:calc(var(--logo-big-w) * 0.9988 + 0.11px);transform:translate(-49.94%,-49.94%);pointer-events:none}
-  63.6%{opacity:1;top:calc(var(--hero-h) * 0.4985 + 0.06px);left:49.862vw;width:calc(var(--logo-big-w) * 0.9969 + 0.28px);transform:translate(-49.85%,-49.85%);pointer-events:none}
-  64.6%{opacity:1;top:calc(var(--hero-h) * 0.4968 + 0.13px);left:49.713vw;width:calc(var(--logo-big-w) * 0.9936 + 0.57px);transform:translate(-49.68%,-49.68%);pointer-events:none}
-  65.6%{opacity:1;top:calc(var(--hero-h) * 0.4943 + 0.23px);left:49.488vw;width:calc(var(--logo-big-w) * 0.9886 + 1.02px);transform:translate(-49.43%,-49.43%);pointer-events:none}
-  66.6%{opacity:1;top:calc(var(--hero-h) * 0.4907 + 0.37px);left:49.165vw;width:calc(var(--logo-big-w) * 0.9814 + 1.67px);transform:translate(-49.07%,-49.07%);pointer-events:none}
-  67.8%{opacity:1;top:calc(var(--hero-h) * 0.4840 + 0.64px);left:48.560vw;width:calc(var(--logo-big-w) * 0.9680 + 2.88px);transform:translate(-48.40%,-48.40%);pointer-events:none}
-  68.8%{opacity:1;top:calc(var(--hero-h) * 0.4772 + 0.91px);left:47.950vw;width:calc(var(--logo-big-w) * 0.9545 + 4.10px);transform:translate(-47.72%,-47.72%);pointer-events:none}
-  70.2%{opacity:1;top:calc(var(--hero-h) * 0.4655 + 1.38px);left:46.896vw;width:calc(var(--logo-big-w) * 0.9310 + 6.21px);transform:translate(-46.55%,-46.55%);pointer-events:none}
-  71.8%{opacity:1;top:calc(var(--hero-h) * 0.4460 + 2.16px);left:45.141vw;width:calc(var(--logo-big-w) * 0.8920 + 9.72px);transform:translate(-44.60%,-44.60%);pointer-events:none}
-  72.8%{opacity:1;top:calc(var(--hero-h) * 0.4313 + 2.75px);left:43.821vw;width:calc(var(--logo-big-w) * 0.8627 + 12.36px);transform:translate(-43.13%,-43.13%);pointer-events:none}
-  73.8%{opacity:1;top:calc(var(--hero-h) * 0.4143 + 3.43px);left:42.284vw;width:calc(var(--logo-big-w) * 0.8285 + 15.43px);transform:translate(-41.43%,-41.43%);pointer-events:none}
-  75.6%{opacity:1;top:calc(var(--hero-h) * 0.3799 + 4.81px);left:39.188vw;width:calc(var(--logo-big-w) * 0.7597 + 21.62px);transform:translate(-37.99%,-37.99%);pointer-events:none}
-  76.6%{opacity:1;top:calc(var(--hero-h) * 0.3553 + 5.79px);left:36.978vw;width:calc(var(--logo-big-w) * 0.7106 + 26.04px);transform:translate(-35.53%,-35.53%);pointer-events:none}
-  77.6%{opacity:1;top:calc(var(--hero-h) * 0.3277 + 6.89px);left:34.497vw;width:calc(var(--logo-big-w) * 0.6555 + 31.01px);transform:translate(-32.77%,-32.77%);pointer-events:none}
-  78.6%{opacity:1;top:calc(var(--hero-h) * 0.2968 + 8.13px);left:31.711vw;width:calc(var(--logo-big-w) * 0.5936 + 36.58px);transform:translate(-29.68%,-29.68%);pointer-events:none}
-  79.6%{opacity:1;top:calc(var(--hero-h) * 0.2623 + 9.51px);left:28.605vw;width:calc(var(--logo-big-w) * 0.5246 + 42.79px);transform:translate(-26.23%,-26.23%);pointer-events:none}
-  81.2%{opacity:1;top:calc(var(--hero-h) * 0.2033 + 11.87px);left:23.301vw;width:calc(var(--logo-big-w) * 0.4067 + 53.40px);transform:translate(-20.33%,-20.33%);pointer-events:none}
-  82.6%{opacity:1;top:calc(var(--hero-h) * 0.1628 + 13.49px);left:19.650vw;width:calc(var(--logo-big-w) * 0.3256 + 60.70px);transform:translate(-16.28%,-16.28%);pointer-events:none}
-  84.6%{opacity:1;top:calc(var(--hero-h) * 0.1127 + 15.49px);left:15.140vw;width:calc(var(--logo-big-w) * 0.2253 + 69.72px);transform:translate(-11.27%,-11.27%);pointer-events:none}
-  85.6%{opacity:1;top:calc(var(--hero-h) * 0.0921 + 16.32px);left:13.286vw;width:calc(var(--logo-big-w) * 0.1841 + 73.43px);transform:translate(-9.21%,-9.21%);pointer-events:none}
-  86.6%{opacity:1;top:calc(var(--hero-h) * 0.0741 + 17.04px);left:11.669vw;width:calc(var(--logo-big-w) * 0.1482 + 76.66px);transform:translate(-7.41%,-7.41%);pointer-events:none}
-  88.6%{opacity:1;top:calc(var(--hero-h) * 0.0455 + 18.18px);left:9.093vw;width:calc(var(--logo-big-w) * 0.0910 + 81.81px);transform:translate(-4.55%,-4.55%);pointer-events:none}
-  90.6%{opacity:1;top:calc(var(--hero-h) * 0.0254 + 18.98px);left:7.289vw;width:calc(var(--logo-big-w) * 0.0509 + 85.42px);transform:translate(-2.54%,-2.54%);pointer-events:none}
-  91.8%{opacity:1;top:calc(var(--hero-h) * 0.0160 + 19.36px);left:6.440vw;width:calc(var(--logo-big-w) * 0.0320 + 87.12px);transform:translate(-1.60%,-1.60%);pointer-events:none}
-  93.2%{opacity:1;top:calc(var(--hero-h) * 0.0093 + 19.63px);left:5.835vw;width:calc(var(--logo-big-w) * 0.0186 + 88.33px);transform:translate(-0.93%,-0.93%);pointer-events:none}
-  95.2%{opacity:1;top:calc(var(--hero-h) * 0.0032 + 19.87px);left:5.287vw;width:calc(var(--logo-big-w) * 0.0064 + 89.43px);transform:translate(-0.32%,-0.32%);pointer-events:none}
-  95.8%{opacity:1;top:calc(var(--hero-h) * 0.0020 + 19.92px);left:5.180vw;width:calc(var(--logo-big-w) * 0.0040 + 89.64px);transform:translate(-0.20%,-0.20%);pointer-events:none}
-  97.2%{opacity:1;top:calc(var(--hero-h) * 0.0006 + 19.98px);left:5.053vw;width:calc(var(--logo-big-w) * 0.0012 + 89.89px);transform:translate(-0.06%,-0.06%);pointer-events:none}
-  98.6%{opacity:1;top:calc(var(--hero-h) * 0.0001 + 20.00px);left:5.008vw;width:calc(var(--logo-big-w) * 0.0002 + 89.98px);transform:translate(-0.01%,-0.01%);pointer-events:auto}
-  99.6%{opacity:1;top:calc(var(--hero-h) * 0.0000 + 20.00px);left:5.000vw;width:calc(var(--logo-big-w) * 0.0000 + 90.00px);transform:translate(0.00%,0.00%);pointer-events:auto}
-  100%{opacity:1;top:calc(var(--hero-h) * 0.0000 + 20.00px);left:5.000vw;width:calc(var(--logo-big-w) * 0.0000 + 90.00px);transform:translate(0.00%,0.00%);pointer-events:auto}
+  0%{opacity:0;top:calc(var(--hero-h)/2);left:50%;width:var(--logo-big-w);transform:translate(-50%,-50%);pointer-events:none}
+  8%{opacity:1;top:calc(var(--hero-h)/2);left:50%;width:var(--logo-big-w);transform:translate(-50%,-50%);pointer-events:none}
+  60%{opacity:1;top:calc(var(--hero-h)/2);left:50%;width:var(--logo-big-w);transform:translate(-50%,-50%);pointer-events:none}
+  60.6%{opacity:1;top:calc(var(--hero-h) * 0.5000 + 0.00px);left:49.998%;width:calc(var(--logo-big-w) * 1.0000 + 0.00px);transform:translate(-50.00%,-50.00%);pointer-events:none}
+  61.6%{opacity:1;top:calc(var(--hero-h) * 0.4998 + 0.01px);left:49.986%;width:calc(var(--logo-big-w) * 0.9997 + 0.03px);transform:translate(-49.98%,-49.98%);pointer-events:none}
+  62.6%{opacity:1;top:calc(var(--hero-h) * 0.4994 + 0.02px);left:49.947%;width:calc(var(--logo-big-w) * 0.9988 + 0.11px);transform:translate(-49.94%,-49.94%);pointer-events:none}
+  63.6%{opacity:1;top:calc(var(--hero-h) * 0.4985 + 0.06px);left:49.862%;width:calc(var(--logo-big-w) * 0.9969 + 0.28px);transform:translate(-49.85%,-49.85%);pointer-events:none}
+  64.6%{opacity:1;top:calc(var(--hero-h) * 0.4968 + 0.13px);left:49.713%;width:calc(var(--logo-big-w) * 0.9936 + 0.57px);transform:translate(-49.68%,-49.68%);pointer-events:none}
+  65.6%{opacity:1;top:calc(var(--hero-h) * 0.4943 + 0.23px);left:49.488%;width:calc(var(--logo-big-w) * 0.9886 + 1.02px);transform:translate(-49.43%,-49.43%);pointer-events:none}
+  66.6%{opacity:1;top:calc(var(--hero-h) * 0.4907 + 0.37px);left:49.165%;width:calc(var(--logo-big-w) * 0.9814 + 1.67px);transform:translate(-49.07%,-49.07%);pointer-events:none}
+  67.8%{opacity:1;top:calc(var(--hero-h) * 0.4840 + 0.64px);left:48.560%;width:calc(var(--logo-big-w) * 0.9680 + 2.88px);transform:translate(-48.40%,-48.40%);pointer-events:none}
+  68.8%{opacity:1;top:calc(var(--hero-h) * 0.4772 + 0.91px);left:47.950%;width:calc(var(--logo-big-w) * 0.9545 + 4.10px);transform:translate(-47.72%,-47.72%);pointer-events:none}
+  70.2%{opacity:1;top:calc(var(--hero-h) * 0.4655 + 1.38px);left:46.896%;width:calc(var(--logo-big-w) * 0.9310 + 6.21px);transform:translate(-46.55%,-46.55%);pointer-events:none}
+  71.8%{opacity:1;top:calc(var(--hero-h) * 0.4460 + 2.16px);left:45.141%;width:calc(var(--logo-big-w) * 0.8920 + 9.72px);transform:translate(-44.60%,-44.60%);pointer-events:none}
+  72.8%{opacity:1;top:calc(var(--hero-h) * 0.4313 + 2.75px);left:43.821%;width:calc(var(--logo-big-w) * 0.8627 + 12.36px);transform:translate(-43.13%,-43.13%);pointer-events:none}
+  73.8%{opacity:1;top:calc(var(--hero-h) * 0.4143 + 3.43px);left:42.284%;width:calc(var(--logo-big-w) * 0.8285 + 15.43px);transform:translate(-41.43%,-41.43%);pointer-events:none}
+  75.6%{opacity:1;top:calc(var(--hero-h) * 0.3799 + 4.81px);left:39.188%;width:calc(var(--logo-big-w) * 0.7597 + 21.62px);transform:translate(-37.99%,-37.99%);pointer-events:none}
+  76.6%{opacity:1;top:calc(var(--hero-h) * 0.3553 + 5.79px);left:36.978%;width:calc(var(--logo-big-w) * 0.7106 + 26.04px);transform:translate(-35.53%,-35.53%);pointer-events:none}
+  77.6%{opacity:1;top:calc(var(--hero-h) * 0.3277 + 6.89px);left:34.497%;width:calc(var(--logo-big-w) * 0.6555 + 31.01px);transform:translate(-32.77%,-32.77%);pointer-events:none}
+  78.6%{opacity:1;top:calc(var(--hero-h) * 0.2968 + 8.13px);left:31.711%;width:calc(var(--logo-big-w) * 0.5936 + 36.58px);transform:translate(-29.68%,-29.68%);pointer-events:none}
+  79.6%{opacity:1;top:calc(var(--hero-h) * 0.2623 + 9.51px);left:28.605%;width:calc(var(--logo-big-w) * 0.5246 + 42.79px);transform:translate(-26.23%,-26.23%);pointer-events:none}
+  81.2%{opacity:1;top:calc(var(--hero-h) * 0.2033 + 11.87px);left:23.301%;width:calc(var(--logo-big-w) * 0.4067 + 53.40px);transform:translate(-20.33%,-20.33%);pointer-events:none}
+  82.6%{opacity:1;top:calc(var(--hero-h) * 0.1628 + 13.49px);left:19.650%;width:calc(var(--logo-big-w) * 0.3256 + 60.70px);transform:translate(-16.28%,-16.28%);pointer-events:none}
+  84.6%{opacity:1;top:calc(var(--hero-h) * 0.1127 + 15.49px);left:15.140%;width:calc(var(--logo-big-w) * 0.2253 + 69.72px);transform:translate(-11.27%,-11.27%);pointer-events:none}
+  85.6%{opacity:1;top:calc(var(--hero-h) * 0.0921 + 16.32px);left:13.286%;width:calc(var(--logo-big-w) * 0.1841 + 73.43px);transform:translate(-9.21%,-9.21%);pointer-events:none}
+  86.6%{opacity:1;top:calc(var(--hero-h) * 0.0741 + 17.04px);left:11.669%;width:calc(var(--logo-big-w) * 0.1482 + 76.66px);transform:translate(-7.41%,-7.41%);pointer-events:none}
+  88.6%{opacity:1;top:calc(var(--hero-h) * 0.0455 + 18.18px);left:9.093%;width:calc(var(--logo-big-w) * 0.0910 + 81.81px);transform:translate(-4.55%,-4.55%);pointer-events:none}
+  90.6%{opacity:1;top:calc(var(--hero-h) * 0.0254 + 18.98px);left:7.289%;width:calc(var(--logo-big-w) * 0.0509 + 85.42px);transform:translate(-2.54%,-2.54%);pointer-events:none}
+  91.8%{opacity:1;top:calc(var(--hero-h) * 0.0160 + 19.36px);left:6.440%;width:calc(var(--logo-big-w) * 0.0320 + 87.12px);transform:translate(-1.60%,-1.60%);pointer-events:none}
+  93.2%{opacity:1;top:calc(var(--hero-h) * 0.0093 + 19.63px);left:5.835%;width:calc(var(--logo-big-w) * 0.0186 + 88.33px);transform:translate(-0.93%,-0.93%);pointer-events:none}
+  95.2%{opacity:1;top:calc(var(--hero-h) * 0.0032 + 19.87px);left:5.287%;width:calc(var(--logo-big-w) * 0.0064 + 89.43px);transform:translate(-0.32%,-0.32%);pointer-events:none}
+  95.8%{opacity:1;top:calc(var(--hero-h) * 0.0020 + 19.92px);left:5.180%;width:calc(var(--logo-big-w) * 0.0040 + 89.64px);transform:translate(-0.20%,-0.20%);pointer-events:none}
+  97.2%{opacity:1;top:calc(var(--hero-h) * 0.0006 + 19.98px);left:5.053%;width:calc(var(--logo-big-w) * 0.0012 + 89.89px);transform:translate(-0.06%,-0.06%);pointer-events:none}
+  98.6%{opacity:1;top:calc(var(--hero-h) * 0.0001 + 20.00px);left:5.008%;width:calc(var(--logo-big-w) * 0.0002 + 89.98px);transform:translate(-0.01%,-0.01%);pointer-events:auto}
+  99.6%{opacity:1;top:calc(var(--hero-h) * 0.0000 + 20.00px);left:5.000%;width:calc(var(--logo-big-w) * 0.0000 + 90.00px);transform:translate(0.00%,0.00%);pointer-events:auto}
+  100%{opacity:1;top:calc(var(--hero-h) * 0.0000 + 20.00px);left:5.000%;width:calc(var(--logo-big-w) * 0.0000 + 90.00px);transform:translate(0.00%,0.00%);pointer-events:auto}
 }
 @keyframes logoIcon{
   0%,8%,60%{left:32.348%;top:0%;width:21.343%;height:59.149%}

@@ -17,45 +17,47 @@ const TEXT_STYLE = {
  */
 export default function LogoMark() {
   return (
-    <a href="#top" aria-label="Bruno Homem" className="logo-stage">
-      <span className="logo-icon">
-        <svg viewBox="369.90 385.72 430.20 451.51" preserveAspectRatio="xMidYMid meet">
-          <path fillRule="evenodd" fill="currentColor" d={ICON_PATH} />
-        </svg>
-      </span>
+    <div className="logo-viewport">
+      <a href="#top" aria-label="Bruno Homem" className="logo-stage">
+        <span className="logo-icon">
+          <svg viewBox="369.90 385.72 430.20 451.51" preserveAspectRatio="xMidYMid meet">
+            <path fillRule="evenodd" fill="currentColor" d={ICON_PATH} />
+          </svg>
+        </span>
 
-      <span className="logo-bruno">
-        <svg viewBox="0 0 340 70" preserveAspectRatio="xMinYMid meet">
-          <text x="0" y="58" style={TEXT_STYLE} fill="currentColor">
-            BRUNO
-          </text>
-        </svg>
-      </span>
+        <span className="logo-bruno">
+          <svg viewBox="0 0 340 70" preserveAspectRatio="xMinYMid meet">
+            <text x="0" y="58" style={TEXT_STYLE} fill="currentColor">
+              BRUNO
+            </text>
+          </svg>
+        </span>
 
-      <span className="logo-homem">
-        <svg viewBox="0 0 340 70" preserveAspectRatio="xMinYMid meet">
-          <defs>
-            <mask id="logoHomemMask" maskUnits="userSpaceOnUse" x="-20" y="-20" width="380" height="110">
-              <text
-                x="0"
-                y="58"
-                style={TEXT_STYLE}
-                fill="none"
-                stroke="#fff"
-                strokeWidth="10.8"
-                strokeLinejoin="round"
-                strokeLinecap="round"
-              >
-                HOMEM
-              </text>
-              <text x="0" y="58" style={TEXT_STYLE} fill="#000">
-                HOMEM
-              </text>
-            </mask>
-          </defs>
-          <rect x="-20" y="-20" width="380" height="110" fill="currentColor" mask="url(#logoHomemMask)" />
-        </svg>
-      </span>
-    </a>
+        <span className="logo-homem">
+          <svg viewBox="0 0 340 70" preserveAspectRatio="xMinYMid meet">
+            <defs>
+              <mask id="logoHomemMask" maskUnits="userSpaceOnUse" x="-20" y="-20" width="380" height="110">
+                <text
+                  x="0"
+                  y="58"
+                  style={TEXT_STYLE}
+                  fill="none"
+                  stroke="#fff"
+                  strokeWidth="10.8"
+                  strokeLinejoin="round"
+                  strokeLinecap="round"
+                >
+                  HOMEM
+                </text>
+                <text x="0" y="58" style={TEXT_STYLE} fill="#000">
+                  HOMEM
+                </text>
+              </mask>
+            </defs>
+            <rect x="-20" y="-20" width="380" height="110" fill="currentColor" mask="url(#logoHomemMask)" />
+          </svg>
+        </span>
+      </a>
+    </div>
   );
 }
