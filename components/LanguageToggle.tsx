@@ -14,7 +14,7 @@ export default function LanguageToggle() {
         className={lang === "pt" ? "active" : undefined}
         onClick={() => setLang("pt")}
       >
-        PT-BR
+        PT
       </button>
       <span className="lang-toggle-sep">/</span>
       <button
@@ -24,7 +24,7 @@ export default function LanguageToggle() {
         className={lang === "en" ? "active" : undefined}
         onClick={() => setLang("en")}
       >
-        ENG
+        EN
       </button>
     </div>
   );

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Bricolage_Grotesque, Instrument_Sans } from "next/font/google";
+import { Bricolage_Grotesque, Instrument_Sans, Montserrat } from "next/font/google";
 import LanguageProvider from "@/lib/language-context";
 import "./globals.css";
 
@@ -15,6 +15,12 @@ const instrumentSans = Instrument_Sans({
   variable: "--font-body",
 });
 
+const montserrat = Montserrat({
+  subsets: ["latin"],
+  weight: ["900"],
+  variable: "--font-logo",
+});
+
 export const metadata: Metadata = {
   title: "Bruno Homem — Gaffer",
   description:
@@ -27,7 +33,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="pt-BR" className={`${bricolage.variable} ${instrumentSans.variable}`}>
+    <html
+      lang="pt-BR"
+      className={`${bricolage.variable} ${instrumentSans.variable} ${montserrat.variable}`}
+    >
       <body>
         <LanguageProvider>{children}</LanguageProvider>
       </body>

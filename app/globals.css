@@ -7,6 +7,14 @@
   --overlay-muted:rgba(243,241,236,.65);
   --display:var(--font-display), sans-serif;
   --body:var(--font-body), sans-serif;
+  /* matches .hero's own height formula, so the logo animation's "big"
+     state can center on the hero regardless of viewport/device */
+  --hero-h:max(100svh,600px);
+  /* single source of truth for the logo's resting width — referenced by
+     both the static hold AND every animated keyframe stop below, so the
+     size never jumps between the two (a literal px number at the first
+     animated stop would diverge from this clamp() on most viewports) */
+  --logo-big-w:clamp(280px,52vw,560px);
 }
 *{margin:0;padding:0;box-sizing:border-box}
 html{scroll-behavior:smooth}
@@ -18,25 +26,20 @@ body{
 ::selection{background:var(--fg);color:var(--bg)}
 a{color:inherit}
 
-/* ---------- header fixo ---------- */
+/* ---------- header: ancorado na base do hero, onde o fade termina ---------- */
 header.site{
-  position:fixed;top:0;left:0;right:0;z-index:100;
-  display:flex;justify-content:space-between;align-items:center;
+  position:absolute;left:0;right:0;bottom:0;z-index:10;
+  display:flex;align-items:center;
   padding:20px 5vw;
-  background:linear-gradient(to bottom, rgba(10,10,11,.7), rgba(10,10,11,0));
-  backdrop-filter:blur(2px);
 }
-header.site .name{
-  font-family:var(--display);font-weight:700;font-size:17px;letter-spacing:-.01em;
-  text-decoration:none;color:var(--overlay-fg);
-}
-header.site nav{display:flex;gap:30px}
+header.site nav{display:flex;justify-content:space-between;align-items:center;gap:12px;width:100%}
 header.site nav a{
   text-decoration:none;font-size:13px;letter-spacing:.01em;color:var(--overlay-muted);
   transition:color .25s;
 }
 header.site nav a:hover{color:var(--overlay-fg)}
-.lang-toggle{display:flex;align-items:center;gap:6px;margin-left:8px}
+
+.lang-toggle{display:flex;align-items:center;gap:6px}
 .lang-toggle button{
   background:none;border:none;cursor:pointer;line-height:1;
   font-size:12px;letter-spacing:.06em;color:var(--overlay-muted);
@@ -54,6 +57,177 @@ header.site nav a:hover{color:var(--overlay-fg)}
 .hero .grade{
   position:absolute;inset:0;
   background:linear-gradient(to bottom, rgba(10,10,11,.35) 0%, rgba(10,10,11,0) 30%, rgba(10,10,11,0) 80%, var(--bg) 100%);
+}
+/* ---------- brand animation: 2D (centered, icon+BRUNO/HOMEM side by
+   side) settles into 2F (top-left corner, icon+BRUNO/HOMEM stacked).
+   Positions below are sampled directly from the brand animation file
+   (icon/BRUNO/HOMEM each move along their own path, not a single
+   shrink+move of one flat image) — 3s static hold, then the real ~2s
+   motion plays out. */
+.logo-stage{
+  position:fixed;z-index:15;top:calc(var(--hero-h)/2);left:50vw;
+  aspect-ratio:618.456/235;
+  color:var(--overlay-fg);text-decoration:none;
+  animation:logoStage 5s linear forwards;
+}
+.logo-icon,.logo-bruno,.logo-homem{position:absolute;display:block}
+.logo-icon svg,.logo-bruno svg,.logo-homem svg{display:block;width:100%;height:100%;overflow:visible}
+/* linear, not eased: every stop below (stage included) is a real sampled
+   position from an already-decelerating source, spaced at real (uneven)
+   time intervals — the deceleration is baked into the *values*, so
+   re-easing between every pair of stops on top of that would double up
+   and read as a stutter. Stage shares the icon's own travel as its
+   progress metric, so the shrink-to-corner move and the internal
+   rearrangement always stay in lockstep. */
+.logo-icon{animation:logoIcon 5s linear forwards}
+.logo-bruno{width:54.98%;height:29.79%;animation:logoBruno 5s linear forwards}
+.logo-homem{width:54.98%;height:29.79%;animation:logoHomem 5s linear forwards}
+
+@keyframes logoStage{
+  0%{opacity:0;top:calc(var(--hero-h)/2);left:50vw;width:var(--logo-big-w);transform:translate(-50%,-50%);pointer-events:none}
+  8%{opacity:1;top:calc(var(--hero-h)/2);left:50vw;width:var(--logo-big-w);transform:translate(-50%,-50%);pointer-events:none}
+  60%{opacity:1;top:calc(var(--hero-h)/2);left:50vw;width:var(--logo-big-w);transform:translate(-50%,-50%);pointer-events:none}
+  60.6%{opacity:1;top:calc(var(--hero-h) * 0.5000 + 0.00px);left:49.998vw;width:calc(var(--logo-big-w) * 1.0000 + 0.00px);transform:translate(-50.00%,-50.00%);pointer-events:none}
+  61.6%{opacity:1;top:calc(var(--hero-h) * 0.4998 + 0.01px);left:49.986vw;width:calc(var(--logo-big-w) * 0.9997 + 0.03px);transform:translate(-49.98%,-49.98%);pointer-events:none}
+  62.6%{opacity:1;top:calc(var(--hero-h) * 0.4994 + 0.02px);left:49.947vw;width:calc(var(--logo-big-w) * 0.9988 + 0.11px);transform:translate(-49.94%,-49.94%);pointer-events:none}
+  63.6%{opacity:1;top:calc(var(--hero-h) * 0.4985 + 0.06px);left:49.862vw;width:calc(var(--logo-big-w) * 0.9969 + 0.28px);transform:translate(-49.85%,-49.85%);pointer-events:none}
+  64.6%{opacity:1;top:calc(var(--hero-h) * 0.4968 + 0.13px);left:49.713vw;width:calc(var(--logo-big-w) * 0.9936 + 0.57px);transform:translate(-49.68%,-49.68%);pointer-events:none}
+  65.6%{opacity:1;top:calc(var(--hero-h) * 0.4943 + 0.23px);left:49.488vw;width:calc(var(--logo-big-w) * 0.9886 + 1.02px);transform:translate(-49.43%,-49.43%);pointer-events:none}
+  66.6%{opacity:1;top:calc(var(--hero-h) * 0.4907 + 0.37px);left:49.165vw;width:calc(var(--logo-big-w) * 0.9814 + 1.67px);transform:translate(-49.07%,-49.07%);pointer-events:none}
+  67.8%{opacity:1;top:calc(var(--hero-h) * 0.4840 + 0.64px);left:48.560vw;width:calc(var(--logo-big-w) * 0.9680 + 2.88px);transform:translate(-48.40%,-48.40%);pointer-events:none}
+  68.8%{opacity:1;top:calc(var(--hero-h) * 0.4772 + 0.91px);left:47.950vw;width:calc(var(--logo-big-w) * 0.9545 + 4.10px);transform:translate(-47.72%,-47.72%);pointer-events:none}
+  70.2%{opacity:1;top:calc(var(--hero-h) * 0.4655 + 1.38px);left:46.896vw;width:calc(var(--logo-big-w) * 0.9310 + 6.21px);transform:translate(-46.55%,-46.55%);pointer-events:none}
+  71.8%{opacity:1;top:calc(var(--hero-h) * 0.4460 + 2.16px);left:45.141vw;width:calc(var(--logo-big-w) * 0.8920 + 9.72px);transform:translate(-44.60%,-44.60%);pointer-events:none}
+  72.8%{opacity:1;top:calc(var(--hero-h) * 0.4313 + 2.75px);left:43.821vw;width:calc(var(--logo-big-w) * 0.8627 + 12.36px);transform:translate(-43.13%,-43.13%);pointer-events:none}
+  73.8%{opacity:1;top:calc(var(--hero-h) * 0.4143 + 3.43px);left:42.284vw;width:calc(var(--logo-big-w) * 0.8285 + 15.43px);transform:translate(-41.43%,-41.43%);pointer-events:none}
+  75.6%{opacity:1;top:calc(var(--hero-h) * 0.3799 + 4.81px);left:39.188vw;width:calc(var(--logo-big-w) * 0.7597 + 21.62px);transform:translate(-37.99%,-37.99%);pointer-events:none}
+  76.6%{opacity:1;top:calc(var(--hero-h) * 0.3553 + 5.79px);left:36.978vw;width:calc(var(--logo-big-w) * 0.7106 + 26.04px);transform:translate(-35.53%,-35.53%);pointer-events:none}
+  77.6%{opacity:1;top:calc(var(--hero-h) * 0.3277 + 6.89px);left:34.497vw;width:calc(var(--logo-big-w) * 0.6555 + 31.01px);transform:translate(-32.77%,-32.77%);pointer-events:none}
+  78.6%{opacity:1;top:calc(var(--hero-h) * 0.2968 + 8.13px);left:31.711vw;width:calc(var(--logo-big-w) * 0.5936 + 36.58px);transform:translate(-29.68%,-29.68%);pointer-events:none}
+  79.6%{opacity:1;top:calc(var(--hero-h) * 0.2623 + 9.51px);left:28.605vw;width:calc(var(--logo-big-w) * 0.5246 + 42.79px);transform:translate(-26.23%,-26.23%);pointer-events:none}
+  81.2%{opacity:1;top:calc(var(--hero-h) * 0.2033 + 11.87px);left:23.301vw;width:calc(var(--logo-big-w) * 0.4067 + 53.40px);transform:translate(-20.33%,-20.33%);pointer-events:none}
+  82.6%{opacity:1;top:calc(var(--hero-h) * 0.1628 + 13.49px);left:19.650vw;width:calc(var(--logo-big-w) * 0.3256 + 60.70px);transform:translate(-16.28%,-16.28%);pointer-events:none}
+  84.6%{opacity:1;top:calc(var(--hero-h) * 0.1127 + 15.49px);left:15.140vw;width:calc(var(--logo-big-w) * 0.2253 + 69.72px);transform:translate(-11.27%,-11.27%);pointer-events:none}
+  85.6%{opacity:1;top:calc(var(--hero-h) * 0.0921 + 16.32px);left:13.286vw;width:calc(var(--logo-big-w) * 0.1841 + 73.43px);transform:translate(-9.21%,-9.21%);pointer-events:none}
+  86.6%{opacity:1;top:calc(var(--hero-h) * 0.0741 + 17.04px);left:11.669vw;width:calc(var(--logo-big-w) * 0.1482 + 76.66px);transform:translate(-7.41%,-7.41%);pointer-events:none}
+  88.6%{opacity:1;top:calc(var(--hero-h) * 0.0455 + 18.18px);left:9.093vw;width:calc(var(--logo-big-w) * 0.0910 + 81.81px);transform:translate(-4.55%,-4.55%);pointer-events:none}
+  90.6%{opacity:1;top:calc(var(--hero-h) * 0.0254 + 18.98px);left:7.289vw;width:calc(var(--logo-big-w) * 0.0509 + 85.42px);transform:translate(-2.54%,-2.54%);pointer-events:none}
+  91.8%{opacity:1;top:calc(var(--hero-h) * 0.0160 + 19.36px);left:6.440vw;width:calc(var(--logo-big-w) * 0.0320 + 87.12px);transform:translate(-1.60%,-1.60%);pointer-events:none}
+  93.2%{opacity:1;top:calc(var(--hero-h) * 0.0093 + 19.63px);left:5.835vw;width:calc(var(--logo-big-w) * 0.0186 + 88.33px);transform:translate(-0.93%,-0.93%);pointer-events:none}
+  95.2%{opacity:1;top:calc(var(--hero-h) * 0.0032 + 19.87px);left:5.287vw;width:calc(var(--logo-big-w) * 0.0064 + 89.43px);transform:translate(-0.32%,-0.32%);pointer-events:none}
+  95.8%{opacity:1;top:calc(var(--hero-h) * 0.0020 + 19.92px);left:5.180vw;width:calc(var(--logo-big-w) * 0.0040 + 89.64px);transform:translate(-0.20%,-0.20%);pointer-events:none}
+  97.2%{opacity:1;top:calc(var(--hero-h) * 0.0006 + 19.98px);left:5.053vw;width:calc(var(--logo-big-w) * 0.0012 + 89.89px);transform:translate(-0.06%,-0.06%);pointer-events:none}
+  98.6%{opacity:1;top:calc(var(--hero-h) * 0.0001 + 20.00px);left:5.008vw;width:calc(var(--logo-big-w) * 0.0002 + 89.98px);transform:translate(-0.01%,-0.01%);pointer-events:auto}
+  99.6%{opacity:1;top:calc(var(--hero-h) * 0.0000 + 20.00px);left:5.000vw;width:calc(var(--logo-big-w) * 0.0000 + 90.00px);transform:translate(0.00%,0.00%);pointer-events:auto}
+  100%{opacity:1;top:calc(var(--hero-h) * 0.0000 + 20.00px);left:5.000vw;width:calc(var(--logo-big-w) * 0.0000 + 90.00px);transform:translate(0.00%,0.00%);pointer-events:auto}
+}
+@keyframes logoIcon{
+  0%,8%,60%{left:32.348%;top:0%;width:21.343%;height:59.149%}
+  60.6%{left:32.347%;top:0%;width:21.343%;height:59.149%}
+  61.6%{left:32.341%;top:0.006%;width:21.343%;height:59.148%}
+  62.6%{left:32.321%;top:0.023%;width:21.343%;height:59.146%}
+  63.6%{left:32.278%;top:0.059%;width:21.341%;height:59.142%}
+  64.6%{left:32.203%;top:0.122%;width:21.339%;height:59.135%}
+  65.6%{left:32.089%;top:0.218%;width:21.336%;height:59.125%}
+  66.6%{left:31.926%;top:0.354%;width:21.331%;height:59.11%}
+  67.8%{left:31.62%;top:0.612%;width:21.323%;height:59.081%}
+  68.8%{left:31.312%;top:0.872%;width:21.314%;height:59.052%}
+  70.2%{left:30.779%;top:1.32%;width:21.299%;height:59.002%}
+  71.8%{left:29.892%;top:2.068%;width:21.274%;height:58.919%}
+  72.8%{left:29.225%;top:2.629%;width:21.255%;height:58.857%}
+  73.8%{left:28.448%;top:3.283%;width:21.233%;height:58.784%}
+  75.6%{left:26.883%;top:4.6%;width:21.188%;height:58.638%}
+  76.6%{left:25.766%;top:5.541%;width:21.156%;height:58.533%}
+  77.6%{left:24.512%;top:6.597%;width:21.121%;height:58.416%}
+  78.6%{left:23.104%;top:7.782%;width:21.081%;height:58.284%}
+  79.6%{left:21.534%;top:9.104%;width:21.036%;height:58.137%}
+  81.2%{left:18.853%;top:11.362%;width:20.96%;height:57.887%}
+  82.6%{left:17.008%;top:12.914%;width:20.907%;height:57.714%}
+  84.6%{left:14.728%;top:14.834%;width:20.842%;height:57.501%}
+  85.6%{left:13.791%;top:15.623%;width:20.816%;height:57.413%}
+  86.6%{left:12.974%;top:16.311%;width:20.793%;height:57.337%}
+  88.6%{left:11.672%;top:17.407%;width:20.756%;height:57.215%}
+  90.6%{left:10.76%;top:18.175%;width:20.73%;height:57.129%}
+  91.8%{left:10.331%;top:18.536%;width:20.717%;height:57.089%}
+  93.2%{left:10.025%;top:18.794%;width:20.709%;height:57.061%}
+  95.2%{left:9.748%;top:19.027%;width:20.701%;height:57.035%}
+  95.8%{left:9.694%;top:19.072%;width:20.699%;height:57.03%}
+  97.2%{left:9.63%;top:19.126%;width:20.697%;height:57.024%}
+  98.6%{left:9.607%;top:19.146%;width:20.697%;height:57.022%}
+  99.6%{left:9.603%;top:19.149%;width:20.697%;height:57.021%}
+  100%{left:9.603%;top:19.149%;width:20.697%;height:57.021%}
+}
+@keyframes logoBruno{
+  0%,8%,60%{left:0%;top:70.213%}
+  60.6%{left:0.001%;top:70.212%}
+  61.6%{left:0.01%;top:70.197%}
+  62.6%{left:0.042%;top:70.15%}
+  63.6%{left:0.11%;top:70.05%}
+  64.6%{left:0.227%;top:69.877%}
+  65.6%{left:0.407%;top:69.613%}
+  66.6%{left:0.663%;top:69.235%}
+  67.8%{left:1.145%;top:68.525%}
+  68.8%{left:1.631%;top:67.809%}
+  70.2%{left:2.468%;top:66.574%}
+  71.8%{left:3.865%;top:64.516%}
+  72.8%{left:4.914%;top:62.969%}
+  73.8%{left:6.138%;top:61.166%}
+  75.6%{left:8.6%;top:57.536%}
+  76.6%{left:10.359%;top:54.944%}
+  77.6%{left:12.333%;top:52.034%}
+  78.6%{left:14.548%;top:48.769%}
+  79.6%{left:17.019%;top:45.126%}
+  81.2%{left:21.24%;top:38.906%}
+  82.6%{left:24.143%;top:34.626%}
+  84.6%{left:27.732%;top:29.335%}
+  85.6%{left:29.207%;top:27.162%}
+  86.6%{left:30.492%;top:25.267%}
+  88.6%{left:32.541%;top:22.247%}
+  90.6%{left:33.978%;top:20.13%}
+  91.8%{left:34.652%;top:19.136%}
+  93.2%{left:35.134%;top:18.425%}
+  95.2%{left:35.57%;top:17.782%}
+  95.8%{left:35.654%;top:17.658%}
+  97.2%{left:35.755%;top:17.509%}
+  98.6%{left:35.792%;top:17.454%}
+  99.6%{left:35.797%;top:17.447%}
+  100%{left:35.798%;top:17.447%}
+}
+@keyframes logoHomem{
+  0%,8%,60%{left:45.024%;top:70.213%}
+  60.6%{left:45.024%;top:70.212%}
+  61.6%{left:45.022%;top:70.206%}
+  62.6%{left:45.015%;top:70.183%}
+  63.6%{left:44.999%;top:70.134%}
+  64.6%{left:44.971%;top:70.051%}
+  65.6%{left:44.929%;top:69.923%}
+  66.6%{left:44.87%;top:69.74%}
+  67.8%{left:44.757%;top:69.396%}
+  68.8%{left:44.644%;top:69.05%}
+  70.2%{left:44.448%;top:68.452%}
+  71.8%{left:44.122%;top:67.456%}
+  72.8%{left:43.878%;top:66.708%}
+  73.8%{left:43.592%;top:65.835%}
+  75.6%{left:43.017%;top:64.079%}
+  76.6%{left:42.607%;top:62.825%}
+  77.6%{left:42.146%;top:61.417%}
+  78.6%{left:41.629%;top:59.837%}
+  79.6%{left:41.053%;top:58.074%}
+  81.2%{left:40.068%;top:55.064%}
+  82.6%{left:39.391%;top:52.994%}
+  84.6%{left:38.553%;top:50.433%}
+  85.6%{left:38.209%;top:49.382%}
+  86.6%{left:37.909%;top:48.465%}
+  88.6%{left:37.431%;top:47.004%}
+  90.6%{left:37.095%;top:45.979%}
+  91.8%{left:36.938%;top:45.498%}
+  93.2%{left:36.826%;top:45.154%}
+  95.2%{left:36.724%;top:44.843%}
+  95.8%{left:36.704%;top:44.783%}
+  97.2%{left:36.681%;top:44.711%}
+  98.6%{left:36.672%;top:44.685%}
+  99.6%{left:36.671%;top:44.681%}
+  100%{left:36.671%;top:44.681%}
 }
 
 /* ---------- section shell ---------- */
@@ -214,9 +388,11 @@ section{padding:13vh 5vw}
 }
 
 /* ---------- sobre ---------- */
-.sobre-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:6vw;align-items:start}
+.sobre-grid{display:grid;grid-template-columns:.62fr 1.1fr .78fr;gap:5vw;align-items:start}
 .sobre-grid p{font-size:clamp(18px,1.9vw,24px);line-height:1.5;max-width:36ch}
 .sobre-grid p+p{margin-top:1.1em;color:var(--muted);font-size:clamp(15px,1.4vw,18px)}
+.sobre-foto{border-radius:3px;overflow:hidden;aspect-ratio:3/4;background:#141414;border:1px solid rgba(243,241,236,.4)}
+.sobre-foto img{width:100%;height:100%;object-fit:cover;object-position:50% 15%}
 .expertise{list-style:none;border-top:1px solid var(--line)}
 .expertise li{
   display:flex;justify-content:space-between;gap:20px;
@@ -249,12 +425,12 @@ footer{padding:24px 5vw;border-top:1px solid var(--line);display:flex;justify-co
 
 @media (max-width:800px){
   header.site{padding:14px 4vw}
-  header.site .name{font-size:13px}
   header.site nav{gap:8px}
   header.site nav a{font-size:10.5px;letter-spacing:0}
-  .lang-toggle{margin-left:4px;gap:4px}
+  .lang-toggle{gap:4px}
   .lang-toggle button{font-size:10px}
   .hero{height:55svh;min-height:380px}
+  :root{--hero-h:max(55svh,380px)}
   .works{grid-template-columns:1fr}
   .card.wide{grid-column:span 1;aspect-ratio:16/9}
   .sobre-grid{grid-template-columns:1fr}

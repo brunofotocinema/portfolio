@@ -1,5 +1,4 @@
 import { comerciais, filmes, galeria } from "@/lib/data";
-import Header from "@/components/Header";
 import Hero from "@/components/Hero";
 import ComerciaisGrid from "@/components/ComerciaisGrid";
 import CinemaList from "@/components/CinemaList";
@@ -13,7 +12,6 @@ import SectionHeading from "@/components/SectionHeading";
 export default function Home() {
   return (
     <ModalProvider>
-      <Header />
       <Hero />
 
       <section id="trabalhos">

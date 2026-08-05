@@ -8,9 +8,6 @@ export default function Header() {
 
   return (
     <header className="site">
-      <a className="name" href="#top">
-        Bruno Homem
-      </a>
       <nav>
         <a href="#trabalhos">{t("nav.trabalhos")}</a>
         <a href="#cinema">{t("nav.cinema")}</a>

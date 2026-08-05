@@ -11,6 +11,10 @@ export default function Sobre() {
         <h2>{t("nav.sobre")}</h2>
       </div>
       <div className="sobre-grid">
+        <div className="sobre-foto">
+          {/* eslint-disable-next-line @next/next/no-img-element -- static profile portrait, no next/image optimization needed */}
+          <img src="/fotos/bruno-perfil.jpg" alt="Bruno Homem" />
+        </div>
         <div>
           <p>{t("sobre.p1")}</p>
           <p>{t("sobre.p2")}</p>
@@ -31,6 +35,10 @@ export default function Sobre() {
           <li>
             <span>{t("sobre.expertise.coordenacao.title")}</span>
             <span>{t("sobre.expertise.coordenacao.sub")}</span>
+          </li>
+          <li>
+            <span>{t("sobre.expertise.internacional.title")}</span>
+            <span>{t("sobre.expertise.internacional.sub")}</span>
           </li>
         </ul>
       </div>

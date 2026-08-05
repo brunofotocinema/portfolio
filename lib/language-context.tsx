@@ -24,12 +24,16 @@ export default function LanguageProvider({ children }: { children: ReactNode }) 
 
   useEffect(() => {
     // Intentional: default render is "pt" (matches SSR) so there's no
-    // hydration mismatch; the stored preference is applied right after.
+    // hydration mismatch; the stored preference (or, failing that, the
+    // browser's own language) is applied right after.
     const stored = localStorage.getItem(STORAGE_KEY);
     if (stored === "pt" || stored === "en") {
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setLangState(stored);
+      return;
     }
+    const browserLang = navigator.language?.toLowerCase().startsWith("pt") ? "pt" : "en";
+    setLangState(browserLang);
   }, []);
 
   function setLang(next: Lang) {

@@ -17,12 +17,14 @@ export const translations: Record<Lang, Record<string, string>> = {
       "Seu trabalho é montar e comandar a estrutura de luz que sustenta cada plano, do primeiro ao último dia de filmagem.",
     "sobre.expertise.chefia.title": "Chefia de elétrica",
     "sobre.expertise.chefia.sub": "Longas · Séries",
-    "sobre.expertise.comerciais.title": "Comerciais & Publicidade",
+    "sobre.expertise.comerciais.title": "Iluminação publicitária",
     "sobre.expertise.comerciais.sub": "Beleza · Moda · Marca",
     "sobre.expertise.prelight.title": "Pré-light & Rigging",
     "sobre.expertise.prelight.sub": "Estúdio · Locação",
     "sobre.expertise.coordenacao.title": "Coordenação de equipe",
     "sobre.expertise.coordenacao.sub": "Grandes crews",
+    "sobre.expertise.internacional.title": "Comunicação em PT & EN",
+    "sobre.expertise.internacional.sub": "Equipes internacionais",
 
     "contato.lead": "Próximo projeto?",
 
@@ -46,12 +48,14 @@ export const translations: Record<Lang, Record<string, string>> = {
       "His work is building and running the lighting setup that carries every shot, from the first day of the shoot to the last.",
     "sobre.expertise.chefia.title": "Gaffer / Head Electrician",
     "sobre.expertise.chefia.sub": "Features · TV Series",
-    "sobre.expertise.comerciais.title": "Commercials & Advertising",
+    "sobre.expertise.comerciais.title": "Advertising Lighting",
     "sobre.expertise.comerciais.sub": "Beauty · Fashion · Brand",
     "sobre.expertise.prelight.title": "Pre-light & Rigging",
     "sobre.expertise.prelight.sub": "Studio · Location",
     "sobre.expertise.coordenacao.title": "Crew Coordination",
     "sobre.expertise.coordenacao.sub": "Large crews",
+    "sobre.expertise.internacional.title": "PT & EN Communication",
+    "sobre.expertise.internacional.sub": "International Crews",
 
     "contato.lead": "Next project?",
 

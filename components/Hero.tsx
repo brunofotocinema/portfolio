@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import Header from "./Header";
+import LogoMark from "./LogoMark";
 
 export default function Hero() {
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -28,6 +30,8 @@ export default function Hero() {
         <source src="/hero.mp4" type="video/mp4" />
       </video>
       <div className="grade" />
+      <LogoMark />
+      <Header />
     </section>
   );
 }
