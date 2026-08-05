@@ -5,6 +5,7 @@
   --line:rgba(243,241,236,.12);
   --overlay-fg:#f3f1ec;
   --overlay-muted:rgba(243,241,236,.65);
+  --accent:#d99e2b;
   --display:var(--font-display), sans-serif;
   --body:var(--font-body), sans-serif;
   /* matches .hero's own height formula, so the logo animation's "big"
@@ -67,7 +68,7 @@ header.site nav a:hover{color:var(--overlay-fg)}
 .logo-stage{
   position:fixed;z-index:15;top:calc(var(--hero-h)/2);left:50vw;
   aspect-ratio:618.456/235;
-  color:var(--overlay-fg);text-decoration:none;
+  color:var(--accent);text-decoration:none;
   animation:logoStage 5s linear forwards;
 }
 .logo-icon,.logo-bruno,.logo-homem{position:absolute;display:block}
@@ -236,14 +237,13 @@ section{padding:13vh 5vw}
   display:flex;align-items:baseline;gap:16px;margin-bottom:5vh;
   padding-bottom:22px;border-bottom:1px solid var(--line);
 }
-.sec-head h2{font-family:var(--display);font-weight:600;font-size:clamp(24px,3vw,40px);letter-spacing:-.01em}
+.sec-head h2{font-family:var(--display);font-weight:600;font-size:clamp(24px,3vw,40px);letter-spacing:-.01em;color:var(--accent)}
 
 /* ---------- grid trabalhos ---------- */
 .works{display:grid;grid-template-columns:repeat(2,1fr);gap:20px}
 .card{
   position:relative;overflow:hidden;cursor:pointer;
   aspect-ratio:16/9;border-radius:3px;background:#141414;
-  border:1px solid rgba(243,241,236,.4);
 }
 .card img.thumb{
   position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
@@ -292,7 +292,6 @@ section{padding:13vh 5vw}
 .extra-card{
   position:relative;overflow:hidden;cursor:pointer;
   width:200px;aspect-ratio:16/9;border-radius:3px;background:#141414;
-  border:1px solid rgba(243,241,236,.3);
   transform:rotate(-1.5deg);transition:transform .25s;
 }
 .extra-card:nth-child(even){transform:rotate(1.5deg)}
@@ -434,6 +433,7 @@ footer{padding:24px 5vw;border-top:1px solid var(--line);display:flex;justify-co
   .works{grid-template-columns:1fr}
   .card.wide{grid-column:span 1;aspect-ratio:16/9}
   .sobre-grid{grid-template-columns:1fr}
+  .sobre-foto{width:min(58vw,260px);margin:0 auto 6vw}
   .filmes-row{grid-template-columns:44px 50px 1fr auto;gap:3vw}
   .filmes-row .poster{width:44px}
 }
