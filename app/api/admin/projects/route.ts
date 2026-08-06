@@ -3,38 +3,10 @@ import { requireFirebaseUser, UnauthorizedError } from "@/lib/auth-server";
 import { commitFiles, getJsonFile, GithubCommitError, type FileChange } from "@/lib/github";
 import { slugify, uniqueSlug } from "@/lib/slugify";
 import { fileExtension, fileToBase64, MAX_FILE_BYTES } from "@/lib/admin-server-utils";
-import type { Comercial, ComercialExtra, Filme, ImagemGaleria } from "@/lib/data";
+import type { Comercial, ComercialExtra, Filme, SiteData } from "@/lib/data";
 import type { Categoria } from "@/lib/admin-types";
 
-const DATA_PATH = "data/projects.json";
-
-export async function GET(request: Request) {
-  try {
-    await requireFirebaseUser(request);
-  } catch (err) {
-    if (err instanceof UnauthorizedError) {
-      return NextResponse.json({ error: err.message }, { status: 401 });
-    }
-    throw err;
-  }
-
-  try {
-    const current = await getJsonFile<ProjectsData>(DATA_PATH);
-    return NextResponse.json(current);
-  } catch (err) {
-    if (err instanceof GithubCommitError) {
-      return NextResponse.json({ error: err.message }, { status: 502 });
-    }
-    console.error(err);
-    return NextResponse.json({ error: "Erro ao carregar projetos." }, { status: 500 });
-  }
-}
-
-interface ProjectsData {
-  comerciais: Comercial[];
-  filmes: Filme[];
-  galeria: ImagemGaleria[];
-}
+const DATA_PATH = "data/site.json";
 
 export async function POST(request: Request) {
   try {
@@ -70,13 +42,13 @@ export async function POST(request: Request) {
     }
 
     try {
-      const current = await getJsonFile<ProjectsData>(DATA_PATH);
+      const current = await getJsonFile<SiteData>(DATA_PATH);
       const existingIds = current.galeria.map((g) => g.id);
       const id = uniqueSlug(slugify(alt || "imagem"), existingIds);
       const ext = fileExtension(imagem);
       const path = `public/galeria/${id}.${ext}`;
 
-      const novaImagem: ImagemGaleria = {
+      const novaImagem = {
         id,
         src: `/galeria/${id}.${ext}`,
         ...(alt ? { alt } : {}),
@@ -147,7 +119,7 @@ export async function POST(request: Request) {
   }
 
   try {
-    const current = await getJsonFile<ProjectsData>(DATA_PATH);
+    const current = await getJsonFile<SiteData>(DATA_PATH);
 
     if (categoria === "publicidade" && vincularA) {
       const parent = current.comerciais.find((c) => c.id === vincularA);

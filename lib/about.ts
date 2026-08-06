@@ -1,4 +1,4 @@
-import aboutJson from "@/data/about.json";
+import siteJson from "@/data/site.json";
 
 export interface Bilingual {
   pt: string;
@@ -16,4 +16,8 @@ export interface AboutContent {
   expertise: ExpertiseItem[];
 }
 
-export const about: AboutContent = aboutJson as AboutContent;
+interface SiteData {
+  about: AboutContent;
+}
+
+export const about: AboutContent = (siteJson as SiteData).about;

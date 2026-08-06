@@ -1,4 +1,5 @@
-import projectsJson from "@/data/projects.json";
+import siteJson from "@/data/site.json";
+import type { AboutContent } from "@/lib/about";
 
 export interface ComercialExtra {
   id: string;
@@ -36,13 +37,14 @@ export interface ImagemGaleria {
   alt?: string;
 }
 
-interface ProjectsData {
+export interface SiteData {
+  about: AboutContent;
   comerciais: Comercial[];
   filmes: Filme[];
   galeria: ImagemGaleria[];
 }
 
-const data = projectsJson as ProjectsData;
+const data = siteJson as SiteData;
 
 export const comerciais: Comercial[] = data.comerciais;
 export const filmes: Filme[] = data.filmes;

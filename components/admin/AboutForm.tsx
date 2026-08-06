@@ -1,135 +1,70 @@
 "use client";
 
-import { useState } from "react";
-import { auth } from "@/lib/firebase";
 import type { AboutContent, ExpertiseItem } from "@/lib/about";
 
 interface AboutFormProps {
-  data: AboutContent;
-  onSaved: (next: AboutContent) => void;
+  value: AboutContent;
+  onChange: (next: AboutContent) => void;
 }
 
 type ExpertiseField = "titlePt" | "titleEn" | "subPt" | "subEn";
 
-export default function AboutForm({ data, onSaved }: AboutFormProps) {
-  const [p1Pt, setP1Pt] = useState(data.p1.pt);
-  const [p1En, setP1En] = useState(data.p1.en);
-  const [p2Pt, setP2Pt] = useState(data.p2.pt);
-  const [p2En, setP2En] = useState(data.p2.en);
-  const [expertise, setExpertise] = useState<ExpertiseItem[]>(data.expertise);
-  const [submitting, setSubmitting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState<string | null>(null);
-
-  function updateItem(index: number, field: ExpertiseField, value: string) {
-    setExpertise((prev) =>
-      prev.map((item, i) => {
-        if (i !== index) return item;
-        switch (field) {
-          case "titlePt":
-            return { ...item, title: { ...item.title, pt: value } };
-          case "titleEn":
-            return { ...item, title: { ...item.title, en: value } };
-          case "subPt":
-            return { ...item, sub: { ...item.sub, pt: value } };
-          case "subEn":
-            return { ...item, sub: { ...item.sub, en: value } };
-        }
-      })
-    );
+export default function AboutForm({ value, onChange }: AboutFormProps) {
+  function updateItem(index: number, field: ExpertiseField, fieldValue: string) {
+    const expertise = value.expertise.map((item, i) => {
+      if (i !== index) return item;
+      switch (field) {
+        case "titlePt":
+          return { ...item, title: { ...item.title, pt: fieldValue } };
+        case "titleEn":
+          return { ...item, title: { ...item.title, en: fieldValue } };
+        case "subPt":
+          return { ...item, sub: { ...item.sub, pt: fieldValue } };
+        case "subEn":
+          return { ...item, sub: { ...item.sub, en: fieldValue } };
+      }
+    });
+    onChange({ ...value, expertise });
   }
 
   function addItem() {
-    setExpertise((prev) => [...prev, { title: { pt: "", en: "" }, sub: { pt: "", en: "" } }]);
+    const item: ExpertiseItem = { title: { pt: "", en: "" }, sub: { pt: "", en: "" } };
+    onChange({ ...value, expertise: [...value.expertise, item] });
   }
 
   function removeItem(index: number) {
-    setExpertise((prev) => prev.filter((_, i) => i !== index));
+    onChange({ ...value, expertise: value.expertise.filter((_, i) => i !== index) });
   }
 
   function moveItem(index: number, direction: -1 | 1) {
-    setExpertise((prev) => {
-      const target = index + direction;
-      if (target < 0 || target >= prev.length) return prev;
-      const next = [...prev];
-      [next[index], next[target]] = [next[target], next[index]];
-      return next;
-    });
-  }
-
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    setError(null);
-    setSuccess(null);
-
-    if (!p1Pt.trim() || !p1En.trim() || !p2Pt.trim() || !p2En.trim()) {
-      setError("Preencha os parágrafos em PT e EN.");
-      return;
-    }
-    if (expertise.length === 0) {
-      setError("Adicione ao menos um item de destaque.");
-      return;
-    }
-    if (expertise.some((item) => !item.title.pt.trim() || !item.title.en.trim())) {
-      setError("Preencha o título (PT e EN) de todos os destaques.");
-      return;
-    }
-
-    const user = auth.currentUser;
-    if (!user) {
-      setError("Sessão expirada. Faça login novamente.");
-      return;
-    }
-
-    const payload: AboutContent = {
-      p1: { pt: p1Pt.trim(), en: p1En.trim() },
-      p2: { pt: p2Pt.trim(), en: p2En.trim() },
-      expertise: expertise.map((item) => ({
-        title: { pt: item.title.pt.trim(), en: item.title.en.trim() },
-        sub: { pt: item.sub.pt.trim(), en: item.sub.en.trim() },
-      })),
-    };
-
-    setSubmitting(true);
-    try {
-      const idToken = await user.getIdToken();
-      const res = await fetch("/api/admin/about", {
-        method: "PUT",
-        headers: {
-          Authorization: `Bearer ${idToken}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(payload),
-      });
-      const json = await res.json();
-      if (!res.ok) {
-        setError(json.error ?? "Não foi possível salvar.");
-        return;
-      }
-      setSuccess(
-        "Seção Sobre salva! O commit foi feito no repositório — o site leva cerca de 1 a 2 minutos para atualizar."
-      );
-      onSaved(payload);
-    } catch {
-      setError("Erro de rede ao salvar.");
-    } finally {
-      setSubmitting(false);
-    }
+    const target = index + direction;
+    if (target < 0 || target >= value.expertise.length) return;
+    const expertise = [...value.expertise];
+    [expertise[index], expertise[target]] = [expertise[target], expertise[index]];
+    onChange({ ...value, expertise });
   }
 
   return (
-    <form className="admin-project-form" onSubmit={handleSubmit}>
+    <div className="admin-project-form">
       <h2>Seção Sobre</h2>
 
       <fieldset className="admin-about-block">
         <legend>Parágrafo 1</legend>
         <label>
           PT
-          <textarea rows={3} value={p1Pt} onChange={(e) => setP1Pt(e.target.value)} />
+          <textarea
+            rows={3}
+            value={value.p1.pt}
+            onChange={(e) => onChange({ ...value, p1: { ...value.p1, pt: e.target.value } })}
+          />
         </label>
         <label>
           EN
-          <textarea rows={3} value={p1En} onChange={(e) => setP1En(e.target.value)} />
+          <textarea
+            rows={3}
+            value={value.p1.en}
+            onChange={(e) => onChange({ ...value, p1: { ...value.p1, en: e.target.value } })}
+          />
         </label>
       </fieldset>
 
@@ -137,17 +72,25 @@ export default function AboutForm({ data, onSaved }: AboutFormProps) {
         <legend>Parágrafo 2</legend>
         <label>
           PT
-          <textarea rows={3} value={p2Pt} onChange={(e) => setP2Pt(e.target.value)} />
+          <textarea
+            rows={3}
+            value={value.p2.pt}
+            onChange={(e) => onChange({ ...value, p2: { ...value.p2, pt: e.target.value } })}
+          />
         </label>
         <label>
           EN
-          <textarea rows={3} value={p2En} onChange={(e) => setP2En(e.target.value)} />
+          <textarea
+            rows={3}
+            value={value.p2.en}
+            onChange={(e) => onChange({ ...value, p2: { ...value.p2, en: e.target.value } })}
+          />
         </label>
       </fieldset>
 
       <fieldset className="admin-about-block">
         <legend>Destaques</legend>
-        {expertise.map((item, i) => (
+        {value.expertise.map((item, i) => (
           <div key={i} className="admin-about-expertise-item">
             <div className="admin-about-expertise-grid">
               <label>
@@ -187,7 +130,7 @@ export default function AboutForm({ data, onSaved }: AboutFormProps) {
                 <button
                   type="button"
                   onClick={() => moveItem(i, 1)}
-                  disabled={i === expertise.length - 1}
+                  disabled={i === value.expertise.length - 1}
                 >
                   ▼
                 </button>
@@ -202,13 +145,6 @@ export default function AboutForm({ data, onSaved }: AboutFormProps) {
           + Adicionar destaque
         </button>
       </fieldset>
-
-      {error && <p className="admin-error">{error}</p>}
-      {success && <p className="admin-success">{success}</p>}
-
-      <button type="submit" disabled={submitting}>
-        {submitting ? "Salvando..." : "Salvar seção Sobre"}
-      </button>
-    </form>
+    </div>
   );
 }
