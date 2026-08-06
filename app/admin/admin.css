@@ -80,6 +80,7 @@
 
 .admin-project-form input,
 .admin-project-form select,
+.admin-project-form textarea,
 .admin-login input {
   background: rgba(243, 241, 236, 0.06);
   border: 1px solid var(--line);
@@ -90,15 +91,11 @@
   font-family: var(--body);
 }
 
-/* The dropdown list itself renders with the browser's native (light)
-   background, which the page's dark theme can't override — so force
-   dark, readable text specifically for the option list. */
-.admin-project-form select option {
-  color: #111;
-  background: #fff;
+.admin-project-form textarea {
+  resize: vertical;
 }
 
-.admin-creditos {
+.admin-about-block {
   border: 1px solid var(--line);
   border-radius: 8px;
   padding: 16px;
@@ -107,10 +104,37 @@
   gap: 14px;
 }
 
-.admin-creditos legend {
+.admin-about-block legend {
   font-size: 13px;
   color: var(--muted);
   padding: 0 6px;
+}
+
+.admin-about-expertise-item {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 14px 0;
+  border-top: 1px solid var(--line);
+}
+
+.admin-about-expertise-item:first-child {
+  border-top: none;
+  padding-top: 0;
+}
+
+.admin-about-expertise-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px 14px;
+}
+
+/* The dropdown list itself renders with the browser's native (light)
+   background, which the page's dark theme can't override — so force
+   dark, readable text specifically for the option list. */
+.admin-project-form select option {
+  color: #111;
+  background: #fff;
 }
 
 button {
@@ -163,6 +187,25 @@ button:disabled {
   display: flex;
   justify-content: space-between;
   align-items: center;
+}
+
+.admin-item-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.admin-order-btns {
+  display: flex;
+  gap: 4px;
+}
+
+.admin-order-btns button {
+  background: transparent;
+  color: var(--fg);
+  border: 1px solid var(--line);
+  padding: 4px 10px;
+  font-size: 12px;
 }
 
 .admin-project-extras {

@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { requireFirebaseUser, UnauthorizedError } from "@/lib/auth-server";
 import { commitFiles, getJsonFile, GithubCommitError, type FileChange } from "@/lib/github";
 import { slugify, uniqueSlug } from "@/lib/slugify";
-import { fileExtension, fileToBase64, readCreditos, MAX_FILE_BYTES } from "@/lib/admin-server-utils";
+import { fileExtension, fileToBase64, MAX_FILE_BYTES } from "@/lib/admin-server-utils";
 import type { Comercial, ComercialExtra, Filme, ImagemGaleria } from "@/lib/data";
 import type { Categoria } from "@/lib/admin-types";
 
@@ -148,7 +148,6 @@ export async function POST(request: Request) {
 
   try {
     const current = await getJsonFile<ProjectsData>(DATA_PATH);
-    const creditos = readCreditos(form);
 
     if (categoria === "publicidade" && vincularA) {
       const parent = current.comerciais.find((c) => c.id === vincularA);
@@ -199,10 +198,9 @@ export async function POST(request: Request) {
         logo: `/logos/${id}.${logoExt}`,
         alt: titulo,
         titulo,
-        sub: creditos?.funcaoBruno ? `${creditos.funcaoBruno} · ${ano}` : `Comercial · ${ano}`,
+        sub: `Comercial · ${ano}`,
         url: videoUrl!,
         ano,
-        ...(creditos ? { creditos } : {}),
       };
 
       current.comerciais = [...current.comerciais, novoComercial];
@@ -220,10 +218,9 @@ export async function POST(request: Request) {
         id,
         titulo,
         ano,
-        tipo: creditos?.funcaoBruno ?? "Filme e Série",
+        tipo: "Filme e Série",
         url: videoUrl!,
         banner: `/banners/${id}.${bannerExt}`,
-        ...(creditos ? { creditos } : {}),
       };
 
       current.filmes = [...current.filmes, novoFilme];

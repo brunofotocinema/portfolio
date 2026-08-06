@@ -17,9 +17,6 @@ const initialState = {
   ano: "",
   videoUrl: "",
   vincularA: "",
-  creditosProdutora: "",
-  creditosDirecao: "",
-  creditosFuncaoBruno: "",
 };
 
 export default function ProjectForm({ existingComerciais, onCreated }: ProjectFormProps) {
@@ -93,12 +90,6 @@ export default function ProjectForm({ existingComerciais, onCreated }: ProjectFo
         formData.set("titulo", fields.titulo.trim());
         formData.set("ano", fields.ano.trim());
         formData.set("videoUrl", fields.videoUrl.trim());
-        if (fields.creditosProdutora.trim())
-          formData.set("creditosProdutora", fields.creditosProdutora.trim());
-        if (fields.creditosDirecao.trim())
-          formData.set("creditosDirecao", fields.creditosDirecao.trim());
-        if (fields.creditosFuncaoBruno.trim())
-          formData.set("creditosFuncaoBruno", fields.creditosFuncaoBruno.trim());
         if (fields.vincularA) formData.set("vincularA", fields.vincularA);
         if (logoFile) formData.set("logo", logoFile);
         if (bannerFile) formData.set("banner", bannerFile);
@@ -221,33 +212,6 @@ export default function ProjectForm({ existingComerciais, onCreated }: ProjectFo
           </label>
         </div>
       ) : null}
-
-      {fields.categoria !== "galeria" && (
-        <fieldset className="admin-creditos">
-          <legend>Créditos (opcional)</legend>
-          <label>
-            Produtora
-            <input
-              value={fields.creditosProdutora}
-              onChange={(e) => update("creditosProdutora", e.target.value)}
-            />
-          </label>
-          <label>
-            Diretor(a) / DP
-            <input
-              value={fields.creditosDirecao}
-              onChange={(e) => update("creditosDirecao", e.target.value)}
-            />
-          </label>
-          <label>
-            Função do Bruno
-            <input
-              value={fields.creditosFuncaoBruno}
-              onChange={(e) => update("creditosFuncaoBruno", e.target.value)}
-            />
-          </label>
-        </fieldset>
-      )}
 
       {error && <p className="admin-error">{error}</p>}
       {success && <p className="admin-success">{success}</p>}

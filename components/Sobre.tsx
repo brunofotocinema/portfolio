@@ -1,9 +1,10 @@
 "use client";
 
 import { useLanguage } from "@/lib/language-context";
+import type { AboutContent } from "@/lib/about";
 
-export default function Sobre() {
-  const { t } = useLanguage();
+export default function Sobre({ about }: { about: AboutContent }) {
+  const { t, lang } = useLanguage();
 
   return (
     <section id="sobre">
@@ -16,30 +17,16 @@ export default function Sobre() {
           <img src="/fotos/bruno-perfil.jpg" alt="Bruno Homem" />
         </div>
         <div>
-          <p>{t("sobre.p1")}</p>
-          <p>{t("sobre.p2")}</p>
+          <p>{about.p1[lang]}</p>
+          <p>{about.p2[lang]}</p>
         </div>
         <ul className="expertise">
-          <li>
-            <span>{t("sobre.expertise.chefia.title")}</span>
-            <span>{t("sobre.expertise.chefia.sub")}</span>
-          </li>
-          <li>
-            <span>{t("sobre.expertise.comerciais.title")}</span>
-            <span>{t("sobre.expertise.comerciais.sub")}</span>
-          </li>
-          <li>
-            <span>{t("sobre.expertise.prelight.title")}</span>
-            <span>{t("sobre.expertise.prelight.sub")}</span>
-          </li>
-          <li>
-            <span>{t("sobre.expertise.coordenacao.title")}</span>
-            <span>{t("sobre.expertise.coordenacao.sub")}</span>
-          </li>
-          <li>
-            <span>{t("sobre.expertise.internacional.title")}</span>
-            <span>{t("sobre.expertise.internacional.sub")}</span>
-          </li>
+          {about.expertise.map((item, i) => (
+            <li key={i}>
+              <span>{item.title[lang]}</span>
+              <span>{item.sub[lang]}</span>
+            </li>
+          ))}
         </ul>
       </div>
     </section>

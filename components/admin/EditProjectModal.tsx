@@ -23,15 +23,6 @@ export default function EditProjectModal({
   const [titulo, setTitulo] = useState(isGaleria ? "" : (project as Comercial | Filme).titulo);
   const [ano, setAno] = useState(isGaleria ? "" : String((project as Comercial | Filme).ano));
   const [videoUrl, setVideoUrl] = useState(isGaleria ? "" : (project as Comercial | Filme).url);
-  const [creditosProdutora, setCreditosProdutora] = useState(
-    isGaleria ? "" : (project as Comercial | Filme).creditos?.produtora ?? ""
-  );
-  const [creditosDirecao, setCreditosDirecao] = useState(
-    isGaleria ? "" : (project as Comercial | Filme).creditos?.direcao ?? ""
-  );
-  const [creditosFuncaoBruno, setCreditosFuncaoBruno] = useState(
-    isGaleria ? "" : (project as Comercial | Filme).creditos?.funcaoBruno ?? ""
-  );
   const [alt, setAlt] = useState(isGaleria ? (project as ImagemGaleria).alt ?? "" : "");
   const [newLogoFile, setNewLogoFile] = useState<File | null>(null);
   const [newBannerFile, setNewBannerFile] = useState<File | null>(null);
@@ -70,10 +61,6 @@ export default function EditProjectModal({
         formData.set("titulo", titulo.trim());
         formData.set("ano", ano.trim());
         formData.set("videoUrl", videoUrl.trim());
-        if (creditosProdutora.trim()) formData.set("creditosProdutora", creditosProdutora.trim());
-        if (creditosDirecao.trim()) formData.set("creditosDirecao", creditosDirecao.trim());
-        if (creditosFuncaoBruno.trim())
-          formData.set("creditosFuncaoBruno", creditosFuncaoBruno.trim());
         if (newLogoFile) formData.set("logo", newLogoFile);
         if (newBannerFile) formData.set("banner", newBannerFile);
       }
@@ -166,33 +153,6 @@ export default function EditProjectModal({
                 />
               </label>
             </div>
-          )}
-
-          {!isGaleria && (
-            <fieldset className="admin-creditos">
-              <legend>Créditos (opcional)</legend>
-              <label>
-                Produtora
-                <input
-                  value={creditosProdutora}
-                  onChange={(e) => setCreditosProdutora(e.target.value)}
-                />
-              </label>
-              <label>
-                Diretor(a) / DP
-                <input
-                  value={creditosDirecao}
-                  onChange={(e) => setCreditosDirecao(e.target.value)}
-                />
-              </label>
-              <label>
-                Função do Bruno
-                <input
-                  value={creditosFuncaoBruno}
-                  onChange={(e) => setCreditosFuncaoBruno(e.target.value)}
-                />
-              </label>
-            </fieldset>
           )}
 
           {error && <p className="admin-error">{error}</p>}

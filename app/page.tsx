@@ -1,4 +1,5 @@
 import { comerciais, filmes, galeria } from "@/lib/data";
+import { about } from "@/lib/about";
 import Hero from "@/components/Hero";
 import ComerciaisGrid from "@/components/ComerciaisGrid";
 import CinemaList from "@/components/CinemaList";
@@ -28,7 +29,7 @@ export default function Home() {
         <CinemaList items={filmes} />
       </section>
 
-      <Sobre />
+      <Sobre about={about} />
       <Galeria items={galeria} />
       <Contato />
       <Footer />

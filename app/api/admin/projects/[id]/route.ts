@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { requireFirebaseUser, UnauthorizedError } from "@/lib/auth-server";
 import { commitFiles, getJsonFile, GithubCommitError, type FileChange } from "@/lib/github";
-import { fileExtension, fileToBase64, readCreditos, MAX_FILE_BYTES } from "@/lib/admin-server-utils";
+import { fileExtension, fileToBase64, MAX_FILE_BYTES } from "@/lib/admin-server-utils";
 import type { Comercial, Filme, ImagemGaleria } from "@/lib/data";
 
 const DATA_PATH = "data/projects.json";
@@ -251,12 +251,9 @@ export async function PUT(request: Request, ctx: RouteContext<"/api/admin/projec
       return NextResponse.json({ error: "Projeto não encontrado." }, { status: 404 });
     }
 
-    const creditos = readCreditos(form);
     project.titulo = titulo;
     project.ano = ano;
     project.url = videoUrl;
-    if (creditos) project.creditos = creditos;
-    else delete project.creditos;
 
     const changes: FileChange[] = [];
     let oldAssetToDelete: string | undefined;
@@ -264,9 +261,7 @@ export async function PUT(request: Request, ctx: RouteContext<"/api/admin/projec
     if (categoria === "publicidade") {
       const comercial = project as Comercial;
       comercial.alt = titulo;
-      comercial.sub = creditos?.funcaoBruno
-        ? `${creditos.funcaoBruno} · ${ano}`
-        : `Comercial · ${ano}`;
+      comercial.sub = `Comercial · ${ano}`;
 
       if (logo instanceof File && logo.size > 0) {
         const ext = fileExtension(logo);
@@ -278,7 +273,7 @@ export async function PUT(request: Request, ctx: RouteContext<"/api/admin/projec
       }
     } else {
       const filme = project as Filme;
-      filme.tipo = creditos?.funcaoBruno ?? "Filme e Série";
+      filme.tipo = "Filme e Série";
 
       if (banner instanceof File && banner.size > 0) {
         const ext = fileExtension(banner);

@@ -80,6 +80,60 @@ export default function ProjectList({ data, loading, error, onChanged }: Project
     removeRequest(id, "galeria", undefined, `galeria:${id}`);
   }
 
+  async function reorderRequest(
+    categoria: "publicidade" | "filmes-series",
+    order: string[],
+    busyKeyValue: string
+  ) {
+    setBusyKey(busyKeyValue);
+    setActionError(null);
+    try {
+      const user = auth.currentUser;
+      if (!user) throw new Error("no-user");
+      const idToken = await user.getIdToken();
+      const res = await fetch("/api/admin/projects/reorder", {
+        method: "PUT",
+        headers: {
+          Authorization: `Bearer ${idToken}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ categoria, order }),
+      });
+      const json = await res.json();
+      if (!res.ok) {
+        setActionError(json.error ?? "Erro ao reordenar.");
+        return;
+      }
+      onChanged();
+    } catch {
+      setActionError("Erro de rede ao reordenar.");
+    } finally {
+      setBusyKey(null);
+    }
+  }
+
+  function moveComercial(e: React.MouseEvent, index: number, direction: -1 | 1) {
+    e.stopPropagation();
+    if (!data) return;
+    const list = data.comerciais;
+    const target = index + direction;
+    if (target < 0 || target >= list.length) return;
+    const order = list.map((c) => c.id);
+    [order[index], order[target]] = [order[target], order[index]];
+    reorderRequest("publicidade", order, `comercial-order:${list[index].id}`);
+  }
+
+  function moveFilme(e: React.MouseEvent, index: number, direction: -1 | 1) {
+    e.stopPropagation();
+    if (!data) return;
+    const list = data.filmes;
+    const target = index + direction;
+    if (target < 0 || target >= list.length) return;
+    const order = list.map((f) => f.id);
+    [order[index], order[target]] = [order[target], order[index]];
+    reorderRequest("filmes-series", order, `filme-order:${list[index].id}`);
+  }
+
   return (
     <div className="admin-project-list">
       <h2>Projetos existentes</h2>
@@ -91,7 +145,7 @@ export default function ProjectList({ data, loading, error, onChanged }: Project
         <>
           <h3>{CATEGORIA_LABEL.publicidade}</h3>
           <ul>
-            {data.comerciais.map((c) => (
+            {data.comerciais.map((c, index) => (
               <li key={c.id} className="admin-project-item">
                 <div
                   className="admin-project-item-row admin-project-item-clickable"
@@ -100,13 +154,31 @@ export default function ProjectList({ data, loading, error, onChanged }: Project
                   <span>
                     {c.titulo} ({c.ano})
                   </span>
-                  <button
-                    type="button"
-                    onClick={(e) => handleRemoveComercial(e, c.id, c.titulo)}
-                    disabled={busyKey === `comercial:${c.id}`}
-                  >
-                    {busyKey === `comercial:${c.id}` ? "Removendo..." : "Remover"}
-                  </button>
+                  <div className="admin-item-actions">
+                    <div className="admin-order-btns">
+                      <button
+                        type="button"
+                        onClick={(e) => moveComercial(e, index, -1)}
+                        disabled={index === 0 || busyKey !== null}
+                      >
+                        ▲
+                      </button>
+                      <button
+                        type="button"
+                        onClick={(e) => moveComercial(e, index, 1)}
+                        disabled={index === data.comerciais.length - 1 || busyKey !== null}
+                      >
+                        ▼
+                      </button>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={(e) => handleRemoveComercial(e, c.id, c.titulo)}
+                      disabled={busyKey === `comercial:${c.id}`}
+                    >
+                      {busyKey === `comercial:${c.id}` ? "Removendo..." : "Remover"}
+                    </button>
+                  </div>
                 </div>
                 {c.extras && c.extras.length > 0 && (
                   <ul className="admin-project-extras">
@@ -134,7 +206,7 @@ export default function ProjectList({ data, loading, error, onChanged }: Project
 
           <h3>{CATEGORIA_LABEL["filmes-series"]}</h3>
           <ul>
-            {data.filmes.map((f) => (
+            {data.filmes.map((f, index) => (
               <li
                 key={f.id}
                 className="admin-project-item-clickable"
@@ -143,13 +215,31 @@ export default function ProjectList({ data, loading, error, onChanged }: Project
                 <span>
                   {f.titulo} ({f.ano})
                 </span>
-                <button
-                  type="button"
-                  onClick={(e) => handleRemoveFilme(e, f.id, f.titulo)}
-                  disabled={busyKey === `filme:${f.id}`}
-                >
-                  {busyKey === `filme:${f.id}` ? "Removendo..." : "Remover"}
-                </button>
+                <div className="admin-item-actions">
+                  <div className="admin-order-btns">
+                    <button
+                      type="button"
+                      onClick={(e) => moveFilme(e, index, -1)}
+                      disabled={index === 0 || busyKey !== null}
+                    >
+                      ▲
+                    </button>
+                    <button
+                      type="button"
+                      onClick={(e) => moveFilme(e, index, 1)}
+                      disabled={index === data.filmes.length - 1 || busyKey !== null}
+                    >
+                      ▼
+                    </button>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={(e) => handleRemoveFilme(e, f.id, f.titulo)}
+                    disabled={busyKey === `filme:${f.id}`}
+                  >
+                    {busyKey === `filme:${f.id}` ? "Removendo..." : "Remover"}
+                  </button>
+                </div>
               </li>
             ))}
             {data.filmes.length === 0 && <li>Nenhum projeto.</li>}

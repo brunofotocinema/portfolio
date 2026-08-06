@@ -1,11 +1,5 @@
 import projectsJson from "@/data/projects.json";
 
-export interface Creditos {
-  produtora?: string;
-  direcao?: string;
-  funcaoBruno?: string;
-}
-
 export interface ComercialExtra {
   id: string;
   titulo: string;
@@ -23,7 +17,6 @@ export interface Comercial {
   ano: number;
   zoom?: number;
   banner?: string;
-  creditos?: Creditos;
   extras?: ComercialExtra[];
 }
 
@@ -35,7 +28,6 @@ export interface Filme {
   url: string;
   poster?: string;
   banner?: string;
-  creditos?: Creditos;
 }
 
 export interface ImagemGaleria {
