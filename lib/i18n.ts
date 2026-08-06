@@ -2,7 +2,7 @@ export type Lang = "pt" | "en";
 
 export const translations: Record<Lang, Record<string, string>> = {
   pt: {
-    "nav.trabalhos": "Trabalhos",
+    "nav.trabalhos": "Comerciais",
     "nav.cinema": "Cinema",
     "nav.sobre": "Sobre",
     "nav.contato": "Contato",
