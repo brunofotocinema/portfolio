@@ -393,9 +393,7 @@ section{padding:13vh 5vw}
 }
 
 /* ---------- sobre ---------- */
-.sobre-grid{display:grid;grid-template-columns:.62fr 1.1fr .78fr;gap:5vw;align-items:start}
-.sobre-grid p{font-size:clamp(18px,1.9vw,24px);line-height:1.5;max-width:36ch}
-.sobre-grid p+p{margin-top:1.1em;color:var(--muted);font-size:clamp(15px,1.4vw,18px)}
+.sobre-grid{display:grid;grid-template-columns:.7fr 1fr;gap:5vw;align-items:start}
 .sobre-foto{border-radius:3px;overflow:hidden;aspect-ratio:3/4;background:#141414;border:1px solid rgba(243,241,236,.4)}
 .sobre-foto img{width:100%;height:100%;object-fit:cover;object-position:50% 15%}
 .expertise{list-style:none;border-top:1px solid var(--line)}

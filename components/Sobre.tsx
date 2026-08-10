@@ -16,10 +16,6 @@ export default function Sobre({ about }: { about: AboutContent }) {
           {/* eslint-disable-next-line @next/next/no-img-element -- static profile portrait, no next/image optimization needed */}
           <img src="/fotos/bruno-perfil.jpg" alt="Bruno Homem" />
         </div>
-        <div>
-          <p>{about.p1[lang]}</p>
-          <p>{about.p2[lang]}</p>
-        </div>
         <ul className="expertise">
           {about.expertise.map((item, i) => (
             <li key={i}>
