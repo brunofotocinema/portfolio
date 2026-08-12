@@ -329,6 +329,7 @@ section{padding:13vh 5vw}
 }
 .filmes-row .poster-placeholder{background:transparent}
 .filmes-row .ano{font-size:13px;color:var(--muted)}
+.filmes-row .ano-nota{font-size:10px;letter-spacing:.03em;opacity:.8}
 .filmes-row .titulo{font-family:var(--display);font-weight:600;font-size:clamp(22px,3vw,40px);letter-spacing:-.01em;transition:transform .35s}
 .filmes-row .tipo{font-size:12px;letter-spacing:.04em;color:var(--muted);text-align:right}
 .filmes-row:hover .titulo{transform:translateX(12px)}

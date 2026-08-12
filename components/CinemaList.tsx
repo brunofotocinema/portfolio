@@ -24,7 +24,15 @@ export default function CinemaList({ items }: { items: Filme[] }) {
             ) : (
               <div className="poster poster-placeholder" aria-hidden="true" />
             )}
-            <span className="ano">{f.ano}</span>
+            <span className="ano">
+              {f.ano}
+              {!embedUrl && (
+                <>
+                  <br />
+                  <span className="ano-nota">(gravação)</span>
+                </>
+              )}
+            </span>
             <span className="titulo">{f.titulo}</span>
             <span className="tipo">{f.tipo}</span>
           </div>
