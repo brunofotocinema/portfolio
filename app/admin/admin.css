@@ -95,6 +95,16 @@
   resize: vertical;
 }
 
+.admin-checkbox {
+  flex-direction: row !important;
+  align-items: center;
+  gap: 8px !important;
+}
+
+.admin-checkbox input[type="checkbox"] {
+  width: auto;
+}
+
 .admin-about-block {
   border: 1px solid var(--line);
   border-radius: 8px;

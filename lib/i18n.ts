@@ -11,6 +11,9 @@ export const translations: Record<Lang, Record<string, string>> = {
     "section.cinema": "Cinema",
     "section.galeria": "Galeria",
 
+    "sobre.saiba_mais": "Saiba mais",
+    "sobre.ver_menos": "Ver menos",
+
     "contato.lead": "Próximo projeto?",
 
     "footer.tagline": "Gaffer · Chefe de elétrica",
@@ -26,6 +29,9 @@ export const translations: Record<Lang, Record<string, string>> = {
     "section.comerciais": "Commercials",
     "section.cinema": "Cinema",
     "section.galeria": "Gallery",
+
+    "sobre.saiba_mais": "Learn more",
+    "sobre.ver_menos": "Show less",
 
     "contato.lead": "Next project?",
 

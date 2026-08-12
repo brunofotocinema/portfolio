@@ -9,19 +9,27 @@ export default function CinemaList({ items }: { items: Filme[] }) {
 
   return (
     <div id="lista-filmes">
-      {items.map((f) => (
-        <div key={f.id} className="filmes-row" onClick={() => openModal(toEmbed(f.url))}>
-          <img
-            className="poster"
-            src={f.banner ?? f.poster ?? thumbOf(f.url) ?? undefined}
-            alt={`Pôster de ${f.titulo}`}
-            loading="lazy"
-          />
-          <span className="ano">{f.ano}</span>
-          <span className="titulo">{f.titulo}</span>
-          <span className="tipo">{f.tipo}</span>
-        </div>
-      ))}
+      {items.map((f) => {
+        const posterSrc = f.banner ?? f.poster ?? thumbOf(f.url) ?? undefined;
+        const embedUrl = toEmbed(f.url);
+
+        return (
+          <div
+            key={f.id}
+            className={`filmes-row${embedUrl ? "" : " sem-video"}`}
+            onClick={embedUrl ? () => openModal(embedUrl) : undefined}
+          >
+            {posterSrc ? (
+              <img className="poster" src={posterSrc} alt={`Pôster de ${f.titulo}`} loading="lazy" />
+            ) : (
+              <div className="poster poster-placeholder" aria-hidden="true" />
+            )}
+            <span className="ano">{f.ano}</span>
+            <span className="titulo">{f.titulo}</span>
+            <span className="tipo">{f.tipo}</span>
+          </div>
+        );
+      })}
     </div>
   );
 }

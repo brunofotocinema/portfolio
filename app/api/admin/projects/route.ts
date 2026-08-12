@@ -80,6 +80,7 @@ export async function POST(request: Request) {
   const anoRaw = form.get("ano") as string | null;
   const videoUrl = (form.get("videoUrl") as string | null)?.trim() || undefined;
   const vincularA = (form.get("vincularA") as string | null)?.trim() || undefined;
+  const emFinalizacao = categoria === "filmes-series" && form.get("emFinalizacao") === "true";
   const banner = form.get("banner");
   const logo = form.get("logo");
 
@@ -90,7 +91,7 @@ export async function POST(request: Request) {
   if (!anoRaw || Number.isNaN(ano)) {
     return NextResponse.json({ error: "Ano é obrigatório." }, { status: 400 });
   }
-  if (!videoUrl) {
+  if (!videoUrl && !emFinalizacao) {
     return NextResponse.json({ error: "Link do vídeo é obrigatório." }, { status: 400 });
   }
 
@@ -106,7 +107,7 @@ export async function POST(request: Request) {
         return NextResponse.json({ error: "Logo muito grande (máximo 8MB)." }, { status: 400 });
       }
     }
-  } else {
+  } else if (!emFinalizacao) {
     if (!(banner instanceof File) || banner.size === 0) {
       return NextResponse.json(
         { error: "Banner é obrigatório para Filmes e Séries." },
@@ -116,6 +117,8 @@ export async function POST(request: Request) {
     if (banner.size > MAX_FILE_BYTES) {
       return NextResponse.json({ error: "Banner muito grande (máximo 8MB)." }, { status: 400 });
     }
+  } else if (banner instanceof File && banner.size > MAX_FILE_BYTES) {
+    return NextResponse.json({ error: "Banner muito grande (máximo 8MB)." }, { status: 400 });
   }
 
   try {
@@ -177,22 +180,24 @@ export async function POST(request: Request) {
 
       current.comerciais = [...current.comerciais, novoComercial];
     } else {
-      const bannerFile = banner as File;
-      const bannerExt = fileExtension(bannerFile);
-      const bannerPath = `public/banners/${id}.${bannerExt}`;
-      changes.push({
-        path: bannerPath,
-        content: await fileToBase64(bannerFile),
-        encoding: "base64",
-      });
+      let bannerPath: string | undefined;
+      if (banner instanceof File && banner.size > 0) {
+        const bannerExt = fileExtension(banner);
+        bannerPath = `/banners/${id}.${bannerExt}`;
+        changes.push({
+          path: `public${bannerPath}`,
+          content: await fileToBase64(banner),
+          encoding: "base64",
+        });
+      }
 
       const novoFilme: Filme = {
         id,
         titulo,
         ano,
-        tipo: "Filme e Série",
-        url: videoUrl!,
-        banner: `/banners/${id}.${bannerExt}`,
+        tipo: emFinalizacao ? "Em finalização" : "Filme e Série",
+        ...(videoUrl ? { url: videoUrl } : {}),
+        ...(bannerPath ? { banner: bannerPath } : {}),
       };
 
       current.filmes = [...current.filmes, novoFilme];

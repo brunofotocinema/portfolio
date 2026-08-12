@@ -327,10 +327,13 @@ section{padding:13vh 5vw}
 .filmes-row .poster{
   width:64px;aspect-ratio:2/3;object-fit:cover;border-radius:2px;background:#141414;
 }
+.filmes-row .poster-placeholder{border:1px dashed var(--line)}
 .filmes-row .ano{font-size:13px;color:var(--muted)}
 .filmes-row .titulo{font-family:var(--display);font-weight:600;font-size:clamp(22px,3vw,40px);letter-spacing:-.01em;transition:transform .35s}
 .filmes-row .tipo{font-size:12px;letter-spacing:.04em;color:var(--muted);text-align:right}
 .filmes-row:hover .titulo{transform:translateX(12px)}
+.filmes-row.sem-video{cursor:default}
+.filmes-row.sem-video:hover .titulo{transform:none}
 
 /* ---------- galeria ---------- */
 .galeria-wrap{display:flex;align-items:center;gap:14px}
@@ -404,6 +407,20 @@ section{padding:13vh 5vw}
 }
 .expertise li span:last-child{font-size:12px;color:var(--muted);letter-spacing:.04em;text-align:right}
 
+.sobre-toggle{
+  margin-top:4vh;background:none;border:1px solid var(--line);color:var(--fg);
+  padding:10px 20px;border-radius:4px;font-size:13px;letter-spacing:.04em;cursor:pointer;
+  transition:background .2s,border-color .2s;
+}
+.sobre-toggle:hover{background:rgba(243,241,236,.06);border-color:rgba(243,241,236,.3)}
+
+.sobre-expandido{
+  display:grid;grid-template-columns:.7fr 1fr;gap:5vw;align-items:start;
+  margin-top:5vh;padding-top:5vh;border-top:1px solid var(--line);
+}
+.sobre-texto p{font-size:clamp(18px,1.9vw,24px);line-height:1.5;max-width:36ch}
+.sobre-texto p+p{margin-top:1.1em;color:var(--muted);font-size:clamp(15px,1.4vw,18px)}
+
 /* ---------- contato ---------- */
 .contato .lead{font-size:13px;letter-spacing:.28em;text-transform:uppercase;color:var(--muted);margin-bottom:4vh}
 .contato a.big{
@@ -437,6 +454,7 @@ footer{padding:24px 5vw;border-top:1px solid var(--line);display:flex;justify-co
   .works{grid-template-columns:1fr}
   .card.wide{grid-column:span 1;aspect-ratio:16/9}
   .sobre-grid{grid-template-columns:1fr}
+  .sobre-expandido{grid-template-columns:1fr}
   .sobre-foto{width:min(58vw,260px);margin:0 auto 6vw}
   .filmes-row{grid-template-columns:44px 50px 1fr auto;gap:3vw}
   .filmes-row .poster{width:44px}

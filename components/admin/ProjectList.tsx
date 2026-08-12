@@ -217,10 +217,10 @@ function FilmeRow({
           />
           <input
             type="url"
-            value={filme.url}
+            value={filme.url ?? ""}
             onChange={(e) => onFieldChange("url", e.target.value)}
             disabled={deleted}
-            placeholder="Link do vídeo"
+            placeholder="Link do vídeo (opcional se ainda em finalização)"
           />
           <label className="admin-draft-file">
             Trocar banner

@@ -24,6 +24,7 @@ export default function ProjectForm({ existingComerciais, onCreated }: ProjectFo
   const [logoFile, setLogoFile] = useState<File | null>(null);
   const [bannerFile, setBannerFile] = useState<File | null>(null);
   const [imagemFile, setImagemFile] = useState<File | null>(null);
+  const [emFinalizacao, setEmFinalizacao] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
@@ -37,7 +38,10 @@ export default function ProjectForm({ existingComerciais, onCreated }: ProjectFo
     setLogoFile(null);
     setBannerFile(null);
     setImagemFile(null);
+    setEmFinalizacao(false);
   }
+
+  const isFilmeEmFinalizacao = fields.categoria === "filmes-series" && emFinalizacao;
 
   function validate(): string | null {
     if (fields.categoria === "galeria") {
@@ -47,6 +51,9 @@ export default function ProjectForm({ existingComerciais, onCreated }: ProjectFo
 
     if (!fields.titulo.trim()) return "Título é obrigatório.";
     if (!fields.ano.trim() || Number.isNaN(Number(fields.ano))) return "Ano é obrigatório.";
+
+    if (isFilmeEmFinalizacao) return null;
+
     if (!fields.videoUrl.trim()) return "Link do vídeo é obrigatório.";
 
     if (fields.categoria === "publicidade") {
@@ -89,10 +96,11 @@ export default function ProjectForm({ existingComerciais, onCreated }: ProjectFo
       } else {
         formData.set("titulo", fields.titulo.trim());
         formData.set("ano", fields.ano.trim());
-        formData.set("videoUrl", fields.videoUrl.trim());
+        if (fields.videoUrl.trim()) formData.set("videoUrl", fields.videoUrl.trim());
         if (fields.vincularA) formData.set("vincularA", fields.vincularA);
         if (logoFile) formData.set("logo", logoFile);
         if (bannerFile) formData.set("banner", bannerFile);
+        if (isFilmeEmFinalizacao) formData.set("emFinalizacao", "true");
       }
 
       const res = await fetch("/api/admin/projects", {
@@ -151,7 +159,18 @@ export default function ProjectForm({ existingComerciais, onCreated }: ProjectFo
         </label>
       )}
 
-      {fields.categoria !== "galeria" && (
+      {fields.categoria === "filmes-series" && (
+        <label className="admin-checkbox">
+          <input
+            type="checkbox"
+            checked={emFinalizacao}
+            onChange={(e) => setEmFinalizacao(e.target.checked)}
+          />
+          Ainda sem lançamento (em finalização) — entra só com título e ano, sem banner nem link
+        </label>
+      )}
+
+      {fields.categoria !== "galeria" && !isFilmeEmFinalizacao && (
         <label>
           Link do vídeo (YouTube) *
           <input
@@ -189,7 +208,7 @@ export default function ProjectForm({ existingComerciais, onCreated }: ProjectFo
 
       {fields.categoria === "publicidade" && !fields.vincularA ? (
         <LogoUploader label="Logo (PNG)" required onChange={setLogoFile} />
-      ) : fields.categoria === "filmes-series" ? (
+      ) : fields.categoria === "filmes-series" && !isFilmeEmFinalizacao ? (
         <div className="admin-field">
           <label>
             Banner *

@@ -62,7 +62,7 @@ function isFilmeDraft(v: unknown): v is Filme {
   return (
     isNonEmptyString(o.id) &&
     isNonEmptyString(o.titulo) &&
-    isNonEmptyString(o.url) &&
+    (o.url === undefined || typeof o.url === "string") &&
     isFiniteNumber(o.ano) &&
     isNonEmptyString(o.tipo) &&
     (o.poster === undefined || typeof o.poster === "string") &&
@@ -175,7 +175,7 @@ export async function PUT(request: Request) {
         }
         banner = newPath;
       }
-      finalFilmes.push({ ...input, banner });
+      finalFilmes.push({ ...input, banner, url: input.url?.trim() || undefined });
     }
 
     const newComercialIds = new Set(finalComerciais.map((c) => c.id));
