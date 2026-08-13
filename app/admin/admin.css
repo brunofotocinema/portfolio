@@ -326,25 +326,77 @@ button:disabled {
   overflow-y: auto;
 }
 
-.admin-project-extras {
-  list-style: none;
-  margin-top: 10px;
+.admin-marca-videos {
+  margin-top: 12px;
   padding-left: 14px;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 8px;
   border-left: 2px solid var(--line);
 }
 
-.admin-project-extras li {
+.admin-video-row {
   display: flex;
-  justify-content: space-between;
+  flex-wrap: wrap;
   align-items: center;
+  gap: 8px;
+}
+
+.admin-video-row input {
+  background: rgba(243, 241, 236, 0.06);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 8px 10px;
+  color: var(--fg);
   font-size: 13px;
-  color: var(--muted);
-  padding: 4px 0 4px 10px;
-  border: none;
-  border-radius: 0;
+  font-family: var(--body);
+}
+
+.admin-video-row input:not([type]) {
+  flex: 2;
+  min-width: 140px;
+}
+
+.admin-video-row input[type="number"] {
+  width: 70px;
+}
+
+.admin-video-row input[type="url"] {
+  flex: 2;
+  min-width: 160px;
+}
+
+.admin-video-badge {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--accent);
+  border: 1px solid var(--accent);
+  border-radius: 4px;
+  padding: 3px 8px;
+  flex-shrink: 0;
+}
+
+.admin-video-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.admin-video-actions button {
+  background: transparent;
+  color: var(--fg);
+  border: 1px solid var(--line);
+  padding: 6px 10px;
+  font-size: 12px;
+}
+
+.admin-add-video-btn {
+  align-self: flex-start;
+  background: transparent;
+  color: var(--fg);
+  border: 1px dashed var(--line);
+  padding: 8px 14px;
+  font-size: 13px;
 }
 
 .admin-logo-preview {

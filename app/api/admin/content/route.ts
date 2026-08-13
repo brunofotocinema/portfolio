@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { requireFirebaseUser, UnauthorizedError } from "@/lib/auth-server";
 import { commitFiles, getJsonFile, GithubCommitError, type FileChange } from "@/lib/github";
 import { fileExtension, fileToBase64, MAX_FILE_BYTES } from "@/lib/admin-server-utils";
-import type { Comercial, Filme, SiteData } from "@/lib/data";
+import type { Comercial, ComercialExtra, Filme, SiteData } from "@/lib/data";
 import type { AboutContent, Bilingual } from "@/lib/about";
 
 const DATA_PATH = "data/site.json";
@@ -41,6 +41,17 @@ function isAboutContent(v: unknown): v is AboutContent {
   );
 }
 
+function isExtraDraft(v: unknown): v is ComercialExtra {
+  if (!v || typeof v !== "object") return false;
+  const o = v as Record<string, unknown>;
+  return (
+    isNonEmptyString(o.id) &&
+    isNonEmptyString(o.titulo) &&
+    typeof o.url === "string" &&
+    (o.ano === undefined || isFiniteNumber(o.ano))
+  );
+}
+
 function isComercialDraft(v: unknown): v is ComercialDraft {
   if (!v || typeof v !== "object") return false;
   const o = v as Record<string, unknown>;
@@ -52,7 +63,7 @@ function isComercialDraft(v: unknown): v is ComercialDraft {
     typeof o.logo === "string" &&
     (o.zoom === undefined || typeof o.zoom === "number") &&
     (o.banner === undefined || typeof o.banner === "string") &&
-    (o.extras === undefined || Array.isArray(o.extras))
+    (o.extras === undefined || (Array.isArray(o.extras) && o.extras.every(isExtraDraft)))
   );
 }
 

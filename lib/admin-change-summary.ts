@@ -65,6 +65,30 @@ export function buildChangeSummary(input: ChangeSummaryInput): string[] {
     if (input.pendingLogoFiles[c.id]) {
       lines.push(`Comercial "${c.titulo}": logo substituída`);
     }
+
+    const originalExtrasById = new Map((prev.extras ?? []).map((e) => [e.id, e]));
+    const draftExtrasById = new Map((c.extras ?? []).map((e) => [e.id, e]));
+    for (const [extraId, extra] of draftExtrasById) {
+      const prevExtra = originalExtrasById.get(extraId);
+      if (!prevExtra) {
+        if (extra.url.trim()) {
+          lines.push(`Comercial "${c.titulo}": novo link adicionado ("${extra.titulo}")`);
+        }
+        continue;
+      }
+      if (
+        prevExtra.titulo !== extra.titulo ||
+        prevExtra.ano !== extra.ano ||
+        prevExtra.url !== extra.url
+      ) {
+        lines.push(`Comercial "${c.titulo}": link "${prevExtra.titulo}" editado`);
+      }
+    }
+    for (const [extraId, prevExtra] of originalExtrasById) {
+      if (!draftExtrasById.has(extraId)) {
+        lines.push(`Comercial "${c.titulo}": link "${prevExtra.titulo}" removido`);
+      }
+    }
   }
   for (const id of input.deletedComerciais) {
     const prev = originalComerciaisById.get(id);

@@ -1,7 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
-import { auth } from "@/lib/firebase";
+import { useEffect, useMemo } from "react";
 import type { Comercial, Filme } from "@/lib/data";
 
 type EditableField = "titulo" | "ano" | "url";
@@ -21,7 +20,10 @@ interface ProjectListProps {
   onBannerFileChange: (id: string, file: File | null) => void;
   onToggleDeleteComercial: (id: string) => void;
   onToggleDeleteFilme: (id: string) => void;
-  onExtraRemoved: (comercialId: string, extraId: string) => void;
+  onFieldChangeExtra: (comercialId: string, extraId: string, field: EditableField, value: string) => void;
+  onAddExtra: (comercialId: string) => void;
+  onRemoveExtra: (comercialId: string, extraId: string) => void;
+  onPromoteExtra: (comercialId: string, extraId: string) => void;
 }
 
 function useObjectUrl(file: File | undefined): string | null {
@@ -46,7 +48,10 @@ function ComercialRow({
   onFieldChange,
   onLogoFileChange,
   onToggleDelete,
-  onExtraRemoved,
+  onFieldChangeExtra,
+  onAddExtra,
+  onRemoveExtra,
+  onPromoteExtra,
 }: {
   comercial: Comercial;
   index: number;
@@ -57,44 +62,50 @@ function ComercialRow({
   onFieldChange: (field: EditableField, value: string) => void;
   onLogoFileChange: (file: File | null) => void;
   onToggleDelete: () => void;
-  onExtraRemoved: (extraId: string) => void;
+  onFieldChangeExtra: (extraId: string, field: EditableField, value: string) => void;
+  onAddExtra: () => void;
+  onRemoveExtra: (extraId: string) => void;
+  onPromoteExtra: (extraId: string) => void;
 }) {
   const previewUrl = useObjectUrl(pendingLogo);
-  const [busyExtraId, setBusyExtraId] = useState<string | null>(null);
-  const [extraError, setExtraError] = useState<string | null>(null);
-
-  async function handleRemoveExtra(extraId: string, titulo: string) {
-    if (!confirm(`Remover o vídeo extra "${titulo}"?`)) return;
-    setBusyExtraId(extraId);
-    setExtraError(null);
-    try {
-      const user = auth.currentUser;
-      if (!user) throw new Error("no-user");
-      const idToken = await user.getIdToken();
-      const params = new URLSearchParams({ categoria: "publicidade", parentId: comercial.id });
-      const res = await fetch(
-        `/api/admin/projects/${encodeURIComponent(extraId)}?${params.toString()}`,
-        { method: "DELETE", headers: { Authorization: `Bearer ${idToken}` } }
-      );
-      const json = await res.json();
-      if (!res.ok) {
-        setExtraError(json.error ?? "Erro ao remover.");
-        return;
-      }
-      onExtraRemoved(extraId);
-    } catch {
-      setExtraError("Erro de rede ao remover.");
-    } finally {
-      setBusyExtraId(null);
-    }
-  }
+  const extras = comercial.extras ?? [];
 
   return (
     <li className={`admin-draft-item${deleted ? " admin-draft-item-deleted" : ""}`}>
       <div className="admin-draft-row">
         {/* eslint-disable-next-line @next/next/no-img-element -- small admin list thumbnail */}
         <img className="admin-draft-thumb" src={previewUrl ?? comercial.logo} alt="" />
-        <div className="admin-draft-fields">
+        <label className="admin-draft-file">
+          Trocar logo
+          <input
+            type="file"
+            accept="image/png,image/jpeg,image/webp"
+            disabled={deleted}
+            onChange={(e) => onLogoFileChange(e.target.files?.[0] ?? null)}
+          />
+        </label>
+        <div className="admin-item-actions">
+          <div className="admin-order-btns">
+            <button type="button" onClick={() => onMove(-1)} disabled={index === 0 || deleted}>
+              ▲
+            </button>
+            <button
+              type="button"
+              onClick={() => onMove(1)}
+              disabled={index === total - 1 || deleted}
+            >
+              ▼
+            </button>
+          </div>
+          <button type="button" onClick={onToggleDelete}>
+            {deleted ? "Desfazer" : "Remover"}
+          </button>
+        </div>
+      </div>
+
+      <div className="admin-marca-videos">
+        <div className="admin-video-row">
+          <span className="admin-video-badge">Principal</span>
           <input
             value={comercial.titulo}
             onChange={(e) => onFieldChange("titulo", e.target.value)}
@@ -115,56 +126,45 @@ function ComercialRow({
             disabled={deleted}
             placeholder="Link do vídeo"
           />
-          <label className="admin-draft-file">
-            Trocar logo
+        </div>
+
+        {extras.map((extra) => (
+          <div key={extra.id} className="admin-video-row">
             <input
-              type="file"
-              accept="image/png,image/jpeg,image/webp"
+              value={extra.titulo}
+              onChange={(e) => onFieldChangeExtra(extra.id, "titulo", e.target.value)}
               disabled={deleted}
-              onChange={(e) => onLogoFileChange(e.target.files?.[0] ?? null)}
+              placeholder="Título"
             />
-          </label>
-        </div>
-        <div className="admin-item-actions">
-          <div className="admin-order-btns">
-            <button type="button" onClick={() => onMove(-1)} disabled={index === 0 || deleted}>
-              ▲
-            </button>
-            <button
-              type="button"
-              onClick={() => onMove(1)}
-              disabled={index === total - 1 || deleted}
-            >
-              ▼
-            </button>
-          </div>
-          <button type="button" onClick={onToggleDelete}>
-            {deleted ? "Desfazer" : "Remover"}
-          </button>
-        </div>
-      </div>
-
-      {extraError && <p className="admin-error">{extraError}</p>}
-
-      {comercial.extras && comercial.extras.length > 0 && (
-        <ul className="admin-project-extras">
-          {comercial.extras.map((extra) => (
-            <li key={extra.id}>
-              <span>
-                ↳ {extra.titulo}
-                {extra.ano ? ` (${extra.ano})` : ""}
-              </span>
-              <button
-                type="button"
-                onClick={() => handleRemoveExtra(extra.id, extra.titulo)}
-                disabled={busyExtraId === extra.id}
-              >
-                {busyExtraId === extra.id ? "Removendo..." : "Remover"}
+            <input
+              type="number"
+              value={extra.ano ?? ""}
+              onChange={(e) => onFieldChangeExtra(extra.id, "ano", e.target.value)}
+              disabled={deleted}
+              placeholder="Ano"
+            />
+            <input
+              type="url"
+              value={extra.url}
+              onChange={(e) => onFieldChangeExtra(extra.id, "url", e.target.value)}
+              disabled={deleted}
+              placeholder="Link do vídeo"
+            />
+            <div className="admin-video-actions">
+              <button type="button" onClick={() => onPromoteExtra(extra.id)} disabled={deleted}>
+                Tornar principal
               </button>
-            </li>
-          ))}
-        </ul>
-      )}
+              <button type="button" onClick={() => onRemoveExtra(extra.id)} disabled={deleted}>
+                Remover
+              </button>
+            </div>
+          </div>
+        ))}
+
+        <button type="button" className="admin-add-video-btn" onClick={onAddExtra} disabled={deleted}>
+          + Novo link
+        </button>
+      </div>
     </li>
   );
 }
@@ -269,7 +269,10 @@ export default function ProjectList({
   onBannerFileChange,
   onToggleDeleteComercial,
   onToggleDeleteFilme,
-  onExtraRemoved,
+  onFieldChangeExtra,
+  onAddExtra,
+  onRemoveExtra,
+  onPromoteExtra,
 }: ProjectListProps) {
   return (
     <div className="admin-project-list">
@@ -287,7 +290,12 @@ export default function ProjectList({
             onFieldChange={(field, value) => onFieldChangeComercial(c.id, field, value)}
             onLogoFileChange={(file) => onLogoFileChange(c.id, file)}
             onToggleDelete={() => onToggleDeleteComercial(c.id)}
-            onExtraRemoved={(extraId) => onExtraRemoved(c.id, extraId)}
+            onFieldChangeExtra={(extraId, field, value) =>
+              onFieldChangeExtra(c.id, extraId, field, value)
+            }
+            onAddExtra={() => onAddExtra(c.id)}
+            onRemoveExtra={(extraId) => onRemoveExtra(c.id, extraId)}
+            onPromoteExtra={(extraId) => onPromoteExtra(c.id, extraId)}
           />
         ))}
         {comerciais.length === 0 && <li>Nenhum projeto.</li>}

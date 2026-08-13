@@ -10,7 +10,8 @@ import AboutForm from "@/components/admin/AboutForm";
 import GaleriaList from "@/components/admin/GaleriaList";
 import SaveReviewModal from "@/components/admin/SaveReviewModal";
 import { buildChangeSummary } from "@/lib/admin-change-summary";
-import type { Comercial, Filme, ImagemGaleria, SiteData } from "@/lib/data";
+import { slugify, uniqueSlug } from "@/lib/slugify";
+import type { Comercial, ComercialExtra, Filme, ImagemGaleria, SiteData } from "@/lib/data";
 import type { AboutContent } from "@/lib/about";
 import "./admin.css";
 
@@ -190,7 +191,48 @@ export default function AdminPage() {
     });
   }
 
-  function extraRemoved(comercialId: string, extraId: string) {
+  function fieldChangeExtra(
+    comercialId: string,
+    extraId: string,
+    field: EditableField,
+    value: string
+  ) {
+    setDraftComerciais(
+      (prev) =>
+        prev?.map((c) =>
+          c.id !== comercialId
+            ? c
+            : {
+                ...c,
+                extras: (c.extras ?? []).map((e) =>
+                  e.id === extraId
+                    ? { ...e, [field]: field === "ano" ? Number(value) || undefined : value }
+                    : e
+                ),
+              }
+        ) ?? prev
+    );
+  }
+
+  function addExtra(comercialId: string) {
+    setDraftComerciais((prev) => {
+      if (!prev) return prev;
+      const comercial = prev.find((c) => c.id === comercialId);
+      if (!comercial) return prev;
+      const existingExtraIds = prev.flatMap((c) => (c.extras ?? []).map((e) => e.id));
+      const newExtra: ComercialExtra = {
+        id: uniqueSlug(slugify(comercial.titulo || "video"), existingExtraIds),
+        titulo: comercial.titulo,
+        ano: comercial.ano,
+        url: "",
+      };
+      return prev.map((c) =>
+        c.id === comercialId ? { ...c, extras: [...(c.extras ?? []), newExtra] } : c
+      );
+    });
+  }
+
+  function removeExtra(comercialId: string, extraId: string) {
     setDraftComerciais(
       (prev) =>
         prev?.map((c) =>
@@ -198,6 +240,27 @@ export default function AdminPage() {
             ? { ...c, extras: (c.extras ?? []).filter((e) => e.id !== extraId) }
             : c
         ) ?? prev
+    );
+  }
+
+  function promoteExtra(comercialId: string, extraId: string) {
+    setDraftComerciais((prev) =>
+      prev?.map((c) => {
+        if (c.id !== comercialId) return c;
+        const extras = c.extras ?? [];
+        const idx = extras.findIndex((e) => e.id === extraId);
+        if (idx === -1) return c;
+        const extra = extras[idx];
+        const nextExtras = [...extras];
+        nextExtras[idx] = { ...extra, titulo: c.titulo, ano: c.ano, url: c.url };
+        return {
+          ...c,
+          titulo: extra.titulo,
+          ano: extra.ano ?? c.ano,
+          url: extra.url,
+          extras: nextExtras,
+        };
+      }) ?? prev
     );
   }
 
@@ -263,10 +326,13 @@ export default function AdminPage() {
       const idToken = await user.getIdToken();
       const formData = new FormData();
       formData.set("about", JSON.stringify(draftAbout));
-      formData.set(
-        "comerciais",
-        JSON.stringify(draftComerciais.filter((c) => !deletedComerciais.has(c.id)))
-      );
+      const comerciaisToSave = draftComerciais
+        .filter((c) => !deletedComerciais.has(c.id))
+        .map((c) => ({
+          ...c,
+          extras: (c.extras ?? []).filter((e) => e.url.trim().length > 0),
+        }));
+      formData.set("comerciais", JSON.stringify(comerciaisToSave));
       formData.set(
         "filmes",
         JSON.stringify(draftFilmes.filter((f) => !deletedFilmes.has(f.id)))
@@ -357,7 +423,7 @@ export default function AdminPage() {
             </div>
           </div>
 
-          <ProjectForm existingComerciais={draftComerciais} onCreated={handleProjectCreated} />
+          <ProjectForm onCreated={handleProjectCreated} />
 
           <ProjectList
             comerciais={draftComerciais}
@@ -374,7 +440,10 @@ export default function AdminPage() {
             onBannerFileChange={bannerFileChange}
             onToggleDeleteComercial={toggleDeleteComercial}
             onToggleDeleteFilme={toggleDeleteFilme}
-            onExtraRemoved={extraRemoved}
+            onFieldChangeExtra={fieldChangeExtra}
+            onAddExtra={addExtra}
+            onRemoveExtra={removeExtra}
+            onPromoteExtra={promoteExtra}
           />
 
           <AboutForm value={draftAbout} onChange={setDraftAbout} />
