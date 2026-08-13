@@ -63,6 +63,26 @@
   },
   "comerciais": [
     {
+      "id": "arezzo",
+      "logo": "/logos/arezzo.png",
+      "alt": "Arezzo",
+      "titulo": "Arezzo",
+      "sub": "Comercial · 2026",
+      "url": "https://vimeo.com/1218064755",
+      "ano": 2026,
+      "extras": []
+    },
+    {
+      "id": "vivara",
+      "logo": "/logos/vivara.png",
+      "alt": "Vivara",
+      "titulo": "Vivara",
+      "sub": "Comercial · 2026",
+      "url": "https://vimeo.com/1216508277",
+      "ano": 2026,
+      "extras": []
+    },
+    {
       "id": "natura",
       "logo": "/logos/natura.png",
       "alt": "Natura",
@@ -153,25 +173,6 @@
       "url": "https://www.youtube.com/watch?is=hIQXZ26CH0lbD4bJ&v=bM8IraTNOgo&feature=youtu.be",
       "ano": 2024,
       "extras": []
-    },
-    {
-      "id": "arezzo",
-      "logo": "/logos/arezzo.png",
-      "alt": "Arezzo",
-      "titulo": "Arezzo",
-      "sub": "Comercial · 2026",
-      "url": "https://vimeo.com/1218064755",
-      "ano": 2026,
-      "extras": []
-    },
-    {
-      "id": "vivara",
-      "logo": "/logos/vivara.png",
-      "alt": "Vivara",
-      "titulo": "Vivara",
-      "sub": "Comercial · 2026",
-      "url": "https://vimeo.com/1216508277",
-      "ano": 2026
     }
   ],
   "filmes": [
