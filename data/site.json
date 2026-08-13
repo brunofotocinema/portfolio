@@ -69,7 +69,8 @@
       "titulo": "Natura",
       "sub": "Comercial · 2023",
       "url": "https://www.youtube.com/watch?v=ZqzhNZJse2I",
-      "ano": 2023
+      "ano": 2023,
+      "extras": []
     },
     {
       "id": "heineken-campanha",
@@ -79,7 +80,8 @@
       "sub": "Comercial · 2023",
       "url": "https://www.youtube.com/watch?v=E0fSp_YdvwQ",
       "zoom": 1.35,
-      "ano": 2023
+      "ano": 2023,
+      "extras": []
     },
     {
       "id": "bradesco",
@@ -88,7 +90,8 @@
       "titulo": "Bradesco",
       "sub": "Comercial · 2025",
       "url": "https://www.youtube.com/watch?v=1A9PslUFGWE",
-      "ano": 2025
+      "ano": 2025,
+      "extras": []
     },
     {
       "id": "tomford-ss24",
@@ -97,7 +100,8 @@
       "titulo": "TOM FORD",
       "sub": "Comercial · 2024",
       "url": "https://player.vimeo.com/video/924696462?autoplay=1&loop=1&controls=1&muted=0",
-      "ano": 2024
+      "ano": 2024,
+      "extras": []
     },
     {
       "id": "itau-comercial",
@@ -107,7 +111,8 @@
       "sub": "Comercial · 2023",
       "url": "https://www.youtube.com/watch?v=BXdRo9fCL-I",
       "zoom": 1.5,
-      "ano": 2023
+      "ano": 2023,
+      "extras": []
     },
     {
       "id": "i-food",
@@ -116,7 +121,8 @@
       "titulo": "i Food",
       "sub": "Comercial · 2026",
       "url": "https://vimeo.com/1213942714",
-      "ano": 2026
+      "ano": 2026,
+      "extras": []
     },
     {
       "id": "fiat",
@@ -125,7 +131,8 @@
       "titulo": "FIAT",
       "sub": "Comercial · 2025",
       "url": "https://www.youtube.com/watch?v=OJlbTfdJQE0&t=9s",
-      "ano": 2025
+      "ano": 2025,
+      "extras": []
     },
     {
       "id": "riot",
@@ -134,7 +141,8 @@
       "titulo": "Riot Games",
       "sub": "Comercial · 2024",
       "url": "https://vimeo.com/879617737",
-      "ano": 2024
+      "ano": 2024,
+      "extras": []
     },
     {
       "id": "guarana",
@@ -143,7 +151,8 @@
       "titulo": "Guaraná",
       "sub": "Comercial · 2024",
       "url": "https://www.youtube.com/watch?is=hIQXZ26CH0lbD4bJ&v=bM8IraTNOgo&feature=youtu.be",
-      "ano": 2024
+      "ano": 2024,
+      "extras": []
     },
     {
       "id": "arezzo",
@@ -151,16 +160,9 @@
       "alt": "Arezzo",
       "titulo": "Arezzo",
       "sub": "Comercial · 2026",
-      "url": "https://vimeo.com/1216508277",
+      "url": "https://vimeo.com/1218064755",
       "ano": 2026,
-      "extras": [
-        {
-          "id": "arezzo",
-          "titulo": "Arezzo",
-          "url": "https://vimeo.com/1218064755",
-          "ano": 2026
-        }
-      ]
+      "extras": []
     }
   ],
   "filmes": [
