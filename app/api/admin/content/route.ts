@@ -154,19 +154,41 @@ export async function PUT(request: Request) {
     for (const input of comerciaisInput) {
       const prev = currentComerciaisById.get(input.id);
       let logo = prev?.logo ?? input.logo;
-      const file = logoFiles.get(input.id);
-      if (file) {
-        const ext = fileExtension(file);
+      const logoFile = logoFiles.get(input.id);
+      if (logoFile) {
+        const ext = fileExtension(logoFile);
         const newPath = `/logos/${input.id}.${ext}`;
-        assetWrites.push({ path: `public${newPath}`, content: await fileToBase64(file), encoding: "base64" });
+        assetWrites.push({
+          path: `public${newPath}`,
+          content: await fileToBase64(logoFile),
+          encoding: "base64",
+        });
         if (prev?.logo && prev.logo !== newPath) {
           assetDeletes.push({ path: `public${prev.logo}`, delete: true });
         }
         logo = newPath;
       }
+
+      let banner = input.banner ?? prev?.banner;
+      const bannerFile = bannerFiles.get(input.id);
+      if (bannerFile) {
+        const ext = fileExtension(bannerFile);
+        const newPath = `/banners/${input.id}.${ext}`;
+        assetWrites.push({
+          path: `public${newPath}`,
+          content: await fileToBase64(bannerFile),
+          encoding: "base64",
+        });
+        if (prev?.banner && prev.banner !== newPath) {
+          assetDeletes.push({ path: `public${prev.banner}`, delete: true });
+        }
+        banner = newPath;
+      }
+
       finalComerciais.push({
         ...input,
         logo,
+        banner,
         alt: input.titulo,
         sub: `Comercial · ${input.ano}`,
       });

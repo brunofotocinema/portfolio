@@ -70,7 +70,8 @@
       "sub": "Comercial · 2026",
       "url": "https://vimeo.com/1218064755",
       "ano": 2026,
-      "extras": []
+      "extras": [],
+      "banner": "/banners/arezzo.jpg"
     },
     {
       "id": "vivara",
@@ -80,7 +81,8 @@
       "sub": "Comercial · 2026",
       "url": "https://vimeo.com/1216508277",
       "ano": 2026,
-      "extras": []
+      "extras": [],
+      "banner": "/banners/vivara.jpg"
     },
     {
       "id": "natura",

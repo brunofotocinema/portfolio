@@ -44,9 +44,11 @@ function ComercialRow({
   total,
   deleted,
   pendingLogo,
+  pendingBanner,
   onMove,
   onFieldChange,
   onLogoFileChange,
+  onBannerFileChange,
   onToggleDelete,
   onFieldChangeExtra,
   onAddExtra,
@@ -58,9 +60,11 @@ function ComercialRow({
   total: number;
   deleted: boolean;
   pendingLogo: File | undefined;
+  pendingBanner: File | undefined;
   onMove: (direction: -1 | 1) => void;
   onFieldChange: (field: EditableField, value: string) => void;
   onLogoFileChange: (file: File | null) => void;
+  onBannerFileChange: (file: File | null) => void;
   onToggleDelete: () => void;
   onFieldChangeExtra: (extraId: string, field: EditableField, value: string) => void;
   onAddExtra: () => void;
@@ -68,6 +72,7 @@ function ComercialRow({
   onPromoteExtra: (extraId: string) => void;
 }) {
   const previewUrl = useObjectUrl(pendingLogo);
+  const bannerPreviewUrl = useObjectUrl(pendingBanner);
   const extras = comercial.extras ?? [];
 
   return (
@@ -82,6 +87,21 @@ function ComercialRow({
             accept="image/png,image/jpeg,image/webp"
             disabled={deleted}
             onChange={(e) => onLogoFileChange(e.target.files?.[0] ?? null)}
+          />
+        </label>
+        {/* eslint-disable-next-line @next/next/no-img-element -- small admin list thumbnail */}
+        <img
+          className="admin-draft-thumb"
+          src={bannerPreviewUrl ?? comercial.banner ?? undefined}
+          alt=""
+        />
+        <label className="admin-draft-file">
+          Trocar thumbnail do card
+          <input
+            type="file"
+            accept="image/png,image/jpeg,image/webp"
+            disabled={deleted}
+            onChange={(e) => onBannerFileChange(e.target.files?.[0] ?? null)}
           />
         </label>
         <div className="admin-item-actions">
@@ -286,9 +306,11 @@ export default function ProjectList({
             total={comerciais.length}
             deleted={deletedComerciais.has(c.id)}
             pendingLogo={pendingLogoFiles[c.id]}
+            pendingBanner={pendingBannerFiles[c.id]}
             onMove={(direction) => onMoveComercial(index, direction)}
             onFieldChange={(field, value) => onFieldChangeComercial(c.id, field, value)}
             onLogoFileChange={(file) => onLogoFileChange(c.id, file)}
+            onBannerFileChange={(file) => onBannerFileChange(c.id, file)}
             onToggleDelete={() => onToggleDeleteComercial(c.id)}
             onFieldChangeExtra={(extraId, field, value) =>
               onFieldChangeExtra(c.id, extraId, field, value)

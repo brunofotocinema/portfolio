@@ -65,6 +65,9 @@ export function buildChangeSummary(input: ChangeSummaryInput): string[] {
     if (input.pendingLogoFiles[c.id]) {
       lines.push(`Comercial "${c.titulo}": logo substituída`);
     }
+    if (input.pendingBannerFiles[c.id]) {
+      lines.push(`Comercial "${c.titulo}": thumbnail do card substituída`);
+    }
 
     const originalExtrasById = new Map((prev.extras ?? []).map((e) => [e.id, e]));
     const draftExtrasById = new Map((c.extras ?? []).map((e) => [e.id, e]));
