@@ -97,30 +97,41 @@ GitHub**, que dispara um deploy automático na Vercel (o site leva ~1–2 min pr
 
 O painel tem dois modelos de salvamento diferentes, por design:
 
-1. **Adicionar projeto novo** (comercial, filme/série ou imagem de galeria) — formulário no topo do
-   painel. Cada envio **commita na hora**, um projeto por vez.
+1. **Adicionar projeto novo** (marca nova em Comerciais, filme/série ou imagem de galeria) —
+   formulário no topo do painel. Cada envio **commita na hora**, um projeto por vez. Em Comerciais,
+   esse formulário serve só pra criar marca nova (título, logo, ano, link) — acrescentar mais um
+   vídeo a uma marca que já existe é outro fluxo (ver abaixo).
 2. **Tudo o mais** (reordenar comerciais/filmes, editar título/ano/link/imagem de um projeto
-   existente, remover um projeto, editar a seção Sobre) fica num **rascunho local no navegador**.
-   Nada disso vai pro GitHub até o usuário clicar em "Revisar e salvar", conferir a lista de
-   mudanças numa tela somente-leitura, e confirmar em **"Comitar"** (ou desistir em "Cancelar").
-   Isso garante que várias edições viram **um único commit**.
+   existente, gerenciar os vídeos de uma marca, remover um projeto, editar a seção Sobre) fica num
+   **rascunho local no navegador**. Nada disso vai pro GitHub até o usuário clicar em "Revisar e
+   salvar", conferir a lista de mudanças numa tela somente-leitura, e confirmar em **"Comitar"**
+   (ou desistir em "Cancelar"). Isso garante que várias edições viram **um único commit**.
 
 As seções aparecem no painel na mesma ordem em que aparecem no site: **Comerciais → Filmes e
 Séries → Sobre → Galeria**.
 
 ### O que ele faz
 
-- Adicionar comercial, filme/série ou imagem de galeria (com upload de logo/banner/imagem).
-- Vincular um vídeo extra a uma marca/comercial já existente (aparece como card secundário).
+- Adicionar marca nova em Comerciais, filme/série ou imagem de galeria (com upload de
+  logo/banner/imagem).
+- Cadastrar um filme/série ainda sem lançamento: um checkbox "Ainda sem lançamento (em
+  finalização)" dispensa banner e link, pede só título e ano. No site público esses projetos
+  aparecem sem pôster, com "Em finalização" no lugar do tipo e "(Filmagem)" ao lado do ano.
+- Em cada card de marca já existente (ex.: "Arezzo"), gerenciar todos os vídeos dela juntos: o
+  vídeo **Principal** (o que aparece no card do site) e os **secundários** (que aparecem como cards
+  extras dentro do player, ao lado do vídeo, quando alguém clica na marca no site) — todos com
+  título/ano/link editáveis. Um botão **"Tornar principal"** troca um vídeo secundário pelo
+  principal, e **"+ Novo link"** acrescenta mais um vídeo à marca.
 - Reordenar comerciais e filmes (setas ▲▼) — a ordem manual é o que o site público exibe.
 - Editar título, ano, link do vídeo e trocar a imagem de um comercial/filme existente, direto na
   lista (sem abrir modal).
 - Marcar um comercial/filme para remoção, com opção de desfazer antes de salvar.
 - Editar os dois parágrafos (PT/EN) e a lista de destaques da seção Sobre — incluindo adicionar,
-  remover e reordenar destaques. (Hoje os parágrafos ficam ocultos no site público — só a tabela de
-  destaques aparece — mas continuam editáveis no painel para o caso de voltarem a ser exibidos.)
-- Editar/remover imagens da galeria e vídeos extra de uma marca (esses continuam com ação imediata,
-  não entram no rascunho).
+  remover e reordenar destaques. (Hoje os parágrafos e as fotos ficam ocultos no site público atrás
+  de um botão "Saiba mais" — só a tabela de destaques fica sempre visível — mas continuam editáveis
+  no painel normalmente.)
+- Editar/remover imagens da galeria (esse é o único conteúdo que ainda tem ação imediata, fora do
+  rascunho).
 - Revisar, num único lugar, tudo que vai ser commitado antes de confirmar.
 
 ### O que ele **não** faz
@@ -133,9 +144,10 @@ Séries → Sobre → Galeria**.
   Authentication — não existe tela de cadastro/convite no site.
 - **Não garante um único commit quando envolve trocar imagem.** A API do GitHub usada (Contents
   API, compatível com o token fine-grained deste repositório) só aceita **um arquivo por commit**.
-  Então: mudanças de texto/ordem/data sempre viram exatamente 1 commit; se além disso uma imagem for
-  trocada ou um projeto com imagem for removido, isso soma +1 commit por arquivo de imagem — tudo
-  ainda sai de um único clique em "Comitar", só não é literalmente um commit no Git.
+  Então: mudanças de texto/ordem/data/vídeos de marca sempre viram exatamente 1 commit; se além
+  disso uma imagem for trocada ou um projeto com imagem for removido, isso soma +1 commit por
+  arquivo de imagem — tudo ainda sai de um único clique em "Comitar", só não é literalmente um
+  commit no Git.
 - **Não valida o conteúdo do vídeo** além de checar se os campos obrigatórios foram preenchidos.
   Vale conferir visualmente no site depois do deploy.
 
