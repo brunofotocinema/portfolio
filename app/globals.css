@@ -289,36 +289,6 @@ section{padding:13vh 5vw}
 .card:hover .meta{opacity:1;transform:none}
 .card:hover .play{opacity:1;transform:scale(1)}
 
-/* ---------- extras soltos (mais vídeos de uma marca) ---------- */
-.works-extra{
-  display:flex;flex-wrap:wrap;gap:16px;
-  margin-top:32px;padding-top:26px;
-  border-top:1px dashed var(--line);
-}
-.extra-card{
-  position:relative;overflow:hidden;cursor:pointer;
-  width:200px;aspect-ratio:16/9;border-radius:3px;background:#141414;
-  transform:rotate(-1.5deg);transition:transform .25s;
-}
-.extra-card:nth-child(even){transform:rotate(1.5deg)}
-.extra-card:hover{transform:rotate(0deg) scale(1.03)}
-.extra-card > img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
-.extra-card .shade{
-  position:absolute;inset:0;
-  background:linear-gradient(to top, rgba(10,10,11,.65), rgba(10,10,11,.15) 55%, rgba(10,10,11,.3));
-}
-.extra-card .logo{
-  position:absolute;left:8px;top:8px;width:32px;height:32px;border-radius:50%;
-  background:rgba(20,20,20,.75);display:flex;align-items:center;justify-content:center;overflow:hidden;
-}
-.extra-card .logo img{max-width:70%;max-height:70%;object-fit:contain}
-.extra-card .meta{
-  position:absolute;left:8px;right:8px;bottom:6px;z-index:3;
-  display:flex;flex-direction:column;
-}
-.extra-card .meta .t{font-family:var(--display);font-weight:600;font-size:12px;color:var(--overlay-fg)}
-.extra-card .meta .s{font-size:10px;color:var(--overlay-muted);letter-spacing:.03em}
-
 /* ---------- cinema ---------- */
 .filmes-row{
   display:grid;grid-template-columns:64px 78px 1fr auto;align-items:center;gap:4vw;
@@ -440,10 +410,40 @@ footer{padding:24px 5vw;border-top:1px solid var(--line);display:flex;justify-co
 .modal{position:fixed;inset:0;z-index:300;display:none;align-items:center;justify-content:center;background:rgba(10,10,11,.95);padding:5vw}
 .modal.open{display:flex;animation:mfade .25s}
 @keyframes mfade{from{opacity:0}to{opacity:1}}
-.modal-box{width:min(1080px,100%);aspect-ratio:16/9;position:relative;background:#000;border-radius:3px;overflow:hidden}
+.modal-content{display:flex;align-items:center;justify-content:center;gap:24px;width:100%;max-width:1280px}
+.modal-box{width:min(1080px,100%);aspect-ratio:16/9;position:relative;background:#000;border-radius:3px;overflow:hidden;flex-shrink:0}
+.modal-content-with-related .modal-box{width:min(760px,58vw)}
 .modal-box iframe{width:100%;height:100%;border:0}
 .modal-close{position:absolute;top:-42px;right:0;background:none;border:0;color:var(--overlay-fg);cursor:pointer;font-size:13px;letter-spacing:.1em}
 .modal-close:hover{color:var(--overlay-muted)}
+
+.modal-related{
+  display:flex;flex-direction:column;gap:12px;width:220px;flex-shrink:0;
+  max-height:min(760px,80vh);overflow-y:auto;scrollbar-width:thin;
+}
+.modal-related-card{
+  position:relative;overflow:hidden;cursor:pointer;display:block;
+  width:100%;aspect-ratio:16/9;border-radius:3px;background:#141414;
+  padding:0;border:1px solid transparent;flex-shrink:0;transition:border-color .2s;
+}
+.modal-related-card:hover{border-color:rgba(243,241,236,.3)}
+.modal-related-card.active{border-color:var(--accent)}
+.modal-related-card > img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.modal-related-card .shade{
+  position:absolute;inset:0;
+  background:linear-gradient(to top, rgba(10,10,11,.65), rgba(10,10,11,.15) 55%, rgba(10,10,11,.3));
+}
+.modal-related-card .logo{
+  position:absolute;left:8px;top:8px;width:28px;height:28px;border-radius:50%;
+  background:rgba(20,20,20,.75);display:flex;align-items:center;justify-content:center;overflow:hidden;
+}
+.modal-related-card .logo img{max-width:70%;max-height:70%;object-fit:contain}
+.modal-related-card .meta{
+  position:absolute;left:8px;right:8px;bottom:6px;
+  display:flex;flex-direction:column;text-align:left;
+}
+.modal-related-card .meta .t{font-family:var(--display);font-weight:600;font-size:12px;color:var(--overlay-fg)}
+.modal-related-card .meta .s{font-size:10px;color:var(--overlay-muted);letter-spacing:.03em}
 
 @media (max-width:800px){
   header.site{padding:14px 4vw}
@@ -459,4 +459,8 @@ footer{padding:24px 5vw;border-top:1px solid var(--line);display:flex;justify-co
   .sobre-fotos{max-width:340px;margin:0 auto 6vw}
   .filmes-row{grid-template-columns:44px 50px 1fr auto;gap:3vw}
   .filmes-row .poster{width:44px}
+  .modal-content{flex-direction:column;gap:16px}
+  .modal-content-with-related .modal-box{width:100%}
+  .modal-related{flex-direction:row;width:100%;max-height:none;overflow-x:auto;overflow-y:visible}
+  .modal-related-card{width:140px}
 }

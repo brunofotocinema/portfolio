@@ -19,7 +19,7 @@ export default function CinemaList({ items }: { items: Filme[] }) {
           <div
             key={f.id}
             className={`filmes-row${embedUrl ? "" : " sem-video"}`}
-            onClick={embedUrl ? () => openModal(embedUrl) : undefined}
+            onClick={embedUrl ? () => openModal({ embedUrl }) : undefined}
           >
             {posterSrc ? (
               <img className="poster" src={posterSrc} alt={`Pôster de ${f.titulo}`} loading="lazy" />
