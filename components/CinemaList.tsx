@@ -3,9 +3,11 @@
 import type { Filme } from "@/lib/data";
 import { toEmbed, thumbOf } from "@/lib/video-utils";
 import { useModal } from "./ModalProvider";
+import { useLanguage } from "@/lib/language-context";
 
 export default function CinemaList({ items }: { items: Filme[] }) {
   const { openModal } = useModal();
+  const { t } = useLanguage();
 
   return (
     <div id="lista-filmes">
@@ -29,12 +31,12 @@ export default function CinemaList({ items }: { items: Filme[] }) {
               {!embedUrl && (
                 <>
                   <br />
-                  <span className="ano-nota">(gravação)</span>
+                  <span className="ano-nota">({t("cinema.gravacao")})</span>
                 </>
               )}
             </span>
             <span className="titulo">{f.titulo}</span>
-            <span className="tipo">{f.tipo}</span>
+            <span className="tipo">{embedUrl ? f.tipo : t("cinema.em_finalizacao")}</span>
           </div>
         );
       })}
