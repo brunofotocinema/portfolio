@@ -15,7 +15,7 @@ export const translations: Record<Lang, Record<string, string>> = {
     "sobre.ver_menos": "Ver menos",
 
     "cinema.em_finalizacao": "Em finalização",
-    "cinema.gravacao": "gravação",
+    "cinema.gravacao": "Filmagem",
 
     "contato.lead": "Próximo projeto?",
 
