@@ -198,12 +198,16 @@ pelo TMDB, que aceita o código do IMDb (`tt…`) diretamente.
 - **Pôster:** é guardado como link para `image.tmdb.org`, não como arquivo no repositório. Se um
   dia o TMDB trocar a imagem, o pôster quebra; nesse caso, basta enviar um banner pelo painel. Ao
   remover um filme, o painel só apaga do repositório imagens que são arquivos locais.
-- **No site:** a lista mostra o diretor na coluna da direita (filme não lançado e sem direção
-  mostra "Em finalização"). Só abrem ao clicar os filmes com vídeo ou link do IMDb. O modal mostra o player (ou o pôster, se não houver vídeo) e a ficha: título, ano,
+- **No site:** a lista mostra direção e DOP (direção de fotografia) na coluna da direita (filme não
+  lançado e sem esses dados mostra "Em finalização"). Só abrem ao clicar os filmes com vídeo ou link do IMDb. O modal mostra o player (ou o pôster, se não houver vídeo) e a ficha: título, ano,
   "Longa-metragem" ou "Curta-metragem" (até 40 min é curta), direção, direção de fotografia,
   produtora e "Ver no IMDb".
 - **Crédito obrigatório:** os termos de uso da API do TMDB exigem atribuição. Está no rodapé do
   site (logo em `public/tmdb.svg` + aviso em PT/EN). Não remover enquanto a integração existir.
+- **Mais de um cadastro por código:** o mesmo código do IMDb às vezes está ligado a mais de um
+  registro no TMDB (por exemplo, um "filme" vazio e a série de verdade). A busca consulta todos e
+  fica com o que tiver mais campos preenchidos. Em série sem diretores cadastrados, o campo
+  direção recebe quem criou a série.
 - **Qualidade dos dados:** o TMDB é colaborativo. Em produções menores pode faltar a direção de
   fotografia ou a produtora. Por isso os campos ficam editáveis antes de salvar.
 

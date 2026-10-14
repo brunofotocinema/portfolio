@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import type { Comercial, Filme } from "@/lib/data";
-import { buscarFichaImdb, type FichaFilme } from "@/lib/imdb-client";
+import { buscarFichaImdb, fichaVazia, type FichaFilme } from "@/lib/imdb-client";
 
 type EditableField = "titulo" | "ano" | "url";
 export type FilmeField = EditableField | "imdb" | "direcao" | "fotografia" | "produtora";
@@ -223,8 +223,13 @@ function FilmeRow({
     setBuscando(true);
     setBuscaMsg(null);
     try {
-      onApplyFicha(await buscarFichaImdb(filme.imdb ?? ""));
-      setBuscaMsg({ ok: true, text: "Ficha atualizada (título e ano mantidos)." });
+      const ficha = await buscarFichaImdb(filme.imdb ?? "");
+      onApplyFicha(ficha);
+      setBuscaMsg(
+        fichaVazia(ficha)
+          ? { ok: false, text: "O TMDB ainda não tem a ficha desse título. Só o link do IMDb foi guardado; preencha o resto à mão." }
+          : { ok: true, text: "Ficha atualizada (título e ano mantidos)." }
+      );
     } catch (err) {
       setBuscaMsg({ ok: false, text: err instanceof Error ? err.message : "Falha na busca." });
     } finally {

@@ -15,3 +15,8 @@ export async function buscarFichaImdb(imdbUrl: string): Promise<FichaFilme> {
   if (!res.ok) throw new Error(json.error ?? "Não foi possível buscar no IMDb.");
   return json as FichaFilme;
 }
+
+/** TMDB found the title but has nothing beyond its name (common for new Brazilian releases). */
+export function fichaVazia(f: FichaFilme): boolean {
+  return !f.direcao && !f.fotografia && !f.produtora && !f.poster && !f.duracao;
+}

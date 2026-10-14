@@ -4,7 +4,7 @@ import { useState } from "react";
 import { auth } from "@/lib/firebase";
 import LogoUploader from "./LogoUploader";
 import { CATEGORIA_LABEL, type Categoria } from "@/lib/admin-types";
-import { buscarFichaImdb } from "@/lib/imdb-client";
+import { buscarFichaImdb, fichaVazia } from "@/lib/imdb-client";
 import type { Comercial } from "@/lib/data";
 
 interface ProjectFormProps {
@@ -92,6 +92,9 @@ export default function ProjectForm({ marcas, onCreated }: ProjectFormProps) {
       setPoster(ficha.poster ?? null);
       setDuracao(ficha.duracao ?? null);
       setFichaAberta(true);
+      if (fichaVazia(ficha)) {
+        setError("O TMDB ainda não tem a ficha desse título. Preencha os campos abaixo à mão.");
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Não foi possível buscar no IMDb.");
     } finally {
