@@ -44,8 +44,11 @@ export default function Sobre({ about }: { about: AboutContent }) {
             </div>
           </div>
           <div className="sobre-texto">
-            <p>{about.p1[lang]}</p>
-            <p>{about.p2[lang]}</p>
+            {[about.p1[lang], about.p2[lang]]
+              .flatMap((text) => text.split(/\n\s*\n/))
+              .map((para, i) => (
+                <p key={i}>{para}</p>
+              ))}
           </div>
         </div>
       )}
