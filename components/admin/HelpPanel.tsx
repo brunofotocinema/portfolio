@@ -83,20 +83,31 @@ export default function HelpPanel() {
             </details>
 
             <details>
-              <summary>Adicionar um comercial (marca nova)</summary>
+              <summary>Adicionar um comercial</summary>
               <ol>
                 <li>Em Adicionar, clique em <strong>Comerciais</strong>.</li>
-                <li>Preencha nome da marca, ano, link do vídeo (YouTube ou Vimeo) e a logo em PNG.</li>
                 <li>
-                  Se a logo tiver fundo, dá pra remover o fundo ali mesmo antes de confirmar.
+                  Responda se é uma <strong>marca nova</strong>.
+                </li>
+                <li>
+                  <strong>Se a marca já está no site:</strong> escolha a marca na lista, dê um nome
+                  ao vídeo (por exemplo, o nome da campanha) e preencha o ano de lançamento e o link
+                  do vídeo (YouTube ou Vimeo). O vídeo aparece ao lado do player quando alguém clica
+                  na marca.
+                </li>
+                <li>
+                  <strong>Se é marca nova:</strong> preencha o nome da marca, o ano de lançamento, o
+                  link do vídeo e a logo em PNG. Se a logo tiver fundo, dá pra remover ali mesmo antes
+                  de confirmar.
                 </li>
                 <li>
                   Clique em <strong>Publicar</strong>.
                 </li>
               </ol>
               <p className="admin-help-tip">
-                A marca já existe e você quer só mais um vídeo dela? Vá em <strong>Editar</strong>,
-                ache o card da marca e use <strong>+ Novo link</strong>.
+                Quer que um vídeo novo vire o principal da marca (o que aparece no card)? Depois de
+                publicar, vá em <strong>Editar</strong>, ache o card da marca e use{" "}
+                <strong>Tornar principal</strong>.
               </p>
             </details>
 

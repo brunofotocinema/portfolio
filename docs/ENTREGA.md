@@ -66,7 +66,8 @@ app/
     admin.css                 → estilos exclusivos do painel
   api/admin/                  → rotas protegidas (todas exigem login Firebase)
     content/route.ts          → GET/PUT do conteúdo inteiro do site (Sobre + comerciais + filmes)
-    projects/route.ts         → POST — adicionar projeto novo (comercial, filme ou imagem de galeria)
+    projects/route.ts         → POST — adicionar projeto novo (comercial, vídeo de marca existente,
+                                 filme ou imagem de galeria)
     projects/[id]/route.ts    → DELETE/PUT — imagens da galeria
     imdb/route.ts             → GET — recebe um link do IMDb e devolve a ficha técnica (via TMDB)
 
@@ -114,8 +115,11 @@ lado dele, um botão **?** abre um guia de uso escrito para o Bruno (`components
 1. **Adicionar** (abre por padrão) — formulário guiado. Primeiro escolhe-se o tipo (Comerciais,
    Filmes e Séries ou Galeria); cada campo seguinte só aparece quando o anterior foi preenchido.
    Cada envio, no botão **Publicar**, **commita na hora**, um projeto por vez.
-   - **Comercial:** nome da marca → ano → link do vídeo → logo (PNG, com remoção de fundo opcional
-     no próprio navegador). Serve só pra criar marca nova.
+   - **Comercial:** o formulário pergunta se é marca nova.
+     - *Marca nova:* nome da marca → ano de lançamento → link do vídeo → logo (PNG, com remoção de
+       fundo opcional no próprio navegador). Cria um card novo.
+     - *Marca que já está no site:* escolhe a marca numa lista → nome do vídeo → ano de lançamento
+       → link. Entra como mais um vídeo (secundário) da marca, sem card novo.
    - **Filme ou série:** o formulário pergunta se já foi lançado.
      - *Lançado:* cola-se o link do IMDb e clica-se em **Buscar**; título, ano, direção, direção
        de fotografia, produtora, duração e pôster vêm preenchidos e continuam editáveis. Vídeo é

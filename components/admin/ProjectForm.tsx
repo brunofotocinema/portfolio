@@ -5,8 +5,11 @@ import { auth } from "@/lib/firebase";
 import LogoUploader from "./LogoUploader";
 import { CATEGORIA_LABEL, type Categoria } from "@/lib/admin-types";
 import { buscarFichaImdb } from "@/lib/imdb-client";
+import type { Comercial } from "@/lib/data";
 
 interface ProjectFormProps {
+  /** marcas já publicadas, para "mais um vídeo de marca existente" */
+  marcas: Comercial[];
   onCreated: () => void;
 }
 
@@ -20,18 +23,17 @@ const initialFields = {
   produtora: "",
 };
 
-const TIPOS: { value: Categoria; label: string; hint: string }[] = [
-  { value: "publicidade", label: CATEGORIA_LABEL.publicidade, hint: "Marca nova, com vídeo e logo" },
-  { value: "filmes-series", label: CATEGORIA_LABEL["filmes-series"], hint: "Pelo link do IMDb" },
-  { value: "galeria", label: CATEGORIA_LABEL.galeria, hint: "Uma foto" },
-];
+const TIPOS: Categoria[] = ["publicidade", "filmes-series", "galeria"];
 
 /**
  * Guided "add" flow: pick what to add, then each field only shows up once the
  * one before it is filled, so the form never shows more than the next step.
  */
-export default function ProjectForm({ onCreated }: ProjectFormProps) {
+export default function ProjectForm({ marcas, onCreated }: ProjectFormProps) {
   const [categoria, setCategoria] = useState<Categoria | null>(null);
+  // comerciais: null = ainda não respondeu "é uma marca nova?"
+  const [marcaNova, setMarcaNova] = useState<boolean | null>(null);
+  const [marcaId, setMarcaId] = useState("");
   // filmes: null = ainda não respondeu "já foi lançado?"
   const [lancado, setLancado] = useState<boolean | null>(null);
   // filme lançado: ficha liberada depois da busca no IMDb (ou "preencher à mão")
@@ -54,6 +56,8 @@ export default function ProjectForm({ onCreated }: ProjectFormProps) {
 
   function recomecar() {
     setCategoria(null);
+    setMarcaNova(null);
+    setMarcaId("");
     setLancado(null);
     setFichaAberta(false);
     setFields(initialFields);
@@ -99,6 +103,14 @@ export default function ProjectForm({ onCreated }: ProjectFormProps) {
   const temAno = !!fields.ano.trim() && !Number.isNaN(Number(fields.ano));
   const isFilmeLancado = categoria === "filmes-series" && lancado === true;
   const isFilmeEmFinalizacao = categoria === "filmes-series" && lancado === false;
+  const isVideoDeMarca = categoria === "publicidade" && marcaNova === false;
+  const marcaEscolhida = marcas.find((m) => m.id === marcaId);
+
+  function escolherMarca(id: string) {
+    setMarcaId(id);
+    // o vídeo começa com o nome da marca; dá pra trocar pelo nome da campanha
+    update("titulo", marcas.find((m) => m.id === id)?.titulo ?? "");
+  }
 
   function validate(): string | null {
     if (categoria === "galeria") return imagemFile ? null : "Escolha a imagem.";
@@ -111,6 +123,7 @@ export default function ProjectForm({ onCreated }: ProjectFormProps) {
       return null;
     }
     if (!fields.videoUrl.trim()) return "Link do vídeo é obrigatório.";
+    if (isVideoDeMarca) return marcaEscolhida ? null : "Escolha a marca.";
     if (!logoFile) return `Logo (PNG) é obrigatória para ${CATEGORIA_LABEL.publicidade}.`;
     return null;
   }
@@ -146,6 +159,7 @@ export default function ProjectForm({ onCreated }: ProjectFormProps) {
         formData.set("titulo", fields.titulo.trim());
         formData.set("ano", fields.ano.trim());
         if (fields.videoUrl.trim()) formData.set("videoUrl", fields.videoUrl.trim());
+        if (isVideoDeMarca) formData.set("marcaId", marcaId);
         if (logoFile) formData.set("logo", logoFile);
         if (bannerFile) formData.set("banner", bannerFile);
         if (isFilmeEmFinalizacao) formData.set("emFinalizacao", "true");
@@ -195,37 +209,85 @@ export default function ProjectForm({ onCreated }: ProjectFormProps) {
       <div className="admin-tipos">
         {TIPOS.map((tipo) => (
           <button
-            key={tipo.value}
+            key={tipo}
             type="button"
-            className={`admin-tipo${categoria === tipo.value ? " active" : ""}`}
-            onClick={() => escolherTipo(tipo.value)}
+            className={`admin-tipo${categoria === tipo ? " active" : ""}`}
+            onClick={() => escolherTipo(tipo)}
           >
-            <strong>{tipo.label}</strong>
-            <span>{tipo.hint}</span>
+            <strong>{CATEGORIA_LABEL[tipo]}</strong>
           </button>
         ))}
       </div>
 
       {success && <p className="admin-success">{success}</p>}
 
-      {/* ---------- Comercial: título → ano → vídeo → logo ---------- */}
+      {/* ---------- Comercial: marca nova? → (marca existente | nome + logo) ---------- */}
       {categoria === "publicidade" && (
         <>
-          <p className="admin-note admin-step">
-            Aqui só se cria marca nova. Pra acrescentar mais um vídeo a uma marca que já existe, use
-            “Editar” no canto de cima e o “+ Novo link” no card dela.
-          </p>
-          <label className="admin-step">
-            Nome da marca
-            <input autoFocus value={fields.titulo} onChange={(e) => update("titulo", e.target.value)} />
-          </label>
-          {temTitulo && (
+          <div className="admin-step">
+            <span className="admin-pergunta">É uma marca nova?</span>
+            <div className="admin-tipos admin-tipos-sm">
+              <button
+                type="button"
+                className={`admin-tipo${marcaNova === true ? " active" : ""}`}
+                onClick={() => {
+                  setMarcaNova(true);
+                  setMarcaId("");
+                  update("titulo", "");
+                }}
+              >
+                <strong>Sim</strong>
+              </button>
+              <button
+                type="button"
+                className={`admin-tipo${marcaNova === false ? " active" : ""}`}
+                onClick={() => {
+                  setMarcaNova(false);
+                  update("titulo", "");
+                }}
+                disabled={marcas.length === 0}
+              >
+                <strong>Não, já está no site</strong>
+              </button>
+            </div>
+          </div>
+
+          {isVideoDeMarca && (
             <label className="admin-step">
-              Ano
+              Marca
+              <select value={marcaId} onChange={(e) => escolherMarca(e.target.value)}>
+                <option value="" disabled>
+                  Escolha a marca
+                </option>
+                {marcas.map((m) => (
+                  <option key={m.id} value={m.id}>
+                    {m.titulo}
+                  </option>
+                ))}
+              </select>
+            </label>
+          )}
+          {marcaEscolhida && isVideoDeMarca && (
+            <label className="admin-step">
+              Nome do vídeo (ex.: nome da campanha)
+              <input value={fields.titulo} onChange={(e) => update("titulo", e.target.value)} />
+            </label>
+          )}
+
+          {marcaNova === true && (
+            <label className="admin-step">
+              Nome da marca
+              <input autoFocus value={fields.titulo} onChange={(e) => update("titulo", e.target.value)} />
+            </label>
+          )}
+
+          {(marcaNova === true || (isVideoDeMarca && marcaEscolhida)) && temTitulo && (
+            <label className="admin-step">
+              Ano de lançamento
               <input type="number" value={fields.ano} onChange={(e) => update("ano", e.target.value)} />
             </label>
           )}
-          {temTitulo && temAno && (
+          {(marcaNova === true || (isVideoDeMarca && marcaEscolhida)) && temTitulo && temAno && (
             <label className="admin-step">
               Link do vídeo (YouTube ou Vimeo)
               <input
@@ -236,12 +298,14 @@ export default function ProjectForm({ onCreated }: ProjectFormProps) {
               />
             </label>
           )}
-          {temTitulo && temAno && fields.videoUrl.trim() && (
+          {isVideoDeMarca && marcaEscolhida && temTitulo && temAno && fields.videoUrl.trim() && submit}
+
+          {marcaNova === true && temTitulo && temAno && fields.videoUrl.trim() && (
             <div className="admin-step">
               <LogoUploader label="Logo da marca (PNG)" required onChange={setLogoFile} />
             </div>
           )}
-          {logoFile && submit}
+          {marcaNova === true && logoFile && submit}
         </>
       )}
 

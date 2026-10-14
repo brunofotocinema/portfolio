@@ -79,6 +79,40 @@ export async function POST(request: Request) {
   const titulo = (form.get("titulo") as string | null)?.trim();
   const anoRaw = form.get("ano") as string | null;
   const videoUrl = (form.get("videoUrl") as string | null)?.trim() || undefined;
+  const marcaId = (form.get("marcaId") as string | null)?.trim() || undefined;
+
+  // Comercial de marca que já existe: entra como mais um vídeo dela (extra),
+  // sem logo nem card novo.
+  if (categoria === "publicidade" && marcaId) {
+    const ano = Number(anoRaw);
+    if (!titulo) return NextResponse.json({ error: "Título é obrigatório." }, { status: 400 });
+    if (!anoRaw || Number.isNaN(ano)) {
+      return NextResponse.json({ error: "Ano é obrigatório." }, { status: 400 });
+    }
+    if (!videoUrl) {
+      return NextResponse.json({ error: "Link do vídeo é obrigatório." }, { status: 400 });
+    }
+    try {
+      const current = await getJsonFile<SiteData>(DATA_PATH);
+      const marca = current.comerciais.find((c) => c.id === marcaId);
+      if (!marca) return NextResponse.json({ error: "Marca não encontrada." }, { status: 404 });
+      const existingExtraIds = current.comerciais.flatMap((c) => (c.extras ?? []).map((e) => e.id));
+      const id = uniqueSlug(slugify(titulo), existingExtraIds);
+      marca.extras = [...(marca.extras ?? []), { id, titulo, ano, url: videoUrl }];
+
+      const { commitSha } = await commitFiles(
+        [{ path: DATA_PATH, content: JSON.stringify(current, null, 2) + "\n", encoding: "utf-8" }],
+        `Admin: adiciona vídeo "${titulo}" à marca ${marca.titulo}`
+      );
+      return NextResponse.json({ ok: true, id, commitSha });
+    } catch (err) {
+      if (err instanceof GithubCommitError) {
+        return NextResponse.json({ error: err.message }, { status: 502 });
+      }
+      console.error(err);
+      return NextResponse.json({ error: "Erro inesperado ao salvar o vídeo." }, { status: 500 });
+    }
+  }
   const emFinalizacao = categoria === "filmes-series" && form.get("emFinalizacao") === "true";
   const ficha = {
     imdb: (form.get("imdb") as string | null)?.trim() || undefined,

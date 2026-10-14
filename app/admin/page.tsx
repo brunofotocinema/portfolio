@@ -301,13 +301,25 @@ export default function AdminPage() {
       const json = await res.json();
       if (!res.ok) return;
       const data = json as SiteData;
+      // videos that only exist since this publish (added to an existing brand)
+      const knownExtraIds = new Set(
+        (content?.comerciais ?? []).flatMap((c) => (c.extras ?? []).map((e) => e.id))
+      );
       setContent(data);
       setGaleria(data.galeria ?? []);
       setDraftComerciais((prev) => {
         if (!prev) return data.comerciais;
         const existingIds = new Set(prev.map((c) => c.id));
         const brandNew = data.comerciais.filter((c) => !existingIds.has(c.id));
-        return [...prev, ...brandNew];
+        // carry newly published extras into the draft, or the next "Revisar e
+        // salvar" would write the draft back without them
+        const merged = prev.map((c) => {
+          const fresh = (data.comerciais.find((d) => d.id === c.id)?.extras ?? []).filter(
+            (e) => !knownExtraIds.has(e.id)
+          );
+          return fresh.length ? { ...c, extras: [...(c.extras ?? []), ...fresh] } : c;
+        });
+        return [...merged, ...brandNew];
       });
       setDraftFilmes((prev) => {
         if (!prev) return data.filmes;
@@ -451,7 +463,9 @@ export default function AdminPage() {
       {contentError && <p className="admin-error">{contentError}</p>}
       {contentLoading && !content && <p>Carregando conteúdo...</p>}
 
-      {modo === "adicionar" && <ProjectForm onCreated={handleProjectCreated} />}
+      {modo === "adicionar" && (
+        <ProjectForm marcas={content?.comerciais ?? []} onCreated={handleProjectCreated} />
+      )}
 
       {modo === "editar" && content && draftAbout && draftComerciais && draftFilmes && (
         <>
