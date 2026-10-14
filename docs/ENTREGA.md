@@ -194,8 +194,8 @@ pelo TMDB, que aceita o código do IMDb (`tt…`) diretamente.
 - **Pôster:** é guardado como link para `image.tmdb.org`, não como arquivo no repositório. Se um
   dia o TMDB trocar a imagem, o pôster quebra; nesse caso, basta enviar um banner pelo painel. Ao
   remover um filme, o painel só apaga do repositório imagens que são arquivos locais.
-- **No site:** a lista mostra o diretor abaixo do título. Só abrem ao clicar os filmes com vídeo ou
-  link do IMDb. O modal mostra o player (ou o pôster, se não houver vídeo) e a ficha: título, ano,
+- **No site:** a lista mostra o diretor na coluna da direita (filme não lançado e sem direção
+  mostra "Em finalização"). Só abrem ao clicar os filmes com vídeo ou link do IMDb. O modal mostra o player (ou o pôster, se não houver vídeo) e a ficha: título, ano,
   "Longa-metragem" ou "Curta-metragem" (até 40 min é curta), direção, direção de fotografia,
   produtora e "Ver no IMDb".
 - **Crédito obrigatório:** os termos de uso da API do TMDB exigem atribuição. Está no rodapé do
