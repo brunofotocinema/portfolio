@@ -20,6 +20,8 @@ type EditableField = "titulo" | "ano" | "url";
 
 export default function AdminPage() {
   const [user, setUser] = useState<User | null>(null);
+  // "adicionar" publica na hora; "editar" é o rascunho com revisão antes de salvar
+  const [modo, setModo] = useState<"adicionar" | "editar">("adicionar");
   const [checkingAuth, setCheckingAuth] = useState(true);
 
   const [content, setContent] = useState<SiteData | null>(null);
@@ -407,25 +409,47 @@ export default function AdminPage() {
     <div className="admin-page">
       <header className="admin-header">
         <h1>Painel administrativo</h1>
-        <div>
-          <span>{user.email}</span>
-          <button type="button" onClick={() => signOut(auth)}>
-            Sair
+        <div className="admin-modo" role="tablist" aria-label="Modo do painel">
+          <button
+            type="button"
+            role="tab"
+            aria-selected={modo === "adicionar"}
+            className={modo === "adicionar" ? "active" : ""}
+            onClick={() => setModo("adicionar")}
+          >
+            Adicionar
+          </button>
+          <button
+            type="button"
+            role="tab"
+            aria-selected={modo === "editar"}
+            className={modo === "editar" ? "active" : ""}
+            onClick={() => setModo("editar")}
+          >
+            Editar
+            {changes.length > 0 && <span className="admin-modo-badge">{changes.length}</span>}
           </button>
         </div>
       </header>
+      <div className="admin-conta">
+        <span>{user.email}</span>
+        <button type="button" className="admin-link" onClick={() => signOut(auth)}>
+          Sair
+        </button>
+      </div>
 
       <p className="admin-note">
-        Adicionar um projeto novo commita direto na branch principal. As demais alterações
-        (reordenar, editar campos, remover, e a seção Sobre) ficam num rascunho — só são
-        commitadas quando você revisa e confirma em &ldquo;Salvar alterações&rdquo;. O deploy na
-        Vercel é automático e leva cerca de 1 a 2 minutos para o site refletir a mudança.
+        {modo === "adicionar"
+          ? "Cada item é publicado assim que você clica em “Publicar”. O site leva cerca de 1 a 2 minutos para mostrar a novidade."
+          : "Aqui você reordena, edita e remove o que já está no site, além da seção Sobre. Nada vai pro ar até você clicar em “Revisar e salvar” e confirmar. O site leva cerca de 1 a 2 minutos para refletir a mudança."}
       </p>
 
       {contentError && <p className="admin-error">{contentError}</p>}
       {contentLoading && !content && <p>Carregando conteúdo...</p>}
 
-      {content && draftAbout && draftComerciais && draftFilmes && (
+      {modo === "adicionar" && <ProjectForm onCreated={handleProjectCreated} />}
+
+      {modo === "editar" && content && draftAbout && draftComerciais && draftFilmes && (
         <>
           <div className="admin-save-bar">
             <span>
@@ -446,8 +470,6 @@ export default function AdminPage() {
               </button>
             </div>
           </div>
-
-          <ProjectForm onCreated={handleProjectCreated} />
 
           <ProjectList
             comerciais={draftComerciais}

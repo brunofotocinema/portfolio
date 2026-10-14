@@ -28,6 +28,7 @@ export const translations: Record<Lang, Record<string, string>> = {
     "contato.lead": "Próximo projeto?",
 
     "footer.tagline": "Gaffer · Chefe de elétrica",
+    "footer.tmdb": "Este site usa a API do TMDB, mas não é endossado nem certificado pelo TMDB.",
 
     "modal.close": "Fechar ✕",
   },
@@ -58,6 +59,7 @@ export const translations: Record<Lang, Record<string, string>> = {
     "contato.lead": "Next project?",
 
     "footer.tagline": "Gaffer · Head Electrician",
+    "footer.tmdb": "This website uses the TMDB API but is not endorsed or certified by TMDB.",
 
     "modal.close": "Close ✕",
   },
