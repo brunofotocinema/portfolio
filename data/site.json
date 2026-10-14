@@ -238,18 +238,6 @@
       "titulo": "Zero K",
       "ano": 2026,
       "tipo": "Em finalização"
-    },
-    {
-      "id": "perrengue-fashion-2",
-      "titulo": "Perrengue Fashion",
-      "ano": 2025,
-      "tipo": "Longa",
-      "imdb": "https://www.imdb.com/title/tt34381317/",
-      "direcao": "Flávia Lacerda",
-      "fotografia": "Paulo Vainer",
-      "produtora": "Amazon MGM Studios, Morena Filmes",
-      "poster": "https://image.tmdb.org/t/p/w500/qVQ58sWH6c36D6YAQ552tHB2x97.jpg",
-      "duracao": 100
     }
   ],
   "galeria": []
