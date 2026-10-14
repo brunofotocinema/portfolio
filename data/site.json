@@ -194,7 +194,13 @@
       "id": "furnas-fundas",
       "titulo": "Furnas Fundas",
       "ano": 2023,
-      "tipo": "Em finalização"
+      "tipo": "Longa",
+      "imdb": "https://www.imdb.com/title/tt29534685/",
+      "direcao": "Beto Marquez",
+      "fotografia": "Paulo Vainer",
+      "produtora": "Midnight Japa",
+      "duracao": 117,
+      "poster": "https://image.tmdb.org/t/p/w500/h37jOsDLNMG7RhSXiQse4oGGqgH.jpg"
     },
     {
       "id": "viuvos",
@@ -217,8 +223,9 @@
     {
       "id": "habeas-corpus",
       "titulo": "Habeas Corpus",
-      "ano": 2025,
-      "tipo": "Em finalização"
+      "ano": 2026,
+      "tipo": "Em finalização",
+      "imdb": "https://www.imdb.com/title/tt39369819/"
     },
     {
       "id": "zero-k",
