@@ -29,6 +29,25 @@ export interface Filme {
   url?: string;
   poster?: string;
   banner?: string;
+  // ficha técnica — preenchida pela busca do IMDb (via TMDB) no admin,
+  // editável à mão; filmes ainda não lançados costumam ter só direcao
+  imdb?: string;
+  direcao?: string;
+  fotografia?: string;
+  produtora?: string;
+  /** minutos; só serve pra dizer se é longa ou curta */
+  duracao?: number;
+}
+
+/** Lançado = tem vídeo ou página no IMDb; só esses abrem o modal. */
+export function filmeLancado(f: Filme): boolean {
+  return !!(f.url?.trim() || f.imdb?.trim());
+}
+
+/** Corte da Academia: até 40 min é curta. */
+export function formatoFilme(f: Filme): "longa" | "curta" | null {
+  if (!f.duracao) return null;
+  return f.duracao > 40 ? "longa" : "curta";
 }
 
 export interface ImagemGaleria {

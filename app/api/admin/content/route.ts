@@ -77,8 +77,17 @@ function isFilmeDraft(v: unknown): v is Filme {
     isFiniteNumber(o.ano) &&
     isNonEmptyString(o.tipo) &&
     (o.poster === undefined || typeof o.poster === "string") &&
-    (o.banner === undefined || typeof o.banner === "string")
+    (o.banner === undefined || typeof o.banner === "string") &&
+    (["imdb", "direcao", "fotografia", "produtora"] as const).every(
+      (k) => o[k] === undefined || typeof o[k] === "string"
+    ) &&
+    (o.duracao === undefined || isFiniteNumber(o.duracao))
   );
+}
+
+/** Pôster pode ser link externo (TMDB); só arquivos do repo são apagados. */
+function isRepoAsset(path: string | undefined): path is string {
+  return !!path && path.startsWith("/");
 }
 
 export async function GET(request: Request) {
@@ -208,7 +217,15 @@ export async function PUT(request: Request) {
         }
         banner = newPath;
       }
-      finalFilmes.push({ ...input, banner, url: input.url?.trim() || undefined });
+      finalFilmes.push({
+        ...input,
+        banner,
+        url: input.url?.trim() || undefined,
+        imdb: input.imdb?.trim() || undefined,
+        direcao: input.direcao?.trim() || undefined,
+        fotografia: input.fotografia?.trim() || undefined,
+        produtora: input.produtora?.trim() || undefined,
+      });
     }
 
     const newComercialIds = new Set(finalComerciais.map((c) => c.id));
@@ -221,8 +238,8 @@ export async function PUT(request: Request) {
     const newFilmeIds = new Set(finalFilmes.map((f) => f.id));
     for (const f of current.filmes) {
       if (newFilmeIds.has(f.id)) continue;
-      if (f.poster) assetDeletes.push({ path: `public${f.poster}`, delete: true });
-      if (f.banner) assetDeletes.push({ path: `public${f.banner}`, delete: true });
+      if (isRepoAsset(f.poster)) assetDeletes.push({ path: `public${f.poster}`, delete: true });
+      if (isRepoAsset(f.banner)) assetDeletes.push({ path: `public${f.banner}`, delete: true });
     }
 
     const next: SiteData = {

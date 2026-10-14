@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Bricolage_Grotesque, Instrument_Sans, Montserrat } from "next/font/google";
 import LanguageProvider from "@/lib/language-context";
+import { LOGO_ANCHOR_SCRIPT } from "@/lib/logo-anchor";
 import "./globals.css";
 
 const bricolage = Bricolage_Grotesque({
@@ -38,6 +39,9 @@ export default function RootLayout({
       className={`${bricolage.variable} ${instrumentSans.variable} ${montserrat.variable}`}
     >
       <body>
+        {/* plain <script>, not next/script: Next queues even "beforeInteractive"
+            until its runtime loads, which is the delay this has to beat */}
+        <script dangerouslySetInnerHTML={{ __html: LOGO_ANCHOR_SCRIPT }} />
         <LanguageProvider>{children}</LanguageProvider>
       </body>
     </html>

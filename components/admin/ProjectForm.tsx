@@ -4,6 +4,7 @@ import { useState } from "react";
 import { auth } from "@/lib/firebase";
 import LogoUploader from "./LogoUploader";
 import { CATEGORIA_LABEL, type Categoria } from "@/lib/admin-types";
+import { buscarFichaImdb } from "@/lib/imdb-client";
 
 interface ProjectFormProps {
   onCreated: () => void;
@@ -14,6 +15,10 @@ const initialState = {
   titulo: "",
   ano: "",
   videoUrl: "",
+  imdb: "",
+  direcao: "",
+  fotografia: "",
+  produtora: "",
 };
 
 export default function ProjectForm({ onCreated }: ProjectFormProps) {
@@ -25,6 +30,11 @@ export default function ProjectForm({ onCreated }: ProjectFormProps) {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  // what the IMDb lookup brought that has no input of its own
+  const [poster, setPoster] = useState<string | null>(null);
+  const [duracao, setDuracao] = useState<number | null>(null);
+  const [buscando, setBuscando] = useState(false);
+  const [buscaInfo, setBuscaInfo] = useState<string | null>(null);
 
   function update<K extends keyof typeof initialState>(key: K, value: string) {
     setFields((prev) => ({ ...prev, [key]: value }));
@@ -36,9 +46,38 @@ export default function ProjectForm({ onCreated }: ProjectFormProps) {
     setBannerFile(null);
     setImagemFile(null);
     setEmFinalizacao(false);
+    setPoster(null);
+    setDuracao(null);
+    setBuscaInfo(null);
+  }
+
+  async function buscarImdb() {
+    setError(null);
+    setBuscaInfo(null);
+    setBuscando(true);
+    try {
+      const ficha = await buscarFichaImdb(fields.imdb);
+      setFields((prev) => ({
+        ...prev,
+        imdb: ficha.imdb,
+        titulo: ficha.titulo,
+        ano: ficha.ano ? String(ficha.ano) : prev.ano,
+        direcao: ficha.direcao ?? "",
+        fotografia: ficha.fotografia ?? "",
+        produtora: ficha.produtora ?? "",
+      }));
+      setPoster(ficha.poster ?? null);
+      setDuracao(ficha.duracao ?? null);
+      setBuscaInfo("Ficha preenchida. Confira e ajuste o que precisar antes de salvar.");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Não foi possível buscar no IMDb.");
+    } finally {
+      setBuscando(false);
+    }
   }
 
   const isFilmeEmFinalizacao = fields.categoria === "filmes-series" && emFinalizacao;
+  const isFilmeLancado = fields.categoria === "filmes-series" && !emFinalizacao;
 
   function validate(): string | null {
     if (fields.categoria === "galeria") {
@@ -51,13 +90,16 @@ export default function ProjectForm({ onCreated }: ProjectFormProps) {
 
     if (isFilmeEmFinalizacao) return null;
 
-    if (!fields.videoUrl.trim()) return "Link do vídeo é obrigatório.";
-
-    if (fields.categoria === "publicidade") {
-      if (!logoFile) return `Logo (PNG) é obrigatória para ${CATEGORIA_LABEL.publicidade}.`;
-    } else {
-      if (!bannerFile) return "Banner é obrigatório para Filmes e Séries.";
+    if (isFilmeLancado) {
+      if (!fields.imdb.trim() && !fields.videoUrl.trim()) {
+        return "Informe o link do IMDb ou do vídeo.";
+      }
+      if (!poster && !bannerFile) return "Sem pôster do IMDb: envie um banner.";
+      return null;
     }
+
+    if (!fields.videoUrl.trim()) return "Link do vídeo é obrigatório.";
+    if (!logoFile) return `Logo (PNG) é obrigatória para ${CATEGORIA_LABEL.publicidade}.`;
 
     return null;
   }
@@ -96,6 +138,13 @@ export default function ProjectForm({ onCreated }: ProjectFormProps) {
         if (logoFile) formData.set("logo", logoFile);
         if (bannerFile) formData.set("banner", bannerFile);
         if (isFilmeEmFinalizacao) formData.set("emFinalizacao", "true");
+        if (fields.categoria === "filmes-series") {
+          for (const key of ["imdb", "direcao", "fotografia", "produtora"] as const) {
+            if (fields[key].trim()) formData.set(key, fields[key].trim());
+          }
+          if (isFilmeLancado && poster) formData.set("poster", poster);
+          if (isFilmeLancado && duracao) formData.set("duracao", String(duracao));
+        }
       }
 
       const res = await fetch("/api/admin/projects", {
@@ -145,6 +194,47 @@ export default function ProjectForm({ onCreated }: ProjectFormProps) {
         </select>
       </label>
 
+      {fields.categoria === "filmes-series" && (
+        <label className="admin-checkbox">
+          <input
+            type="checkbox"
+            checked={emFinalizacao}
+            onChange={(e) => setEmFinalizacao(e.target.checked)}
+          />
+          Ainda sem lançamento (em finalização) — entra só com título, ano da filmagem e, se
+          quiser, a direção. No site, não abre ao clicar.
+        </label>
+      )}
+
+      {isFilmeLancado && (
+        <div className="admin-imdb">
+          <label>
+            Link do IMDb
+            <div className="admin-imdb-row">
+              <input
+                type="url"
+                value={fields.imdb}
+                onChange={(e) => update("imdb", e.target.value)}
+                placeholder="https://www.imdb.com/title/tt..."
+              />
+              <button type="button" onClick={buscarImdb} disabled={buscando || !fields.imdb.trim()}>
+                {buscando ? "Buscando..." : "Buscar"}
+              </button>
+            </div>
+          </label>
+          {buscaInfo && <p className="admin-success">{buscaInfo}</p>}
+          {poster && (
+            <div className="admin-imdb-preview">
+              {/* eslint-disable-next-line @next/next/no-img-element -- admin preview of the TMDB poster */}
+              <img src={poster} alt="" />
+              <span>
+                {duracao ? `${duracao > 40 ? "Longa" : "Curta"} · ${duracao} min` : "Duração não informada"}
+              </span>
+            </div>
+          )}
+        </div>
+      )}
+
       <label>
         {fields.categoria === "galeria" ? "Legenda (opcional)" : "Título *"}
         <input value={fields.titulo} onChange={(e) => update("titulo", e.target.value)} />
@@ -152,7 +242,7 @@ export default function ProjectForm({ onCreated }: ProjectFormProps) {
 
       {fields.categoria !== "galeria" && (
         <label>
-          Ano *
+          {isFilmeEmFinalizacao ? "Ano da filmagem *" : "Ano *"}
           <input
             type="number"
             value={fields.ano}
@@ -162,19 +252,28 @@ export default function ProjectForm({ onCreated }: ProjectFormProps) {
       )}
 
       {fields.categoria === "filmes-series" && (
-        <label className="admin-checkbox">
-          <input
-            type="checkbox"
-            checked={emFinalizacao}
-            onChange={(e) => setEmFinalizacao(e.target.checked)}
-          />
-          Ainda sem lançamento (em finalização) — entra só com título e ano, sem banner nem link
+        <label>
+          Direção
+          <input value={fields.direcao} onChange={(e) => update("direcao", e.target.value)} />
         </label>
+      )}
+
+      {isFilmeLancado && (
+        <>
+          <label>
+            Direção de fotografia
+            <input value={fields.fotografia} onChange={(e) => update("fotografia", e.target.value)} />
+          </label>
+          <label>
+            Produtora
+            <input value={fields.produtora} onChange={(e) => update("produtora", e.target.value)} />
+          </label>
+        </>
       )}
 
       {fields.categoria !== "galeria" && !isFilmeEmFinalizacao && (
         <label>
-          Link do vídeo (YouTube) *
+          {isFilmeLancado ? "Link do vídeo (YouTube) — opcional" : "Link do vídeo (YouTube) *"}
           <input
             type="url"
             value={fields.videoUrl}
@@ -189,7 +288,7 @@ export default function ProjectForm({ onCreated }: ProjectFormProps) {
       ) : fields.categoria === "filmes-series" && !isFilmeEmFinalizacao ? (
         <div className="admin-field">
           <label>
-            Banner *
+            {poster ? "Banner (opcional — sem ele, usa o pôster do IMDb)" : "Banner *"}
             <input
               type="file"
               accept="image/png,image/jpeg,image/webp"

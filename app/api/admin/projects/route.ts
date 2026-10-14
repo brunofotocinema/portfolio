@@ -80,6 +80,17 @@ export async function POST(request: Request) {
   const anoRaw = form.get("ano") as string | null;
   const videoUrl = (form.get("videoUrl") as string | null)?.trim() || undefined;
   const emFinalizacao = categoria === "filmes-series" && form.get("emFinalizacao") === "true";
+  const ficha = {
+    imdb: (form.get("imdb") as string | null)?.trim() || undefined,
+    direcao: (form.get("direcao") as string | null)?.trim() || undefined,
+    fotografia: (form.get("fotografia") as string | null)?.trim() || undefined,
+    produtora: (form.get("produtora") as string | null)?.trim() || undefined,
+    poster: (form.get("poster") as string | null)?.trim() || undefined,
+    duracao: Number(form.get("duracao")) || undefined,
+  };
+  // Filme lançado entra pelo link do IMDb (o vídeo é opcional); comercial
+  // continua exigindo o vídeo.
+  const filmeComImdb = categoria === "filmes-series" && !!ficha.imdb;
   const banner = form.get("banner");
   const logo = form.get("logo");
 
@@ -90,8 +101,19 @@ export async function POST(request: Request) {
   if (!anoRaw || Number.isNaN(ano)) {
     return NextResponse.json({ error: "Ano é obrigatório." }, { status: 400 });
   }
-  if (!videoUrl && !emFinalizacao) {
-    return NextResponse.json({ error: "Link do vídeo é obrigatório." }, { status: 400 });
+  if (!videoUrl && !emFinalizacao && !filmeComImdb) {
+    return NextResponse.json(
+      {
+        error:
+          categoria === "filmes-series"
+            ? "Informe o link do IMDb ou do vídeo."
+            : "Link do vídeo é obrigatório.",
+      },
+      { status: 400 }
+    );
+  }
+  if (ficha.poster && !/^https:\/\/image\.tmdb\.org\//.test(ficha.poster)) {
+    return NextResponse.json({ error: "Pôster inválido." }, { status: 400 });
   }
 
   if (categoria === "publicidade") {
@@ -104,7 +126,7 @@ export async function POST(request: Request) {
     if (logo.size > MAX_FILE_BYTES) {
       return NextResponse.json({ error: "Logo muito grande (máximo 8MB)." }, { status: 400 });
     }
-  } else if (!emFinalizacao) {
+  } else if (!emFinalizacao && !ficha.poster) {
     if (!(banner instanceof File) || banner.size === 0) {
       return NextResponse.json(
         { error: "Banner é obrigatório para Filmes e Séries." },
@@ -163,9 +185,20 @@ export async function POST(request: Request) {
         id,
         titulo,
         ano,
-        tipo: emFinalizacao ? "Em finalização" : "Filme e Série",
+        tipo: emFinalizacao
+          ? "Em finalização"
+          : ficha.duracao
+            ? ficha.duracao > 40
+              ? "Longa"
+              : "Curta"
+            : "Filme e Série",
         ...(videoUrl ? { url: videoUrl } : {}),
         ...(bannerPath ? { banner: bannerPath } : {}),
+        ...(emFinalizacao
+          ? ficha.direcao
+            ? { direcao: ficha.direcao }
+            : {}
+          : Object.fromEntries(Object.entries(ficha).filter(([, v]) => v !== undefined))),
       };
 
       current.filmes = [...current.filmes, novoFilme];

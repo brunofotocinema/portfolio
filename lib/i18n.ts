@@ -16,6 +16,14 @@ export const translations: Record<Lang, Record<string, string>> = {
 
     "cinema.em_finalizacao": "Em finalização",
     "cinema.gravacao": "Filmagem",
+    "cinema.dir_por": "Direção",
+
+    "filme.direcao": "Direção",
+    "filme.fotografia": "Direção de fotografia",
+    "filme.produtora": "Produtora",
+    "filme.longa": "Longa-metragem",
+    "filme.curta": "Curta-metragem",
+    "filme.imdb": "Ver no IMDb ↗",
 
     "contato.lead": "Próximo projeto?",
 
@@ -38,6 +46,14 @@ export const translations: Record<Lang, Record<string, string>> = {
 
     "cinema.em_finalizacao": "In post-production",
     "cinema.gravacao": "filmed",
+    "cinema.dir_por": "Directed by",
+
+    "filme.direcao": "Director",
+    "filme.fotografia": "Cinematographer",
+    "filme.produtora": "Production",
+    "filme.longa": "Feature film",
+    "filme.curta": "Short film",
+    "filme.imdb": "View on IMDb ↗",
 
     "contato.lead": "Next project?",
 

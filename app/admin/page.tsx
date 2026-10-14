@@ -5,7 +5,7 @@ import { onAuthStateChanged, signOut, type User } from "firebase/auth";
 import { auth } from "@/lib/firebase";
 import LoginForm from "@/components/admin/LoginForm";
 import ProjectForm from "@/components/admin/ProjectForm";
-import ProjectList from "@/components/admin/ProjectList";
+import ProjectList, { type FilmeField } from "@/components/admin/ProjectList";
 import AboutForm from "@/components/admin/AboutForm";
 import GaleriaList from "@/components/admin/GaleriaList";
 import SaveReviewModal from "@/components/admin/SaveReviewModal";
@@ -13,6 +13,7 @@ import { buildChangeSummary } from "@/lib/admin-change-summary";
 import { slugify, uniqueSlug } from "@/lib/slugify";
 import type { Comercial, ComercialExtra, Filme, ImagemGaleria, SiteData } from "@/lib/data";
 import type { AboutContent } from "@/lib/about";
+import type { FichaFilme } from "@/lib/imdb-client";
 import "./admin.css";
 
 type EditableField = "titulo" | "ano" | "url";
@@ -146,12 +147,35 @@ export default function AdminPage() {
     );
   }
 
-  function fieldChangeFilme(id: string, field: EditableField, value: string) {
+  function fieldChangeFilme(id: string, field: FilmeField, value: string) {
     setDraftFilmes(
       (prev) =>
         prev?.map((f) =>
           f.id === id ? { ...f, [field]: field === "ano" ? Number(value) : value } : f
         ) ?? prev
+    );
+  }
+
+  // Título e ano ficam como estão (podem ter sido escritos do jeito que o
+  // Bruno quer); a busca só completa a ficha técnica e o pôster.
+  function applyFichaFilme(id: string, ficha: FichaFilme) {
+    setDraftFilmes(
+      (prev) =>
+        prev?.map((f) => {
+          if (f.id !== id) return f;
+          const tipoGenerico = f.tipo === "Em finalização" || f.tipo === "Filme e Série";
+          return {
+            ...f,
+            imdb: ficha.imdb,
+            direcao: ficha.direcao ?? f.direcao,
+            fotografia: ficha.fotografia ?? f.fotografia,
+            produtora: ficha.produtora ?? f.produtora,
+            duracao: ficha.duracao ?? f.duracao,
+            poster: ficha.poster ?? f.poster,
+            tipo:
+              tipoGenerico && ficha.duracao ? (ficha.duracao > 40 ? "Longa" : "Curta") : f.tipo,
+          };
+        }) ?? prev
     );
   }
 
@@ -436,6 +460,7 @@ export default function AdminPage() {
             onMoveFilme={moveFilme}
             onFieldChangeComercial={fieldChangeComercial}
             onFieldChangeFilme={fieldChangeFilme}
+            onApplyFichaFilme={applyFichaFilme}
             onLogoFileChange={logoFileChange}
             onBannerFileChange={bannerFileChange}
             onToggleDeleteComercial={toggleDeleteComercial}

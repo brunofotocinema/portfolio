@@ -521,3 +521,46 @@ button:disabled {
   margin-top: 6px;
   background: repeating-conic-gradient(#2a3a52 0% 25%, #1c2b41 0% 50%) 50% / 16px 16px;
 }
+
+/* ---------- busca de ficha pelo IMDb ---------- */
+.admin-imdb {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.admin-imdb-row {
+  display: flex;
+  gap: 8px;
+  width: 100%;
+}
+
+.admin-imdb-row input {
+  flex: 1;
+  min-width: 0;
+}
+
+.admin-imdb-row button {
+  flex-shrink: 0;
+}
+
+.admin-draft-fields .admin-imdb-row,
+.admin-draft-fields p {
+  flex-basis: 100%;
+  margin: 0;
+}
+
+.admin-imdb-preview {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.admin-imdb-preview img {
+  width: 56px;
+  aspect-ratio: 2 / 3;
+  object-fit: cover;
+  border-radius: 4px;
+}

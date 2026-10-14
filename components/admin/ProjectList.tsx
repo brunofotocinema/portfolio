@@ -1,9 +1,11 @@
 "use client";
 
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { Comercial, Filme } from "@/lib/data";
+import { buscarFichaImdb, type FichaFilme } from "@/lib/imdb-client";
 
 type EditableField = "titulo" | "ano" | "url";
+export type FilmeField = EditableField | "imdb" | "direcao" | "fotografia" | "produtora";
 
 interface ProjectListProps {
   comerciais: Comercial[];
@@ -15,7 +17,8 @@ interface ProjectListProps {
   onMoveComercial: (index: number, direction: -1 | 1) => void;
   onMoveFilme: (index: number, direction: -1 | 1) => void;
   onFieldChangeComercial: (id: string, field: EditableField, value: string) => void;
-  onFieldChangeFilme: (id: string, field: EditableField, value: string) => void;
+  onFieldChangeFilme: (id: string, field: FilmeField, value: string) => void;
+  onApplyFichaFilme: (id: string, ficha: FichaFilme) => void;
   onLogoFileChange: (id: string, file: File | null) => void;
   onBannerFileChange: (id: string, file: File | null) => void;
   onToggleDeleteComercial: (id: string) => void;
@@ -199,6 +202,7 @@ function FilmeRow({
   onFieldChange,
   onBannerFileChange,
   onToggleDelete,
+  onApplyFicha,
 }: {
   filme: Filme;
   index: number;
@@ -206,11 +210,27 @@ function FilmeRow({
   deleted: boolean;
   pendingBanner: File | undefined;
   onMove: (direction: -1 | 1) => void;
-  onFieldChange: (field: EditableField, value: string) => void;
+  onFieldChange: (field: FilmeField, value: string) => void;
   onBannerFileChange: (file: File | null) => void;
   onToggleDelete: () => void;
+  onApplyFicha: (ficha: FichaFilme) => void;
 }) {
   const previewUrl = useObjectUrl(pendingBanner);
+  const [buscando, setBuscando] = useState(false);
+  const [buscaMsg, setBuscaMsg] = useState<{ ok: boolean; text: string } | null>(null);
+
+  async function buscar() {
+    setBuscando(true);
+    setBuscaMsg(null);
+    try {
+      onApplyFicha(await buscarFichaImdb(filme.imdb ?? ""));
+      setBuscaMsg({ ok: true, text: "Ficha atualizada (título e ano mantidos)." });
+    } catch (err) {
+      setBuscaMsg({ ok: false, text: err instanceof Error ? err.message : "Falha na busca." });
+    } finally {
+      setBuscando(false);
+    }
+  }
 
   return (
     <li className={`admin-draft-item${deleted ? " admin-draft-item-deleted" : ""}`}>
@@ -240,7 +260,40 @@ function FilmeRow({
             value={filme.url ?? ""}
             onChange={(e) => onFieldChange("url", e.target.value)}
             disabled={deleted}
-            placeholder="Link do vídeo (opcional se ainda em finalização)"
+            placeholder="Link do vídeo (opcional)"
+          />
+          <div className="admin-imdb-row">
+            <input
+              type="url"
+              value={filme.imdb ?? ""}
+              onChange={(e) => onFieldChange("imdb", e.target.value)}
+              disabled={deleted}
+              placeholder="Link do IMDb (vazio = ainda não lançado)"
+            />
+            <button type="button" onClick={buscar} disabled={deleted || buscando || !filme.imdb?.trim()}>
+              {buscando ? "Buscando..." : "Buscar"}
+            </button>
+          </div>
+          {buscaMsg && (
+            <p className={buscaMsg.ok ? "admin-success" : "admin-error"}>{buscaMsg.text}</p>
+          )}
+          <input
+            value={filme.direcao ?? ""}
+            onChange={(e) => onFieldChange("direcao", e.target.value)}
+            disabled={deleted}
+            placeholder="Direção"
+          />
+          <input
+            value={filme.fotografia ?? ""}
+            onChange={(e) => onFieldChange("fotografia", e.target.value)}
+            disabled={deleted}
+            placeholder="Direção de fotografia"
+          />
+          <input
+            value={filme.produtora ?? ""}
+            onChange={(e) => onFieldChange("produtora", e.target.value)}
+            disabled={deleted}
+            placeholder="Produtora"
           />
           <label className="admin-draft-file">
             Trocar banner
@@ -285,6 +338,7 @@ export default function ProjectList({
   onMoveFilme,
   onFieldChangeComercial,
   onFieldChangeFilme,
+  onApplyFichaFilme,
   onLogoFileChange,
   onBannerFileChange,
   onToggleDeleteComercial,
@@ -337,6 +391,7 @@ export default function ProjectList({
             onFieldChange={(field, value) => onFieldChangeFilme(f.id, field, value)}
             onBannerFileChange={(file) => onBannerFileChange(f.id, file)}
             onToggleDelete={() => onToggleDeleteFilme(f.id)}
+            onApplyFicha={(ficha) => onApplyFichaFilme(f.id, ficha)}
           />
         ))}
         {filmes.length === 0 && <li>Nenhum projeto.</li>}

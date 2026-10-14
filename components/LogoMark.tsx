@@ -17,8 +17,12 @@ const TEXT_STYLE = {
  */
 export default function LogoMark() {
   return (
-    <div className="logo-viewport">
-      <a href="#top" aria-label="Bruno Homem" className="logo-stage">
+    <div className="logo-viewport" suppressHydrationWarning>
+      {/* rulers for the scroll-anchoring script in lib/logo-anchor.ts */}
+      <span className="logo-probe logo-probe-big" style={{ width: "var(--logo-big-w)" }} />
+      <span className="logo-probe logo-probe-small" style={{ width: "var(--logo-small-w)" }} />
+      {/* class/translate are driven by that script before hydration, hence the suppress */}
+      <a href="#top" aria-label="Bruno Homem" className="logo-stage" suppressHydrationWarning>
         <span className="logo-icon">
           <svg viewBox="369.90 385.72 430.20 451.51" preserveAspectRatio="xMidYMid meet">
             <path fillRule="evenodd" fill="currentColor" d={ICON_PATH} />

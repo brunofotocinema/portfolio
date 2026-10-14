@@ -124,6 +124,15 @@ export function buildChangeSummary(input: ChangeSummaryInput): string[] {
     if (input.pendingBannerFiles[f.id]) {
       lines.push(`Filme "${f.titulo}": banner substituído`);
     }
+    if ((prev.imdb ?? "") !== (f.imdb ?? "")) {
+      lines.push(`Filme "${f.titulo}": link do IMDb ${f.imdb ? "alterado" : "removido"}`);
+    }
+    const fichaMudou = (["direcao", "fotografia", "produtora", "duracao", "poster", "tipo"] as const).some(
+      (k) => (prev[k] ?? "") !== (f[k] ?? "")
+    );
+    if (fichaMudou) {
+      lines.push(`Filme "${f.titulo}": ficha técnica atualizada`);
+    }
   }
   for (const id of input.deletedFilmes) {
     const prev = originalFilmesById.get(id);
