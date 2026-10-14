@@ -35,15 +35,11 @@ export default function CinemaList({ items }: { items: Filme[] }) {
                 </>
               )}
             </span>
-            <span className="titulo-wrap">
-              <span className="titulo">{f.titulo}</span>
-              {f.direcao && (
-                <span className="direcao">
-                  {t("cinema.dir_por")}: {f.direcao}
-                </span>
-              )}
+            <span className="titulo">{f.titulo}</span>
+            {/* formato (longa/curta) fica só no modal; aqui vai quem dirigiu */}
+            <span className="tipo">
+              {f.direcao ?? (lancado ? "" : t("cinema.em_finalizacao"))}
             </span>
-            <span className="tipo">{lancado ? f.tipo : t("cinema.em_finalizacao")}</span>
           </div>
         );
       })}

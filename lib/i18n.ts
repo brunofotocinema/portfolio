@@ -16,7 +16,6 @@ export const translations: Record<Lang, Record<string, string>> = {
 
     "cinema.em_finalizacao": "Em finalização",
     "cinema.gravacao": "Filmagem",
-    "cinema.dir_por": "Direção",
 
     "filme.direcao": "Direção",
     "filme.fotografia": "Direção de fotografia",
@@ -47,7 +46,6 @@ export const translations: Record<Lang, Record<string, string>> = {
 
     "cinema.em_finalizacao": "In post-production",
     "cinema.gravacao": "filmed",
-    "cinema.dir_por": "Directed by",
 
     "filme.direcao": "Director",
     "filme.fotografia": "Cinematographer",
