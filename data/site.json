@@ -225,7 +225,10 @@
       "titulo": "Habeas Corpus",
       "ano": 2026,
       "tipo": "Em finalização",
-      "imdb": "https://www.imdb.com/title/tt39369819/"
+      "imdb": "https://www.imdb.com/title/tt39369819/",
+      "direcao": "Luiz Villaça",
+      "produtora": "Café Royal",
+      "poster": "https://image.tmdb.org/t/p/w500/pMkQ9LyDJIkMjyfnJ7TNJbKSEEv.jpg"
     },
     {
       "id": "zero-k",
