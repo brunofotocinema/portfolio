@@ -9,6 +9,7 @@ import ProjectList, { type FilmeField } from "@/components/admin/ProjectList";
 import AboutForm from "@/components/admin/AboutForm";
 import GaleriaList from "@/components/admin/GaleriaList";
 import SaveReviewModal from "@/components/admin/SaveReviewModal";
+import HelpPanel from "@/components/admin/HelpPanel";
 import { buildChangeSummary } from "@/lib/admin-change-summary";
 import { slugify, uniqueSlug } from "@/lib/slugify";
 import type { Comercial, ComercialExtra, Filme, ImagemGaleria, SiteData } from "@/lib/data";
@@ -409,26 +410,29 @@ export default function AdminPage() {
     <div className="admin-page">
       <header className="admin-header">
         <h1>Painel administrativo</h1>
-        <div className="admin-modo" role="tablist" aria-label="Modo do painel">
-          <button
-            type="button"
-            role="tab"
-            aria-selected={modo === "adicionar"}
-            className={modo === "adicionar" ? "active" : ""}
-            onClick={() => setModo("adicionar")}
-          >
-            Adicionar
-          </button>
-          <button
-            type="button"
-            role="tab"
-            aria-selected={modo === "editar"}
-            className={modo === "editar" ? "active" : ""}
-            onClick={() => setModo("editar")}
-          >
-            Editar
-            {changes.length > 0 && <span className="admin-modo-badge">{changes.length}</span>}
-          </button>
+        <div className="admin-header-actions">
+          <div className="admin-modo" role="tablist" aria-label="Modo do painel">
+            <button
+              type="button"
+              role="tab"
+              aria-selected={modo === "adicionar"}
+              className={modo === "adicionar" ? "active" : ""}
+              onClick={() => setModo("adicionar")}
+            >
+              Adicionar
+            </button>
+            <button
+              type="button"
+              role="tab"
+              aria-selected={modo === "editar"}
+              className={modo === "editar" ? "active" : ""}
+              onClick={() => setModo("editar")}
+            >
+              Editar
+              {changes.length > 0 && <span className="admin-modo-badge">{changes.length}</span>}
+            </button>
+          </div>
+          <HelpPanel />
         </div>
       </header>
       <div className="admin-conta">
